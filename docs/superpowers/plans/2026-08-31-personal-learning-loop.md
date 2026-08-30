@@ -256,14 +256,16 @@ git commit -m "feat: add personal knowledge operations"
 ### Task 3: Connect v2 State, Real History, and Learning Status
 
 **Files:**
+- Create: `js/ui.js`
+- Create: `tests/ui.test.js`
 - Modify: `js/app.js`
 - Modify: `tests/data.test.js`
 
 **Interfaces:**
 - Consumes: `createStateStore()` from `js/state.js`; history and learning operations from `js/knowledge.js`.
-- Produces: existing pages backed by normalized v2 state; lesson detail controls with status and confidence.
+- Produces: `getThemeControl(theme)`, `learningStatusOptions(activeStatus)`, and existing pages backed by normalized v2 state with lesson status and confidence controls.
 
-- [ ] **Step 1: Add a failing integration-contract test**
+- [ ] **Step 1: Add failing UI-model tests**
 
 Add to `tests/data.test.js`:
 
@@ -277,15 +279,39 @@ test('every learning route can participate in structured progress', () => {
 });
 ```
 
-Add a new `tests/app-contract.test.js` test that reads `js/app.js` and asserts it imports `createStateStore`, `recordVisit`, and `getLearningSummary`, and contains all four status values. It must fail before the app integration.
+Create `tests/ui.test.js`:
+
+```js
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { getThemeControl, learningStatusOptions } from '../js/ui.js';
+
+test('theme control describes the next visible theme', () => {
+  assert.deepEqual(getThemeControl('dark'), {
+    theme: 'dark', nextTheme: 'light', label: '切换到白色', pressed: false
+  });
+  assert.deepEqual(getThemeControl('light'), {
+    theme: 'light', nextTheme: 'dark', label: '切换到深色', pressed: true
+  });
+});
+
+test('learning status options expose one selected status', () => {
+  const options = learningStatusOptions('applied');
+  assert.deepEqual(options.map((item) => item.value), ['unseen', 'learning', 'applied', 'articulated']);
+  assert.equal(options.filter((item) => item.selected).length, 1);
+  assert.equal(options.find((item) => item.selected).value, 'applied');
+});
+```
 
 - [ ] **Step 2: Run and verify RED**
 
-Run: `node --test tests/app-contract.test.js`
+Run: `node --test tests/ui.test.js`
 
-Expected: FAIL because the v2 imports and status UI are absent.
+Expected: FAIL because `js/ui.js` does not exist.
 
-- [ ] **Step 3: Replace legacy state access**
+- [ ] **Step 3: Implement the minimal UI model and replace legacy state access**
+
+Create `js/ui.js` with literal labels for the four states and normalized dark/light theme control data, then initialize the app state once:
 
 Initialize once:
 
@@ -311,12 +337,12 @@ Render a native `<select id="learning-status">` with `unseen`, `learning`, `appl
 
 - [ ] **Step 6: Verify and commit**
 
-Run: `npm test && npm run check`
+Add `node --check js/ui.js` to the syntax command, then run: `npm test && npm run check`
 
 Expected: all tests pass and syntax checking exits 0.
 
 ```bash
-git add js/app.js tests/data.test.js tests/app-contract.test.js
+git add js/ui.js js/app.js tests/ui.test.js tests/data.test.js package.json
 git commit -m "feat: track learning history and mastery"
 ```
 
@@ -328,15 +354,15 @@ git commit -m "feat: track learning history and mastery"
 - Modify: `index.html`
 - Modify: `js/app.js`
 - Modify: `styles.css`
-- Modify: `tests/app-contract.test.js`
+- Modify: `tests/knowledge.test.js`
 
 **Interfaces:**
 - Consumes: `createProjectIssue`, `updateProjectIssue`, and `filterProjectIssues` from `js/knowledge.js`.
 - Produces: `#/capture` and `#/projects` routes; forms identified by `#capture-form` and `[data-project-form]`.
 
-- [ ] **Step 1: Extend the failing app contract**
+- [ ] **Step 1: Add failing capture validation tests**
 
-Assert that `index.html` contains navigation to `#/projects`, `js/app.js` routes both `capture` and `projects`, and the capture form requires a `name="title"` field. Run the test and verify it fails because routes are absent.
+Add a test showing `createProjectIssue` trims the title and throws a user-facing error for an empty title. Run `node --test tests/knowledge.test.js` and verify it fails because title validation is absent.
 
 - [ ] **Step 2: Add navigation and routes**
 
@@ -372,7 +398,7 @@ Add `.capture-page`, `.project-page`, `.project-card`, `.project-form`, `.issue-
 Run: `npm test && npm run check`
 
 ```bash
-git add index.html js/app.js styles.css tests/app-contract.test.js
+git add index.html js/app.js styles.css tests/knowledge.test.js
 git commit -m "feat: add project learning journal"
 ```
 
@@ -383,15 +409,15 @@ git commit -m "feat: add project learning journal"
 **Files:**
 - Modify: `js/app.js`
 - Modify: `styles.css`
-- Modify: `tests/app-contract.test.js`
+- Modify: `tests/ui.test.js`
 
 **Interfaces:**
-- Consumes: `searchWorkspace` and `getRelatedProjectIssues` from `js/knowledge.js`.
+- Consumes: `searchWorkspace` and `getRelatedProjectIssues` from `js/knowledge.js`; `searchResultTypeLabel` from `js/ui.js`.
 - Produces: typed global search results and project backlinks on terminology detail pages.
 
-- [ ] **Step 1: Add failing app contract assertions**
+- [ ] **Step 1: Add failing search-result presentation tests**
 
-Assert `js/app.js` calls `searchWorkspace`, includes result labels for `术语`, `笔记`, and `项目问题`, and renders `related-projects`. Run the test and verify RED.
+Add `searchResultTypeLabel(type)` to the intended `js/ui.js` interface and assert literal labels for `lesson`, `note`, and `project`. Run `node --test tests/ui.test.js` and verify RED because the function is not exported.
 
 - [ ] **Step 2: Replace lesson-only global search**
 
@@ -419,7 +445,7 @@ Below the terminology note section, render matching issues with project name, is
 Run: `npm test && npm run check`
 
 ```bash
-git add js/app.js styles.css tests/app-contract.test.js
+git add js/ui.js js/app.js styles.css tests/ui.test.js
 git commit -m "feat: search notes and project knowledge"
 ```
 
@@ -431,15 +457,15 @@ git commit -m "feat: search notes and project knowledge"
 - Modify: `index.html`
 - Modify: `js/app.js`
 - Modify: `styles.css`
-- Modify: `tests/app-contract.test.js`
+- Modify: `tests/ui.test.js`
 
 **Interfaces:**
-- Consumes: `serializeState`, `parseImportedState`, and the state store from `js/state.js`.
+- Consumes: `serializeState`, `parseImportedState`, and the state store from `js/state.js`; `getThemeControl` and `backupFilename` from `js/ui.js`.
 - Produces: `#theme-toggle`, `#export-data`, and `#import-data` controls.
 
-- [ ] **Step 1: Add failing UI contract tests**
+- [ ] **Step 1: Add failing backup presentation tests**
 
-Assert the topbar contains `id="theme-toggle"`, the project page implementation contains export/import control IDs, and CSS contains `:root[data-theme="light"]`. Run and verify the test fails before markup and styles are added.
+Add `backupFilename(date)` to the intended `js/ui.js` interface. Assert `backupFilename(new Date('2026-08-31T12:00:00Z'))` equals `learning-workspace-2026-08-31.json`. Run `node --test tests/ui.test.js` and verify RED because the function is not exported.
 
 - [ ] **Step 2: Add the top-right theme switch**
 
@@ -469,7 +495,7 @@ Export uses a Blob with MIME `application/json` and filename `learning-workspace
 Run: `npm test && npm run check`
 
 ```bash
-git add index.html js/app.js styles.css tests/app-contract.test.js
+git add js/ui.js index.html js/app.js styles.css tests/ui.test.js
 git commit -m "feat: add backups and light theme"
 ```
 
@@ -520,4 +546,3 @@ git commit -m "fix: complete learning loop acceptance"
 ```
 
 Finish with `git status --short`, `git log --oneline --decorate -8`, and a fresh `npm test && npm run check`.
-

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DEV Learning Lab——把模糊问题编译成清晰、可执行的技术知识。" />
+    <meta name="theme-color" content="#080d12" />
+    <title>DEV Learning Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="paper-grain" aria-hidden="true"></div>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主要导航">
+        <a class="brand" href="#/home" aria-label="DEV Learning Lab 首页">
+          <span class="brand-mark" aria-hidden="true"><i></i><b>DL</b></span>
+          <span><strong>DEV LEARNING LAB</strong><small>个人知识实验室</small></span>
+        </a>
+        <p class="sidebar-caption"><span>$</span> cd ~/knowledge-base<br /><span>$</span> status --learning</p>
+        <nav class="main-nav">
+          <a href="#/home" data-route="home"><span>01</span>控制台</a>
+          <a href="#/library" data-route="library"><span>02</span>知识索引</a>
+          <a href="#/practice" data-route="practice"><span>03</span>测试运行</a>
+          <a href="#/favorites" data-route="favorites"><span>04</span>已保存</a>
+        </nav>
+        <div class="sidebar-foot">
+          <div class="mini-progress">
+            <span>KNOWLEDGE COVERAGE</span><strong id="sidebar-progress">0%</strong>
+            <i><b id="sidebar-progress-bar"></b></i>
+          </div>
+          <p class="runtime-label"><i></i> LOCAL RUNTIME ONLINE</p>
+        </div>
+      </aside>
+
+      <div class="content-shell">
+        <header class="topbar">
+          <button class="search-launcher" id="search-launcher" type="button">
+            <span aria-hidden="true">⌕</span>
+            <span>搜索术语、知识与笔记</span>
+            <kbd>/</kbd>
+          </button>
+          <div class="topbar-meta">
+            <span id="today-label"></span>
+            <span class="status-dot">LOCAL DATA</span>
+          </div>
+        </header>
+        <main id="main-content" tabindex="-1"></main>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" aria-label="移动端导航">
+      <a href="#/home" data-route="home">控制台</a>
+      <a href="#/library" data-route="library">知识库</a>
+      <a href="#/practice" data-route="practice">测试</a>
+      <a href="#/favorites" data-route="favorites">保存</a>
+    </nav>
+
+    <dialog class="search-dialog" id="search-dialog">
+      <form method="dialog" class="search-dialog-head">
+        <label for="global-search">SEARCH KNOWLEDGE BASE</label>
+        <button aria-label="关闭搜索" value="cancel">关闭</button>
+      </form>
+      <div class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input id="global-search" type="search" autocomplete="off" placeholder="输入 Frontend、状态、测试或用户…" />
+      </div>
+      <div class="search-results" id="search-results"></div>
+      <p class="search-tip"><kbd>↑</kbd><kbd>↓</kbd> 浏览 · <kbd>Enter</kbd> 打开 · <kbd>Esc</kbd> 关闭</p>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>

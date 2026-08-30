@@ -1,0 +1,11 @@
+{
+  "name": "dev-learning-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "test": "node --test",
+    "check": "node --check js/data.js && node --check js/expanded-data.js && node --check js/utils.js && node --check js/app.js && node --check dev-server.mjs"
+  }
+}

@@ -1,45 +1,47 @@
 /**
  * V4 内容层 · 站点元信息（site.js）
- * 纯数据：首页 Hero 文案 / Terminal 自我介绍 / NOW 卡 / 页脚链接。
- * 依赖方向：本文件不 import 任何模块。
+ * 小编辑站话术：克制、个人感、温暖。
  */
 
 export const site = {
   name: 'AI Knowledge Lab',
-  tagline: 'AI · Product · Building',
+  tagline: 'AI · Product · Engineering',
 
-  // Hero：一句人话介绍 + 少量 CTA（蓝图 §6.1 第一屏）
+  // Hero：小比例作者主页，不是 Landing Page
   hero: {
-    title: '我在 AI、产品和构建实践中，',
-    titleAccent: '留下真正搞明白和真正做过的东西。',
-    focusLine: ['AI Evaluation', 'Agent & Skills', 'AI Product'],
-    ctas: [
-      { label: '看看知识', href: '#/topics', solid: true },
-      { label: '看看我做过的东西', href: '#/work' }
+    title: '把模糊问题，',
+    titleAccent: '编译成清晰知识。',
+    subtitle:
+      '最近在研究 AI Evaluation、Agent、AI Product 和 Vibe Coding。\n这里记录一些我真正搞明白的东西，以及我正在做的项目。',
+    links: [
+      { label: '看看最近的笔记', href: '#/notes' },
+      { label: '看看我做的东西', href: '#/work' }
     ]
   },
 
-  // MiniTerminal：人格化点缀，不承担数据展示
-  terminal: {
-    whoami: ['→ AI Product / Evaluation / Builder'],
-    currently: ['→ AI Evaluation', '→ Agent & Skills', '→ Building with AI'],
-    building: ['→ Personal Knowledge Lab', '→ Evaluation Workflow']
-  },
-
-  // NOW / 最近在弄：一句话 + 指向相关笔记
+  // NOW / 最近在弄
   now: {
-    date: '2026.09',
-    text:
-      '现在主要在研究 Agent Evaluation。最近越来越觉得：评测设计本质上不是"让另一个模型打分"这么简单。',
-    linkLabel: '相关笔记',
-    linkHref: '#/notes/note-eval-rules-vs-judge'
+    label: '现在在弄什么',
+    chips: ['AI Evaluation', 'Agent', 'AI Product', 'Vibe Coding', 'LLM Application']
   },
 
-  // 页脚（About / 链接 / 覆盖率）
+  // 轻量统计（放在 Hero 下方）
+  stats: {
+    label: '知识库',
+    items: [
+      { label: '术语', key: 'topics' },
+      { label: '笔记', key: 'notes' },
+      { label: '项目', key: 'work' },
+      { label: '论文', key: 'papers' },
+      { label: '工具', key: 'tools' },
+      { label: '资源', key: 'library' }
+    ]
+  },
+
+  // 页脚
   footerLinks: [
     { label: 'About', href: '#/about' },
     { label: 'GitHub', href: 'https://github.com' },
-    { label: 'Resume', href: '#/about' },
     { label: 'Email', href: 'mailto:developer@example.com' }
   ]
 };

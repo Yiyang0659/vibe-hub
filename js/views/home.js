@@ -1,14 +1,11 @@
 /**
  * V4 视图层 · 首页（views/home.js）
- * 编辑部长流（蓝图 §6.1）：Hero + MiniTerminal → NOW → SplitPair →
- * 从问题开始 → 做过/验证过 → 最近笔记 → 读过/工具箱 → 资料库 → 页脚。
- *
- * 架构约定：本模块只做「数据 → HTML 字符串」的纯渲染；
- * 状态合并（getAllNotes 等）由 app.js 作为组合根传入 ctx；
- * 事件绑定（data-quick-copy 等）沿用 app.js 的全局委托。
+ * 编辑部温暖首页：Hero + NOW + 笔记目录 + 非对称作品 + 主题索引 + 工具列表 + 页脚。
+ * 不再使用大卡片墙和 Dashboard 统计，强调个人文字与作品感。
  */
 
 import { site } from '../content/site.js';
+import { topicsWithDomain } from '../content/topics.js';
 
 function esc(value = '') {
   return String(value).replace(/[&<>'"]/g, (char) => ({
@@ -16,264 +13,205 @@ function esc(value = '') {
   })[char]);
 }
 
-/* ---- 局部小组件 ---- */
-
-const terminalLines = (lines) =>
-  lines.map((line) => `<span class="t-line">${esc(line)}</span>`).join('');
-
-function miniTerminal() {
-  const t = site.terminal;
-  return `
-    <div class="c-terminal v-hero-terminal" aria-label="终端自我介绍">
-      <span class="t-line t-muted">~/about — zsh</span>
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">whoami</span></span>
-      ${terminalLines(t.whoami)}
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">currently</span></span>
-      ${terminalLines(t.currently)}
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">building</span></span>
-      ${terminalLines(t.building)}
-      <span class="t-line"><span class="t-prompt">$</span> <span class="t-cursor" aria-hidden="true">▌</span></span>
-    </div>`;
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${m}.${day}`;
 }
 
-function splitPair({ leftLabel, leftHtml, rightLabel, rightHtml }) {
-  return `
-    <div class="v-split">
-      <div class="v-split-col">
-        <h2 class="v-split-label">${esc(leftLabel)}</h2>
-        ${leftHtml}
-      </div>
-      <div class="v-split-col">
-        <h2 class="v-split-label">${esc(rightLabel)}</h2>
-        ${rightHtml}
-      </div>
-    </div>`;
+function readTime(text = '') {
+  const mins = Math.max(1, Math.round(text.length / 450));
+  return `${mins} min`;
 }
 
-/* 行式清单条目（消费 styles/base.css 的 c-index-row） */
-function row({ date, title, desc, href, aside, label }) {
-  const inner = `
-    ${date ? `<span class="row-date c-meta">${esc(date)}</span>` : ''}
-    <div class="row-main">
-      ${label ? `<p class="c-eyebrow">${esc(label)}</p>` : ''}
-      <h3 class="row-title">${esc(title)}</h3>
-      ${desc ? `<p class="row-desc">${esc(desc)}</p>` : ''}
-    </div>
-    <span class="row-aside">${aside ? esc(aside) : ''}<span class="row-arrow" aria-hidden="true">→</span></span>`;
-  return href
-    ? `<a class="c-index-row" href="${esc(href)}">${inner}</a>`
-    : `<div class="c-index-row">${inner}</div>`;
-}
-
-const sectionHead = (label, title, linkHtml = '') => `
-  <div class="v-section-head">
-    <div>
-      <p class="c-eyebrow">${esc(label)}</p>
-      <h2>${esc(title)}</h2>
-    </div>
-    ${linkHtml}
-  </div>`;
-
-/* ---- 各区块 ---- */
-
+/* ========== 1. Hero ========== */
 function heroHtml() {
   const h = site.hero;
   return `
-    <header class="v-hero">
-      <div class="v-hero-copy">
-        <p class="c-eyebrow">${esc(site.name)} · ${esc(site.tagline)}</p>
-        <h1 class="v-hero-title">${esc(h.title)}<br /><em>${esc(h.titleAccent)}</em></h1>
-        <p class="v-hero-sub">最近主要在弄：${h.focusLine.map((f) => `<b>${esc(f)}</b>`).join(' · ')}</p>
-        <div class="v-hero-actions">
-          ${h.ctas.map((c) => `<a class="c-btn ${c.solid ? 'c-btn--solid' : ''}" href="${esc(c.href)}">${esc(c.label)} <span aria-hidden="true">→</span></a>`).join('')}
-        </div>
+    <header class="h-hero">
+      <p class="h-hero-kicker">${esc(site.name)} · ${esc(site.tagline)}</p>
+      <h1 class="h-hero-title">
+        ${esc(h.title)}<br>
+        <em>${esc(h.titleAccent)}</em>
+      </h1>
+      <p class="h-hero-sub">${esc(h.subtitle).replace(/\n/g, '<br>')}</p>
+      <div class="h-hero-links">
+        ${h.links.map((l) => `<a href="${esc(l.href)}">${esc(l.label)} <span aria-hidden="true">→</span></a>`).join('')}
       </div>
-      ${miniTerminal()}
     </header>`;
 }
 
-function nowHtml() {
-  const now = site.now;
+/* ========== 2. 轻量统计 + NOW ========== */
+function statsNowHtml(counts) {
+  const statLine = site.stats.items
+    .map((s) => `${counts[s.key] || 0} ${esc(s.label)}`)
+    .join(' · ');
+
   return `
-    <section class="v-now">
-      <p class="c-eyebrow">NOW / 最近在弄</p>
-      <p class="v-now-text">${esc(now.text)}</p>
-      <div class="v-now-meta">
-        <span class="c-meta">${esc(now.date)}</span>
-        <a class="c-arrow-link" href="${esc(now.href || now.linkHref)}">${esc(now.linkLabel)} <span class="row-arrow" aria-hidden="true">→</span></a>
+    <section class="h-meta-band">
+      <p class="h-statline">${statLine}</p>
+      <div class="h-now">
+        <span class="h-now-label">${esc(site.now.label)}</span>
+        <div class="h-now-chips">
+          ${site.now.chips.map((c) => `<span>${esc(c)}</span>`).join('')}
+        </div>
       </div>
     </section>`;
 }
 
-function pairHtml({ notes, work }) {
-  const latestNote = notes[0];
-  const featuredWork = work.find((w) => w.kind === 'PROJECT') || work[0];
-
-  const noteHtml = latestNote
-    ? row({
-        label: `NOTE · ${latestNote.duration || 5} MIN`,
-        title: latestNote.title,
-        desc: latestNote.oneLiner || latestNote.question,
-        href: `#/notes/${latestNote.id}`,
-        aside: ''
-      })
-    : `<p class="v-empty">最近还没有留下笔记。</p>`;
-
-  const workHtml = featuredWork
-    ? row({
-        label: `${featuredWork.kind} · ${featuredWork.statusLabel || ''}`,
-        title: featuredWork.title,
-        desc: featuredWork.summary,
-        href: `#/work/${featuredWork.id}`,
-        aside: ''
-      })
-    : `<p class="v-empty">项目沉淀整理中。</p>`;
-
-  return splitPair({
-    leftLabel: '最近搞明白',
-    leftHtml: noteHtml,
-    rightLabel: '最近做的东西',
-    rightHtml: workHtml
-  });
-}
-
-function questionsHtml({ lessons }) {
-  const rows = lessons
-    .filter((l) => l.entryQuestion)
-    .slice(0, 6)
-    .map((l) =>
-      row({
-        title: l.entryQuestion,
-        desc: `→ ${l.title} · ${l.english || ''}`,
-        href: `#/topics/${l.id}`,
-        aside: ''
-      })
-    )
-    .join('');
+/* ========== 3. 笔记目录 ========== */
+function noteDirectory(notes) {
+  if (!notes.length) return '';
   return `
-    <section class="v-section">
-      ${sectionHead('从问题开始', '知识从真实问题长出来', `<a class="c-arrow-link" href="#/topics">全部知识 <span class="row-arrow" aria-hidden="true">→</span></a>`)}
-      <div class="v-rows">${rows}</div>
+    <section class="h-section">
+      <div class="h-section-head">
+        <h2>最近写下的</h2>
+        <a href="#/notes">全部笔记 <span aria-hidden="true">→</span></a>
+      </div>
+      <ul class="h-article-list">
+        ${notes.slice(0, 5).map((n) => `
+          <li>
+            <a class="h-article-row" href="#/notes/${esc(n.id)}">
+              <time>${formatDate(n.date)}</time>
+              <span class="h-article-title">${esc(n.title)}</span>
+              <span class="h-article-meta">${[n.category, n.domain].filter(Boolean).join(' · ')} · ${readTime(n.body || n.oneLiner || '')}</span>
+            </a>
+          </li>`).join('')}
+      </ul>
     </section>`;
 }
 
-function workHtml({ work }) {
-  const order = { PROJECT: 0, PROTOTYPE: 1, EXPERIMENT: 2 };
-  const rows = [...work]
-    .sort((a, b) => (order[a.kind] ?? 9) - (order[b.kind] ?? 9))
-    .slice(0, 3)
-    .map((w, i) =>
-      row({
-        label: `${String(i + 1).padStart(2, '0')} / ${w.kind}`,
-        title: w.title,
-        desc: w.summary,
-        href: `#/work/${w.id}`,
-        aside: w.statusLabel || ''
-      })
-    )
-    .join('');
+/* ========== 4. 非对称作品展示 ========== */
+function workGallery(work) {
+  if (!work.length) return '';
+  const [featured, ...rest] = work;
   return `
-    <section class="v-section">
-      ${sectionHead('我做过 / 验证过的东西', 'Projects · Prototypes · Experiments', `<a class="c-arrow-link" href="#/work">全部实践 <span class="row-arrow" aria-hidden="true">→</span></a>`)}
-      <div class="v-rows">${rows}</div>
+    <section class="h-section">
+      <div class="h-section-head">
+        <h2>最近做的</h2>
+        <a href="#/work">全部项目 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="h-work-grid">
+        <a class="h-work-card h-work-card--featured" href="#/work/${esc(featured.id)}">
+          <div class="h-work-thumb"></div>
+          <div class="h-work-body">
+            <span class="h-work-label">${esc(featured.kind || 'PROJECT')}</span>
+            <h3>${esc(featured.title)}</h3>
+            <p>${esc(featured.summary || featured.problem || '')}</p>
+            <span class="h-work-arrow">→</span>
+          </div>
+        </a>
+        ${rest.slice(0, 2).map((w) => `
+          <a class="h-work-card" href="#/work/${esc(w.id)}">
+            <div class="h-work-thumb"></div>
+            <div class="h-work-body">
+              <span class="h-work-label">${esc(w.kind || 'PROJECT')}</span>
+              <h3>${esc(w.title)}</h3>
+              <span class="h-work-arrow">→</span>
+            </div>
+          </a>`).join('')}
+      </div>
     </section>`;
 }
 
-function recentNotesHtml({ notes }) {
-  const rows = notes
-    .slice(0, 3)
-    .map((n) =>
-      row({
-        date: (n.date || '').slice(5).replace('-', '.'),
-        title: n.title,
-        href: `#/notes/${n.id}`,
-        aside: `${n.duration || 5} min`
-      })
-    )
+/* ========== 5. 主题索引 ========== */
+function topicIndex(lessons) {
+  const mapped = lessons.map((l) => topicsWithDomain.find((t) => t.id === l.id) || l);
+  const groups = [
+    { id: 'ai', name: 'AI', filter: (l) => l.domain === 'ai' },
+    { id: 'product', name: 'Product', filter: (l) => l.domain === 'product' },
+    { id: 'agent', name: 'Agent', filter: (l) => l.domain === 'agent' },
+    { id: 'engineering', name: 'Engineering', filter: (l) => l.domain === 'engineering' }
+  ];
+
+  const columns = groups
+    .map((g) => {
+      const items = mapped.filter(g.filter);
+      if (!items.length) return '';
+      return `
+        <div class="h-topic-col">
+          <h3 class="h-topic-domain">${esc(g.name)}</h3>
+          <ul>
+            ${items.slice(0, 6).map((l) => `
+              <li>
+                <a href="#/topics/${esc(l.id)}">
+                  <span>${esc(l.title)}</span>
+                  <span class="h-topic-count">${l.entryQuestion ? '?' : ''}</span>
+                </a>
+              </li>`).join('')}
+          </ul>
+        </div>`;
+    })
     .join('');
+
   return `
-    <section class="v-section">
-      ${sectionHead('最近留下的笔记', 'Notes', `<a class="c-arrow-link" href="#/notes">全部笔记 <span class="row-arrow" aria-hidden="true">→</span></a>`)}
-      <div class="v-rows">${rows}</div>
+    <section class="h-section">
+      <div class="h-section-head">
+        <h2>最近搞明白的</h2>
+        <a href="#/topics">全部术语 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="h-topic-grid">${columns}</div>
     </section>`;
 }
 
-function readingToolsHtml({ papers, toolbox }) {
-  const readingRows = papers
-    .slice(0, 3)
-    .map((p) =>
-      row({
-        label: p.kindLabel || 'PAPER',
-        title: p.title,
-        href: `#/papers/${p.id}`,
-        aside: p.year || ''
-      })
-    )
-    .join('');
-  const toolRows = toolbox
-    .slice(0, 3)
-    .map((t) =>
-      row({
-        label: t.typeLabel || 'TOOL',
-        title: t.title,
-        desc: t.problemSolved,
-        href: `#/toolbox/${t.id}`,
-        aside: ''
-      })
-    )
-    .join('');
-  return splitPair({
-    leftLabel: '最近读过',
-    leftHtml: `<div class="v-rows v-rows--tight">${readingRows}</div><a class="c-arrow-link" href="#/reading">全部阅读 <span class="row-arrow" aria-hidden="true">→</span></a>`,
-    rightLabel: '工具箱',
-    rightHtml: `<div class="v-rows v-rows--tight">${toolRows}</div><a class="c-arrow-link" href="#/toolbox">进入工具箱 <span class="row-arrow" aria-hidden="true">→</span></a>`
-  });
-}
-
-function libraryHtml({ library }) {
-  const rows = library
-    .slice(0, 3)
-    .map((item) =>
-      row({
-        label: item.typeLabel || item.type,
-        title: item.title,
-        desc: item.whyRecommend || item.whySaved,
-        href: item.url && item.url.startsWith('#') ? item.url : '#/library',
-        aside: ''
-      })
-    )
-    .join('');
+/* ========== 6. 工具箱 ========== */
+function toolboxList(tools) {
+  if (!tools.length) return '';
   return `
-    <section class="v-section">
-      ${sectionHead('值得留下的资料', 'Curated Library', `<a class="c-arrow-link" href="#/library">全部资料 <span class="row-arrow" aria-hidden="true">→</span></a>`)}
-      <div class="v-rows">${rows}</div>
+    <section class="h-section">
+      <div class="h-section-head">
+        <h2>常用工具箱</h2>
+        <a href="#/toolbox">全部工具 <span aria-hidden="true">→</span></a>
+      </div>
+      <ul class="h-tool-list">
+        ${tools.slice(0, 5).map((t, i) => `
+          <li class="h-tool-row">
+            <span class="h-tool-no">${String(i + 1).padStart(2, '0')}</span>
+            <span class="h-tool-type">${esc(t.typeLabel || t.type || 'TOOL')}</span>
+            <span class="h-tool-name">${esc(t.title)}</span>
+            <span class="h-tool-desc">${esc(t.problemSolved || t.subtitle || '')}</span>
+            <span class="h-tool-actions">
+              ${t.promptTemplate ? `<button type="button" class="h-tool-action" data-quick-copy="${esc(t.id)}">Copy</button>` : ''}
+              <a class="h-tool-action" href="#/toolbox/${esc(t.id)}">Open</a>
+            </span>
+          </li>`).join('')}
+      </ul>
     </section>`;
 }
 
-function footerHtml({ progress, lessons }) {
+/* ========== 7. 页脚 ========== */
+function footerHtml() {
   const links = site.footerLinks
-    .map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`)
-    .join('<span aria-hidden="true">·</span>');
+    .map((l) => `<a href="${esc(l.href)}"${l.href.startsWith('http') ? ' target="_blank" rel="noreferrer"' : ''}>${esc(l.label)}</a>`)
+    .join('<span class="h-foot-sep">·</span>');
   return `
-    <footer class="v-home-foot">
-      <div>${links}</div>
-      <p class="c-meta">已学 ${progress.completed} / ${lessons.length} · 本站由我长期维护，缓慢生长。</p>
+    <footer class="h-foot">
+      <div class="h-foot-links">${links}</div>
+      <p class="h-foot-copy">© ${new Date().getFullYear()} ${esc(site.name)}. Built slowly, with curiosity & AI.</p>
     </footer>`;
 }
 
-/* ---- 视图入口：ctx = { lessons, routes, progress, notes, work, toolbox, papers, library, currentFocus } ---- */
-
+/* ========== 视图入口 ========== */
 export function renderHomeView(ctx) {
+  const counts = {
+    topics: ctx.lessons?.length || 0,
+    notes: ctx.notes?.length || 0,
+    work: ctx.work?.length || 0,
+    papers: ctx.papers?.length || 0,
+    tools: ctx.toolbox?.length || 0,
+    library: ctx.library?.length || 0
+  };
+
   return `
-    <section class="home-view page-view">
+    <article class="home-view page-view">
       ${heroHtml()}
-      ${nowHtml()}
-      ${pairHtml({ notes: ctx.notes, work: ctx.work })}
-      ${questionsHtml({ lessons: ctx.lessons })}
-      ${workHtml({ work: ctx.work })}
-      ${recentNotesHtml({ notes: ctx.notes })}
-      ${readingToolsHtml({ papers: ctx.papers, toolbox: ctx.toolbox })}
-      ${libraryHtml({ library: ctx.library })}
-      ${footerHtml({ progress: ctx.progress, lessons: ctx.lessons })}
-    </section>`;
+      ${statsNowHtml(counts)}
+      ${noteDirectory(ctx.notes || [])}
+      ${workGallery(ctx.work || [])}
+      ${topicIndex(ctx.lessons || [])}
+      ${toolboxList(ctx.toolbox || [])}
+      ${footerHtml()}
+    </article>`;
 }

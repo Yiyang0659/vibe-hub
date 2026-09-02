@@ -1,134 +1,131 @@
 /* ==========================================================================
    V4 DESIGN TOKENS — AI Knowledge & Practice Lab
-   Editorial Developer Lab · 单一变量源（全站换肤只改本文件）
+   编辑部温暖纸张 + 墨黑 + 单一朱红强调（2026-09-02 定稿）
 
    加载顺序：styles.css(legacy, 过渡期) → styles/tokens.css → styles/base.css
-   Phase 0 约定：纸墨色值与 legacy 1:1 对齐 = 零视觉突变；
-   结构性新 token（域色/字号阶梯/间距/布局尺度）在此定义，供新组件消费。
+   全站强调色只保留朱红；内容类型通过字号、排版、标签区分，不再用色块。
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 纸与墨 · 日间（暖白纸张，印刷品质感）
+   1. 纸与墨 · 日间（温暖纸张，印刷品质感）
    -------------------------------------------------------------------------- */
 :root,
 :root[data-theme="day"] {
   /* 纸面 */
-  --paper: #f5f0e6;
-  --paper-deep: #e9e1d1;
-  --paper-light: #fcf9f2;
+  --paper: #F7F4EC;
+  --paper-deep: #EFE9DD;
+  --paper-light: #FBF8F1;
 
   /* 墨色 */
-  --ink: #1b1f23;
-  --ink-soft: #4b5563;
-  --ink-faint: #788290;
+  --ink: #202124;
+  --ink-soft: #6E6A63;
+  --ink-faint: #9B968E;
 
   /* 线 */
-  --line: rgba(35, 30, 20, 0.14);
-  --line-strong: rgba(35, 30, 20, 0.32);
+  --line: #D9D2C5;
+  --line-strong: #C4BDB0;
 
-  /* 强调 —— 全站唯一强调色：可点击 / 当前项 / 关键标记 */
-  --vermilion: #c9442a;
-  --vermilion-dark: #9e301b;
+  /* 强调 —— 全站唯一品牌色：朱红 */
+  --vermilion: #C94B32;
+  --vermilion-dark: #A83D2A;
 
-  /* 功能色（仅内联标记：✓ / ✗） */
-  --pine: #1b6f63;
-  --gold: #966724;
+  /* 功能色（仅状态点 / 成功标记，禁止大面积使用） */
+  --pine: #397C67;
+  --gold: #A67C3D;
 
-  --shadow: 0 12px 36px rgba(45, 38, 24, 0.08);
+  --shadow: 0 10px 30px rgba(45, 38, 24, 0.06);
 
-  /* 知识域功能色（V4 新增：只允许 顶线 2px / eyebrow 文字 / 进度线 三种用法，
-     禁止大面积色块）。映射：AI=青绿 Product=蓝 Agent=紫 Engineering=赭黄 */
-  --domain-ai: #2f7d6d;
-  --domain-product: #3d6ba8;
-  --domain-agent: #7b5ea7;
-  --domain-engineering: #b0722d;
+  /* 知识域色（保留变量但首页不再使用；详情页 eyebrow 可继续用单色小标签） */
+  --domain-ai: #6E6A63;
+  --domain-product: #6E6A63;
+  --domain-agent: #6E6A63;
+  --domain-engineering: #6E6A63;
 
-  /* 实体徽章（过渡期保留 legacy 用法；Phase 3 起由 c-eyebrow + 域色取代） */
-  --badge-topic-bg: #e6f7f3;
-  --badge-topic-ink: #1b6f63;
-  --badge-note-bg: #eaf2ff;
-  --badge-note-ink: #2563eb;
-  --badge-paper-bg: #f3e8ff;
-  --badge-paper-ink: #7c3aed;
-  --badge-work-bg: #ffedd5;
-  --badge-work-ink: #c2410c;
-  --badge-tool-bg: #fef3c7;
-  --badge-tool-ink: #b45309;
-  --badge-lib-bg: #f1f5f9;
-  --badge-lib-ink: #475569;
+  /* 实体徽章（过渡期保留 legacy 用法，首页已废弃） */
+  --badge-topic-bg: transparent;
+  --badge-topic-ink: var(--ink-soft);
+  --badge-note-bg: transparent;
+  --badge-note-ink: var(--ink-soft);
+  --badge-paper-bg: transparent;
+  --badge-paper-ink: var(--ink-soft);
+  --badge-work-bg: transparent;
+  --badge-work-ink: var(--ink-soft);
+  --badge-tool-bg: transparent;
+  --badge-tool-ink: var(--ink-soft);
+  --badge-lib-bg: transparent;
+  --badge-lib-ink: var(--ink-soft);
 }
 
 /* --------------------------------------------------------------------------
-   2. 纸与墨 · 夜航（同一套编辑排版换纸，不是反色）
+   2. 纸与墨 · 夜航（同一套排版换纸，不是反色）
    -------------------------------------------------------------------------- */
 :root[data-theme="night"] {
-  --paper: #080d12;
-  --paper-deep: #0e1620;
-  --paper-light: #131e2b;
+  --paper: #121418;
+  --paper-deep: #1A1E24;
+  --paper-light: #22262D;
 
-  --ink: #e8eef5;
-  --ink-soft: #9daab8;
-  --ink-faint: #637180;
+  --ink: #E8E4DC;
+  --ink-soft: #A39E96;
+  --ink-faint: #77726C;
 
-  --line: rgba(157, 170, 184, 0.16);
-  --line-strong: rgba(157, 170, 184, 0.32);
+  --line: rgba(227, 221, 212, 0.14);
+  --line-strong: rgba(227, 221, 212, 0.28);
 
-  --vermilion: #ff6b5f;
-  --vermilion-dark: #ff8a80;
+  --vermilion: #E86A52;
+  --vermilion-dark: #FF8A76;
 
-  --pine: #45e0bf;
-  --gold: #f2b84b;
+  --pine: #5CAE95;
+  --gold: #D4A85A;
 
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
 
-  /* 域色夜航提亮 */
-  --domain-ai: #4ecdb4;
-  --domain-product: #6fa8e8;
-  --domain-agent: #a58ad8;
-  --domain-engineering: #d99a54;
+  --domain-ai: #A39E96;
+  --domain-product: #A39E96;
+  --domain-agent: #A39E96;
+  --domain-engineering: #A39E96;
 
-  --badge-topic-bg: rgba(69, 224, 191, 0.15);
-  --badge-topic-ink: #45e0bf;
-  --badge-note-bg: rgba(88, 166, 255, 0.15);
-  --badge-note-ink: #58a6ff;
-  --badge-paper-bg: rgba(167, 139, 250, 0.15);
-  --badge-paper-ink: #a78bfa;
-  --badge-work-bg: rgba(255, 122, 69, 0.15);
-  --badge-work-ink: #ff7a45;
-  --badge-tool-bg: rgba(242, 184, 75, 0.15);
-  --badge-tool-ink: #f2b84b;
-  --badge-lib-bg: rgba(148, 163, 184, 0.15);
-  --badge-lib-ink: #94a3b8;
+  --badge-topic-bg: rgba(227, 221, 212, 0.08);
+  --badge-topic-ink: #A39E96;
+  --badge-note-bg: rgba(227, 221, 212, 0.08);
+  --badge-note-ink: #A39E96;
+  --badge-paper-bg: rgba(227, 221, 212, 0.08);
+  --badge-paper-ink: #A39E96;
+  --badge-work-bg: rgba(227, 221, 212, 0.08);
+  --badge-work-ink: #A39E96;
+  --badge-tool-bg: rgba(227, 221, 212, 0.08);
+  --badge-tool-ink: #A39E96;
+  --badge-lib-bg: rgba(227, 221, 212, 0.08);
+  --badge-lib-ink: #A39E96;
 }
 
 /* --------------------------------------------------------------------------
-   3. 字体与字号阶梯（V4 新增；legacy px 字面量在后续 Phase 逐步切换）
+   3. 字体与字号阶梯
    -------------------------------------------------------------------------- */
 :root {
-  --serif: "方正书宋_GBK", "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
-  --sans: "霞鹜文楷", "LXGW WenKai", "Microsoft YaHei", -apple-system, sans-serif;
+  --serif: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", Georgia, serif;
+  --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: "JetBrains Mono", "SFMono-Regular", Consolas, Menlo, monospace;
 
-  /* 字号阶梯（正文型页面基准） */
-  --fs-display: clamp(30px, 4vw, 44px); /* 首页主标题 */
-  --fs-h1: 30px;                        /* 页面标题 */
-  --fs-h2: 21px;                        /* 区块标题 */
-  --fs-h3: 16px;                        /* 列表项标题 */
-  --fs-body: 15px;                      /* 正文 */
-  --fs-meta: 12px;                      /* 日期 / 时长 / 序号 */
-  --fs-eyebrow: 11px;                   /* 类型标签 */
+  /* 字号：编辑部克制尺度 */
+  --fs-hero: clamp(34px, 4.6vw, 52px);   /* 首页主标题（宋体） */
+  --fs-display: clamp(26px, 3.2vw, 36px); /* 区块标题 */
+  --fs-h1: 26px;                          /* 页面标题 */
+  --fs-h2: 20px;                          /* 列表项标题 / 小标题 */
+  --fs-h3: 15px;                          /* 元信息标题 */
+  --fs-body: 15px;                        /* 正文 */
+  --fs-meta: 12px;                        /* 日期 / 时长 / 序号 */
+  --fs-eyebrow: 11px;                     /* 类型标签 */
 
-  /* 行高：正文行高是阅读感的核心，1.9 起步 */
-  --lh-display: 1.25;
-  --lh-heading: 1.4;
-  --lh-body: 1.9;
+  --lh-hero: 1.28;
+  --lh-display: 1.4;
+  --lh-heading: 1.45;
+  --lh-body: 1.85;
 
-  /* 字距：eyebrow 专用 */
-  --track-eyebrow: 0.14em;
+  --track-eyebrow: 0.12em;
 }
 
 /* --------------------------------------------------------------------------
-   4. 间距与布局尺度（V4 新增）
+   4. 间距与布局尺度
    -------------------------------------------------------------------------- */
 :root {
   --space-1: 4px;
@@ -136,37 +133,31 @@
   --space-3: 12px;
   --space-4: 16px;
   --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
-  --space-8: 72px;
+  --space-6: 36px;
+  --space-7: 52px;
+  --space-8: 80px;
 
-  /* 布局尺度（蓝图 §5.3） */
-  --measure-article: 720px;  /* 正文列 */
-  --measure-page: 1040px;    /* 主内容最大宽 */
-  --toc-width: 200px;        /* 长文 TOC */
-  --header-h: 56px;          /* 移动端吸顶头 */
-  --sidebar-width: 258px;    /* Phase 1 重排侧栏时收敛为 232px */
-
-  /* 内容嵌套红线：禁止超过 3 层视觉嵌套 */
+  --measure-article: 680px;   /* 正文列 */
+  --measure-page: 920px;      /* 主内容最大宽 */
+  --toc-width: 200px;
+  --header-h: 56px;
+  --sidebar-width: 220px;
 }
 
 /* --------------------------------------------------------------------------
-   5. 形状 / 线条 / 动效 / 层级（V4 新增）
+   5. 形状 / 线条 / 动效 / 层级
    -------------------------------------------------------------------------- */
 :root {
-  /* 圆角：编辑部语言，克制 */
   --radius-sm: 2px;
   --radius-md: 4px;
 
-  /* 动效 */
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur-fast: 0.15s;
   --dur-base: 0.25s;
 
-  /* z-index 层级表（全站唯一出处） */
-  --z-grain: 30;       /* 纸张纹理 */
-  --z-topbar: 40;      /* 吸顶头 */
-  --z-hover-card: 70;  /* Hover Explain 浮层 */
-  --z-overlay: 60;     /* dialog */
-  --z-toast: 80;       /* toast 最高 */
+  --z-grain: 30;
+  --z-topbar: 40;
+  --z-hover-card: 70;
+  --z-overlay: 60;
+  --z-toast: 80;
 }

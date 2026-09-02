@@ -175,10 +175,8 @@ function setTheme(theme) {
 
 function updateProgressUI() {
   const progress = calculateProgress(lessons.length, state.completed);
-  const el = document.querySelector('#sidebar-progress');
-  const bar = document.querySelector('#sidebar-progress-bar');
-  if (el) el.textContent = `${progress.percent}%`;
-  if (bar) bar.style.width = `${progress.percent}%`;
+  // 新版侧栏已移除进度条；保留函数兼容旧调用与详情页进度展示。
+  return progress;
 }
 
 function isFavorite(id) {
@@ -1470,7 +1468,7 @@ function route() {
 }
 
 // 快速捕获入口
-document.querySelector('#sidebar-quick-capture')?.addEventListener('click', openQuickCaptureModal);
+
 document.querySelector('#topbar-quick-capture')?.addEventListener('click', openQuickCaptureModal);
 
 // 全局搜索弹窗

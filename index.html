@@ -3,14 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AI Knowledge & Practice Lab——围绕 AI 产品、Agent、评测与工程开发持续积累的知识与实践库。" />
-    <meta name="theme-color" content="#f5f0e6" />
+    <meta name="description" content="AI Knowledge & Practice Lab——我在 AI、产品与工程实践中真正理解、研究过和沉淀下来的东西。" />
+    <meta name="theme-color" content="#F7F4EC" />
     <meta property="og:title" content="AI Knowledge & Practice Lab" />
-    <meta property="og:description" content="我在 AI、产品和构建实践中，留下真正搞明白和真正做过的东西：术语、笔记、论文拆解、项目实验与可复用工具。" />
+    <meta property="og:description" content="把模糊问题编译成清晰知识：术语、笔记、论文拆解、项目实验与可复用工具。" />
     <meta property="og:type" content="website" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f5f0e6'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='16' font-weight='bold' text-anchor='middle' fill='%23c9442a'%3EAI%3C/text%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F7F4EC'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='16' font-weight='bold' text-anchor='middle' fill='%23C94B32'%3EAI%3C/text%3E%3C/svg%3E" />
     <title>AI Knowledge & Practice Lab</title>
-    <!-- V4 样式加载顺序：legacy(过渡期共存) → tokens(单一变量源) → base(新组件原语) -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./styles/tokens.css" />
     <link rel="stylesheet" href="./styles/base.css" />
@@ -28,36 +32,32 @@
           <span class="brand-mark" aria-hidden="true"><i></i><b>AI</b></span>
           <span><strong>AI KNOWLEDGE LAB</strong><small>AI · PRODUCT · ENGINEERING</small></span>
         </a>
-        <p class="sidebar-caption"><span>$</span> cd ~/knowledge-lab</p>
-        
+        <p class="sidebar-caption"><span>$</span> cd ~/knowledge<br><span>$</span> status --learning</p>
+
         <nav class="main-nav" aria-label="主导航">
-          <a href="#/home" data-route="home"><span>01</span>首页</a>
-          <a href="#/topics" data-route="topics"><span>02</span>术语</a>
-          <a href="#/notes" data-route="notes"><span>03</span>笔记</a>
-          <a href="#/reading" data-route="reading"><span>04</span>阅读</a>
-          <a href="#/work" data-route="work"><span>05</span>实践</a>
-          <a href="#/toolbox" data-route="toolbox"><span>06</span>工具箱</a>
-          <a href="#/library" data-route="library"><span>07</span>资源库</a>
+          <a href="#/home" data-route="home"><span>首页</span><i>Home</i></a>
+          <a href="#/topics" data-route="topics"><span>术语</span><i>Topics</i></a>
+          <a href="#/notes" data-route="notes"><span>笔记</span><i>Notes</i></a>
+          <a href="#/reading" data-route="reading"><span>阅读</span><i>Reading</i></a>
+          <a href="#/work" data-route="work"><span>项目</span><i>Work</i></a>
+          <a href="#/toolbox" data-route="toolbox"><span>工具箱</span><i>Toolbox</i></a>
+          <a href="#/library" data-route="library"><span>资源库</span><i>Library</i></a>
         </nav>
 
         <div class="sidebar-aux-block">
-          <div class="nav-section-title">PERSONAL TOOLS</div>
+          <div class="nav-section-title">Personal</div>
           <nav class="aux-nav">
-            <a href="#/practice" data-route="practice"><span>▷</span>测试运行</a>
-            <a href="#/saved" data-route="saved"><span>◇</span>已保存</a>
-            <a href="#/about" data-route="about"><span>◦</span>关于</a>
+            <a href="#/practice" data-route="practice"><span>练习</span><i>Practice</i></a>
+            <a href="#/saved" data-route="saved"><span>已保存</span><i>Saved</i></a>
+            <a href="#/about" data-route="about"><span>关于</span><i>About</i></a>
           </nav>
         </div>
 
         <div class="sidebar-foot">
-          <div class="mini-progress">
-            <span>已学 <strong id="sidebar-progress">0%</strong></span>
-            <i><b id="sidebar-progress-bar"></b></i>
-          </div>
-          <div class="sidebar-actions">
-            <button class="quick-capture-launcher" id="sidebar-quick-capture" type="button">
-              <span>+</span> 快速记录推进 / 思考
-            </button>
+          <p>Built slowly,<br>with curiosity & AI.</p>
+          <div class="sidebar-links">
+            <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="mailto:developer@example.com">Email</a>
           </div>
         </div>
       </aside>
@@ -66,13 +66,11 @@
         <header class="topbar">
           <button class="search-launcher" id="search-launcher" type="button">
             <span aria-hidden="true">⌕</span>
-            <span>全局检索：术语、论文、思考、项目实验、工具箱与精选资源…</span>
+            <span>搜索…</span>
             <kbd>/</kbd>
           </button>
           <div class="topbar-meta">
-            <button class="topbar-capture-btn" id="topbar-quick-capture" type="button">
-              <span>+</span> 记录推进
-            </button>
+            <button class="topbar-capture-btn" id="topbar-quick-capture" type="button">+ 记录</button>
             <span id="today-label"></span>
             <button class="theme-toggle-btn" id="theme-toggle" type="button" aria-label="切换夜航模式">夜航</button>
           </div>
@@ -86,30 +84,26 @@
       <a href="#/topics" data-route="topics">术语</a>
       <a href="#/notes" data-route="notes">笔记</a>
       <a href="#/reading" data-route="reading">阅读</a>
-      <a href="#/work" data-route="work">实践</a>
+      <a href="#/work" data-route="work">项目</a>
       <a href="#/toolbox" data-route="toolbox">工具</a>
       <a href="#/library" data-route="library">资源</a>
     </nav>
 
-    <!-- 全局检索弹窗 2.0 (支持 6 大核心模块全量检索) -->
     <dialog class="search-dialog" id="search-dialog">
       <form method="dialog" class="search-dialog-head">
-        <label for="global-search">GLOBAL SEARCH 2.0 (全域跨分类知识检索)</label>
+        <label for="global-search">Global Search</label>
         <button aria-label="关闭搜索" value="cancel">关闭</button>
       </form>
       <div class="search-field">
         <span aria-hidden="true">⌕</span>
-        <input id="global-search" type="search" autocomplete="off" placeholder="输入 Agent、RAG、MCP、Attention、评测、Prompt 或工具名…" />
+        <input id="global-search" type="search" autocomplete="off" placeholder="Agent、RAG、MCP、评测、Prompt…" />
       </div>
       <div class="search-results" id="search-results"></div>
-      <p class="search-tip"><kbd>↑</kbd><kbd>↓</kbd> 浏览 · <kbd>Enter</kbd> 打开 · <kbd>Esc</kbd> 关闭 · 覆盖 术语/论文/思考/项目/工具/资源</p>
+      <p class="search-tip"><kbd>↑</kbd><kbd>↓</kbd> 浏览 · <kbd>Enter</kbd> 打开 · <kbd>Esc</kbd> 关闭</p>
     </dialog>
 
-    <!-- Quick Capture & AI Content Compiler 交互弹窗 -->
     <dialog class="capture-dialog" id="capture-dialog">
-      <div class="capture-dialog-content" id="capture-dialog-container">
-        <!-- 动态渲染 -->
-      </div>
+      <div class="capture-dialog-content" id="capture-dialog-container"></div>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>

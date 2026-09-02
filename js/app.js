@@ -22,6 +22,10 @@ import {
   searchAllEntities
 } from './utils.js';
 import { renderHomeView } from './views/home.js';
+import { renderTopicsIndex, mountTopicsIndex } from './views/topics.js';
+import { renderNotesTimeline } from './views/notes.js';
+import { renderWorkIndex } from './views/work.js';
+import { topicsWithDomain, WHY_LOOKUP } from './content/topics.js';
 
 const storageKey = 'pkl-v3-state';
 
@@ -228,107 +232,12 @@ function attachHomeQuickCopy() {
    02 TOPICS 术语知识体系
    ========================================================================== */
 function renderTopics(params) {
-  const initialCategory = params.get('category') || 'all';
-  const uniqueTagCount = new Set(lessons.flatMap(l => l.tags || [])).size;
-  const featuredTags = ['Agent', 'LLM', 'Context', 'RAG', 'MCP', '评测', 'API', '状态机', 'Git'];
-
-  main.innerHTML = `
-    <section class="library-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>02 TOPICS</span> / 专业术语知识体系</p>
-        <div>
-          <h1>理解术语，才能更精确地给机器下指令。</h1>
-          <p>涵盖 AI、Product、Frontend、Backend、Engineering 五大领域。每个术语都包含定义、核心职责、交互实验、误区与可执行检查。</p>
-        </div>
-      </header>
-
-      <section class="term-index-stats reveal" aria-label="术语库概览">
-        <div><span>TERM MODULES</span><strong>${lessons.length}</strong><small>个完整术语</small></div>
-        <div><span>DOMAINS</span><strong>${categories.length}</strong><small>个专业领域</small></div>
-        <div><span>TAGS</span><strong>${uniqueTagCount}</strong><small>个检索标签</small></div>
-        <p><b>STANDARD FORMAT</b> 每个术语严格包含：一句话理解 → 定义 → 为什么重要 → 交互实验 → 误区 → 行动清单 → 快速校准。</p>
-      </section>
-
-      <div class="library-toolbar reveal">
-        <label class="inline-search"><span aria-hidden="true">⌕</span><input id="topic-search" type="search" placeholder="搜索术语、英文名或标签…" /></label>
-        <label>难度<select id="level-filter"><option value="all">全部</option><option value="入门">入门</option><option value="进阶">进阶</option></select></label>
-      </div>
-
-      <div class="category-tabs reveal" role="tablist" aria-label="知识分类">
-        <button type="button" data-category="all" class="${initialCategory === 'all' ? 'is-active' : ''}">全部 <span>${lessons.length}</span></button>
-        ${categories.map(cat => `<button type="button" data-category="${cat.id}" class="${initialCategory === cat.id ? 'is-active' : ''}">${cat.title} <span>${lessons.filter(l => l.category === cat.id).length}</span></button>`).join('')}
-      </div>
-
-      <div class="term-quick-filter reveal" aria-label="热门标签"><span>QUICK LOOKUP</span>${featuredTags.map(tag => `<button type="button" data-term-tag="${tag}">${tag}</button>`).join('')}</div>
-      <div class="library-summary" id="topic-summary"></div>
-      <div class="lesson-grid" id="topic-grid"></div>
-    </section>
-  `;
-
-  let activeCategory = initialCategory;
-  let query = '';
-  let level = 'all';
-  const grid = document.querySelector('#topic-grid');
-  const summary = document.querySelector('#topic-summary');
-
-  const update = () => {
-    const results = searchLessons(lessons, query, activeCategory, level);
-    summary.innerHTML = `<span>INDEX MATCHES</span><strong>${results.length}</strong><small>个术语模块</small>`;
-    grid.innerHTML = results.length
-      ? results.map(topicCard).join('')
-      : `<div class="empty-state"><span>∅</span><h2>没有匹配的术语</h2><p>没有找到“${escapeHTML(query)}”相关内容。可以换个词，或清空筛选。</p><button type="button" id="clear-topic-filter">RESET FILTERS</button></div>`;
-    
-    document.querySelector('#clear-topic-filter')?.addEventListener('click', () => {
-      query = ''; level = 'all'; activeCategory = 'all';
-      document.querySelector('#topic-search').value = '';
-      document.querySelector('#level-filter').value = 'all';
-      document.querySelectorAll('[data-category]').forEach(b => b.classList.toggle('is-active', b.dataset.category === 'all'));
-      update();
-    });
-  };
-
-  document.querySelector('#topic-search').addEventListener('input', (e) => {
-    query = e.target.value;
-    document.querySelectorAll('[data-term-tag]').forEach(b => b.classList.remove('is-active'));
-    update();
+  main.innerHTML = renderTopicsIndex({ topics: topicsWithDomain, params });
+  mountTopicsIndex({
+    topics: topicsWithDomain,
+    initialDomain: params.get('domain') || 'all',
+    isCompleted
   });
-  document.querySelector('#level-filter').addEventListener('change', (e) => { level = e.target.value; update(); });
-  document.querySelectorAll('[data-category]').forEach(b => b.addEventListener('click', () => {
-    activeCategory = b.dataset.category;
-    document.querySelectorAll('[data-category]').forEach(item => item.classList.toggle('is-active', item === b));
-    update();
-  }));
-  document.querySelectorAll('[data-term-tag]').forEach(b => b.addEventListener('click', () => {
-    const isActive = b.classList.contains('is-active');
-    query = isActive ? '' : b.dataset.termTag;
-    document.querySelector('#topic-search').value = query;
-    document.querySelectorAll('[data-term-tag]').forEach(item => item.classList.toggle('is-active', item === b && !isActive));
-    update();
-  }));
-
-  update();
-}
-
-function topicCard(lesson, index = 0) {
-  const cat = categoryOf(lesson.category);
-  const complete = isCompleted(lesson.id);
-  return `
-    <article class="lesson-card reveal" style="--delay:${Math.min(index * 40, 240)}ms; --route-color:${cat.accent}">
-      <div class="lesson-card-top">
-        <span class="route-code">${cat.code} · ${escapeHTML(lesson.level)}</span>
-        <button class="favorite-button ${isFavorite(lesson.id) ? 'is-active' : ''}" type="button" data-favorite="${lesson.id}" aria-label="收藏 ${escapeHTML(lesson.title)}">${isFavorite(lesson.id) ? '◆' : '◇'}</button>
-      </div>
-      <a class="lesson-card-link" href="#/topics/${lesson.id}">
-        <span class="completion-mark ${complete ? 'is-done' : ''}">${complete ? '✓' : String(index + 1).padStart(2, '0')}</span>
-        <div>
-          <p class="eyebrow">${escapeHTML(lesson.english)}</p>
-          <h3>${escapeHTML(lesson.title)}</h3>
-          <p>${escapeHTML(lesson.excerpt)}</p>
-        </div>
-      </a>
-      <footer><span>${lesson.duration} 分钟</span><span>${lesson.tags.slice(0, 2).map(escapeHTML).join(' · ')}</span></footer>
-    </article>
-  `;
 }
 
 function renderTopicDetail(id) {
@@ -341,6 +250,7 @@ function renderTopicDetail(id) {
   const relatedLessons = lesson.related.map(topicById).filter(Boolean);
   const relatedNotes = getAllNotes().filter(n => (n.relatedTopics || []).includes(id));
   const relatedWork = getAllWork().filter(w => (w.relatedTopics || []).includes(id));
+  const relatedTools = getAllToolbox().filter(t => (t.relatedTopics || []).includes(id));
 
   main.innerHTML = `
     <article class="lesson-page page-view" style="--route-color:${cat.accent}">
@@ -374,6 +284,7 @@ function renderTopicDetail(id) {
           <span>ON THIS PAGE</span>
           <a class="is-active" href="#/topics/${id}" data-scroll-target="sec-def">01 术语定义</a>
           <a href="#/topics/${id}" data-scroll-target="sec-why">02 核心职责</a>
+          ${WHY_LOOKUP[id] ? `<a href="#/topics/${id}" data-scroll-target="sec-lookup">02.5 我为什么查它</a>` : ''}
           ${lesson.scenario ? `<a href="#/topics/${id}" data-scroll-target="sec-lab">03 交互实验</a>` : ''}
           <a href="#/topics/${id}" data-scroll-target="sec-exp">04 真实场景</a>
           <a href="#/topics/${id}" data-scroll-target="sec-pit">05 常见误区</a>
@@ -401,6 +312,13 @@ function renderTopicDetail(id) {
               ${lesson.points.map((pt, i) => `<div><span>0${i + 1}</span><p>${escapeHTML(pt)}</p></div>`).join('')}
             </div>
           </section>
+
+          ${WHY_LOOKUP[id] ? `
+          <section id="sec-lookup" class="content-section reveal">
+            <p class="section-no">02.5 / WHY I LOOKED IT UP</p>
+            <h2>我为什么会查这个？</h2>
+            <div class="c-callout">${escapeHTML(WHY_LOOKUP[id])}</div>
+          </section>` : ''}
 
           <!-- 03 交互实验 -->
           ${lesson.scenario ? scenarioMarkup(lesson) : ''}
@@ -468,6 +386,12 @@ function renderTopicDetail(id) {
                 <div class="rel-group">
                   <strong>USED IN WORK (实践项目/实验):</strong>
                   ${relatedWork.map(w => `<a href="#/work/${w.id}" class="rel-chip work">🚀 ${escapeHTML(w.title)}</a>`).join('')}
+                </div>
+              ` : ''}
+              ${relatedTools.length ? `
+                <div class="rel-group">
+                  <strong>USED IN TOOLS (沉淀为工具):</strong>
+                  ${relatedTools.map(t => `<a href="#/toolbox/${t.id}" class="rel-chip tool">🛠 ${escapeHTML(t.title)}</a>`).join('')}
                 </div>
               ` : ''}
               ${relatedLessons.length ? `
@@ -586,36 +510,7 @@ function scenarioMarkup(lesson) {
    03 NOTES 笔记 / 思考 (轻量高密度 5 结构)
    ========================================================================== */
 function renderNotes() {
-  const allNotes = getAllNotes();
-
-  main.innerHTML = `
-    <section class="notes-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>03 NOTES</span> / 知识沉淀与深度思考</p>
-        <div>
-          <h1>我把某个问题真正想明白之后，留下的思考。</h1>
-          <p>不是长篇大论，而是把问题、理解、例子、结论与相关知识高度压缩的思考卡片。证明我的独立判断与认知深度。</p>
-        </div>
-      </header>
-
-      <div class="notes-grid">
-        ${allNotes.map((note, idx) => `
-          <article class="unified-card note-card reveal" style="--delay:${idx * 50}ms">
-            <div class="card-head">
-              <span class="entity-badge note">NOTE 0${idx + 1}</span>
-              <span class="card-sub">${escapeHTML(note.category)} · ${note.duration || 5} min</span>
-            </div>
-            <h3>${escapeHTML(note.title)}</h3>
-            <p class="card-oneliner">${escapeHTML(note.oneLiner)}</p>
-            <div class="card-foot">
-              <span class="card-date">${escapeHTML(note.date)}</span>
-              <a href="#/notes/${note.id}" class="card-link-btn">READ NOTE →</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
+  main.innerHTML = renderNotesTimeline({ notes: getAllNotes() });
 }
 
 function renderNoteDetail(id) {
@@ -673,6 +568,13 @@ function renderNoteDetail(id) {
           <h3>我最后的判断是什么？</h3>
           <p style="font-weight:600; color:var(--pine);">${escapeHTML(note.myTake)}</p>
         </section>
+
+          <!-- 05 UNRESOLVED · 我还没想清楚什么 -->
+          <section class="case-study-block reveal">
+            <p class="section-no">05 / UNRESOLVED</p>
+            <h3>我还没想清楚什么？</h3>
+            <p style="color: var(--ink-soft);">${escapeHTML(note.unresolved || '还没有记录——这说明这个问题我还没真正想透。')}</p>
+          </section>
       </div>
 
       <!-- 05 RELATED -->
@@ -817,46 +719,7 @@ function renderPaperDetail(id) {
    05 WORK 项目 / 原型 / 实验 (Projects, Prototypes, Experiments)
    ========================================================================== */
 function renderWork(filterKind = 'ALL') {
-  const allWork = getAllWork();
-  const filtered = filterKind === 'ALL' ? allWork : allWork.filter(w => w.kind === filterKind);
-
-  main.innerHTML = `
-    <section class="work-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>05 WORK</span> / 项目 · 原型 · 实验验证</p>
-        <div>
-          <h1>我真正做过什么、验证过什么。</h1>
-          <p>包含完整落地项目 (Projects)、快速概念验证 (Prototypes) 与参数/Prompt 对比实验 (Experiments)。</p>
-        </div>
-      </header>
-
-      <div class="filter-tabs-row reveal">
-        <button type="button" class="tab-btn ${filterKind === 'ALL' ? 'is-active' : ''}" data-work-tab="ALL">全部 (${allWork.length})</button>
-        <button type="button" class="tab-btn ${filterKind === 'PROJECT' ? 'is-active' : ''}" data-work-tab="PROJECT">完整项目 (${allWork.filter(w => w.kind === 'PROJECT').length})</button>
-        <button type="button" class="tab-btn ${filterKind === 'PROTOTYPE' ? 'is-active' : ''}" data-work-tab="PROTOTYPE">快速原型 (${allWork.filter(w => w.kind === 'PROTOTYPE').length})</button>
-        <button type="button" class="tab-btn ${filterKind === 'EXPERIMENT' ? 'is-active' : ''}" data-work-tab="EXPERIMENT">实验验证 (${allWork.filter(w => w.kind === 'EXPERIMENT').length})</button>
-      </div>
-
-      <div class="work-grid">
-        ${filtered.map((work, idx) => `
-          <article class="unified-card work-card reveal" style="--delay:${idx * 50}ms">
-            <div class="card-head">
-              <span class="entity-badge ${work.badgeClass}">${work.kindLabel}</span>
-              <span class="card-sub">${escapeHTML(work.domain)} · ${escapeHTML(work.statusLabel)}</span>
-            </div>
-            <h3>${escapeHTML(work.title)}</h3>
-            <p class="card-english">${escapeHTML(work.english || '')}</p>
-            <p class="card-summary">${escapeHTML(work.summary)}</p>
-            <div class="card-foot">
-              <span class="card-role">${escapeHTML(work.role || work.time)}</span>
-              <a href="#/work/${work.id}" class="card-link-btn">DETAILS →</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
-
+  main.innerHTML = renderWorkIndex({ work: getAllWork(), filterKind });
   document.querySelectorAll('[data-work-tab]').forEach(btn => {
     btn.addEventListener('click', () => renderWork(btn.dataset.workTab));
   });

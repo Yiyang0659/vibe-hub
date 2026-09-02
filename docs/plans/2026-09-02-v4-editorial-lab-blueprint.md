@@ -776,14 +776,15 @@ AI Evaluation Checklist（toolbox）
 - [x] `js/content/site.js`（Hero/Terminal/Now/页脚文案）+ `styles/views/home.css`（900px 双栏堆叠）；
 - 验收结果：视图空跑断言 0 仪表盘残留、11 个区块齐全；`npm run check && npm test` 14/14 全绿；服务器产物验证通过。
 
-### Phase 2 —— 三大核心模板（2 天）
-- [ ] 数据迁移：`content/topics.js`（含 domain 重映射 + entryQuestion/whyLookup/usedIn 字段，先给 10 个高频词条补个人痕迹字段，其余允许空由测试标记 warning）；
-- [ ] `views/topics.js`：域分组行式索引 + Hover Explain；Topic 详情插入 §6.3 两个新段；
-- [ ] `views/notes.js`：时间轴索引 + 新详情模板（unresolved 段必填）；
-- [ ] `views/work.js`：Problem-first 索引（重点卡 + 行条目）+ Case Study 详情模板；
-- [ ] 路由 alias：`#/papers→#/reading`、`#/projects→#/work`、旧 lesson id → 新 topic id；
-- [ ] 测试：schema 校验（§7.3 发布门槛）+ related 死链检查 + 路由 alias 快照；
-- 验收：Topics/Notes/Work 三页在双主题、三断点下逐页人工过检。
+### Phase 2 —— 三大核心模板（2 天）✅
+- [x] 数据与逻辑层拆分：`content/topics.js`（DOMAINS 四域映射 + `WHY_LOOKUP` 10 词条个人痕迹 + `usedInReverse` 反向索引）；`lib/search.js` + `lib/progress.js` 从 utils.js 物理拆分（utils 保留 re-export 兼容）；5 条 Note 注入 `unresolved` 字段；
+- [x] `views/topics.js`：域分组行式索引（AI 7 / Product 8 / Agent 2 / Engineering 43）+ 即时过滤 + Hover Explain 浮层（150ms 延迟、触屏禁用）；
+- [x] Topic 详情插入 §6.3 新段：**02.5 我为什么会查这个**（c-callout 形态 + TOC 条目）+ 关联网络补 **USED IN TOOLS** 组；
+- [x] `views/notes.js`：年份时间轴索引（c-timeline-year + 行式条目）；Note 详情新增 **05 我还没想清楚什么** 段；
+- [x] `views/work.js`：Problem-first 索引（重点 PROJECT 大卡先讲问题 + 排序行条目，Experiment 展示量化结果）；Work 详情补 USED IN TOOLS 关联；
+- [x] 路由 alias 已在 Phase 1 同步启用（`#/reading`、`#/library`、`#/projects`、`#/lesson/:id`）；
+- [x] 测试：`tests/content/schema.test.js`（8 项发布门槛强校验）+ `tests/content/related-links.test.js`（四类实体关联死链 + 反向索引可用性）；
+- 验收结果：`npm run check && npm test` **28/28 全绿**；三视图真实数据冒烟通过（Tabs/分组计数/时间轴行/重点卡/实验结果）。
 
 ### Phase 3 —— Reading / Toolbox / Library（1 天）
 - [ ] `views/reading.js`：四类型筛选索引 + 论文拆解详情（memorized=3 强校验）；

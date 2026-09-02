@@ -155,6 +155,7 @@ export const notes = [
     myUnderstanding: '不要用概率模型去解决已经有确定性解法的问题。评测系统第一原则是：能用代码断言的绝不用正则，能用正则的绝不用大模型。大模型只用来做人类专家级别的“主观语义理解与意图推断”。',
     example: '在七维能力评测系统中，如果把“是否包含订单号”、“是否跳转状态码 200”和“态度是否真诚”混在一个 Prompt 里，LLM 会经常对订单号缺失视而不见，而给出 85 分的矛盾分数；拆分为“代码规则过滤层 + 语义二元断言层”后，确定性错误拦截率直接达到 100%，整体一致性达到 94.2%。',
     myTake: '好架构不是消除全部不确定性，而是为不确定性划定清晰的安全边界。规则引擎负责格式与状态机，LLM Judge 负责同理心与语义。',
+    unresolved: '规则与 Judge 的分界线在"混合维度"上仍然模糊：比如"回复是否解决了用户问题"既有语义成分又有可验证成分。我还没想清楚这类维度应该拆成两层打分，还是允许 Judge 输出置信度。',
     relatedTopics: ['testing-strategy', 'acceptance-criteria', 'api-contract'],
     relatedPapers: ['paper-constitutional-ai'],
     relatedWork: ['ai-seven-dimension-eval']
@@ -170,6 +171,7 @@ export const notes = [
     myUnderstanding: 'REST API 是面向人类开发者或固定后端客户端设计的，假设调用方知道何时调用、如何鉴权与解析响应；而 MCP 是面向不确定的 LLM Agent 设计的，它提供自描述的 Prompts、Resources（只读上下文）和 Tools（执行动作）三位一体的标准协议。',
     example: '普通 API 接入需要为每个模型编写特定的 Tool Schema 与转换脚本；MCP 让本地 IDE（如 Cursor、Claude Desktop）通过单一协议即插即用任意本地文件、数据库或第三方 SaaS，无需在每个应用中重复造轮子。',
     myTake: 'MCP 正在成为 AI 时代的“USB 接口”，将割裂的应用生态转换为统一的 Agent 可插拔服务体系。',
+    unresolved: 'MCP 的鉴权与审计在多租户生产环境里怎么落地，我还没想清楚。协议本身解决了"发现与调用"，但企业级权限模型似乎还是留给实现方。',
     relatedTopics: ['tool-calling', 'api-contract', 'system-prompt'],
     relatedPapers: ['paper-react-reasoning-and-acting'],
     relatedWork: ['personal-knowledge-lab']
@@ -185,6 +187,7 @@ export const notes = [
     myUnderstanding: 'Chat UI 是大模型技术初期的“偷懒设计”，因为它无需构建复杂的领域信息架构；但在生产力场景中，线性流式的对话不仅难以进行局部编辑与版本对比，而且吞吐密度极低。真正优秀的 AI 产品是将 AI 嵌入既有的工作流节点，而不是逼用户聊天。',
     example: 'Cursor 将 AI 融入代码行内补全与 Diff 审查，而不是单独弹出一个网页聊天窗口；Canva 将 AI 融入画布图层修改，用户无需用自然语言描述“把第三个矩形左移 10px”。',
     myTake: 'AI 交互应该围绕 Artifact（产物）展开，AI 充当后台编译器或行内 copilot，而非永远让用户面对一个空白聊天框。',
+    unresolved: '跳出 Chat UI 之后，交互重心的判定标准我还没想清楚：按任务结构分（工作流型用表单）还是按不确定性分（不确定时才回到对话）？两个模型都能自圆其说。',
     relatedTopics: ['component-thinking', 'user-problem', 'state-management'],
     relatedPapers: ['paper-rag-for-knowledge-intensive-nlp'],
     relatedWork: ['personal-knowledge-lab', 'wepictool-ai-image']
@@ -200,6 +203,7 @@ export const notes = [
     myUnderstanding: '在严苛生产环境中，不同类型的错误代价完全不同（漏拦截一次敏感越权指令的代价是灾难性的，而误拦截普通提问只是稍损体验）。必须针对关键风险维度分别计算 Recall（查全率）并设置硬性拦截阈值。',
     example: '某退款 Agent 测试集包含 95 个常规查询和 5 个越权攻击用例。模型对所有用例全部放行，Accuracy 为 95%，但对高危攻击的 Recall 为 0%。引入多维召回矩阵后，设立高危风险 Recall ≥ 99.5% 门禁，成功在发布前拦截全部风险。',
     myTake: '评测体系必须用多维指标（Precision, Recall, F1, 边界覆盖率）取代单一 Accuracy，并为关键维度设定不可妥协的基准红线。',
+    unresolved: '多维度指标的权重怎么定，我还没想清楚。现在靠业务方拍优先级，缺一个像 F-beta 那样可调节、可解释的数学工具。',
     relatedTopics: ['testing-strategy', 'acceptance-criteria'],
     relatedPapers: ['paper-constitutional-ai'],
     relatedWork: ['ai-seven-dimension-eval']
@@ -215,6 +219,7 @@ export const notes = [
     myUnderstanding: '以前工程师的大量时间消耗在查语法、调 CSS、写样板代码上；现在通过 AI 辅助，工程师的核心竞争力转移到了：1. 问题拆解能力 2. 架构边界与数据契约设计 3. 验收标准与测试用例制定 4. 异常边界洞察。',
     example: '在构建本 Personal Knowledge Lab 时，定义清晰的 6 字段数据契约与单向数据流，AI 可以在 30 秒内准确补全完整的组件代码；若缺乏清晰契约，AI 生成的代码将迅速失控并互相冲突。',
     myTake: '你给出的 Prompt 和 Schema 越具确定性，AI 的产出质量上限就越高。',
+    unresolved: '"什么任务适合完全交给 AI、什么任务必须人主导"，我的判断目前全靠手感。我还没想清楚这个边界的可操作判据，比如变更爆炸半径或可测试性。',
     relatedTopics: ['component-thinking', 'api-contract', 'state-management'],
     relatedPapers: ['paper-react-reasoning-and-acting'],
     relatedWork: ['personal-knowledge-lab']

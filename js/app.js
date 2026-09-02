@@ -29,6 +29,8 @@ import { topicsWithDomain, WHY_LOOKUP } from './content/topics.js';
 import { renderReadingIndex } from './views/reading.js';
 import { renderToolboxIndex } from './views/toolbox.js';
 import { renderLibraryIndex } from './views/library.js';
+import { renderRelatedTrail } from './components/related-trail.js';
+import { site } from './content/site.js';
 
 const storageKey = 'pkl-v3-state';
 
@@ -256,6 +258,7 @@ function renderTopicDetail(id) {
   const relatedNotes = getAllNotes().filter(n => (n.relatedTopics || []).includes(id));
   const relatedWork = getAllWork().filter(w => (w.relatedTopics || []).includes(id));
   const relatedTools = getAllToolbox().filter(t => (t.relatedTopics || []).includes(id));
+  const trailGraph = { notes: getAllNotes(), work: getAllWork(), toolbox: getAllToolbox() };
 
   main.innerHTML = `
     <article class="lesson-page page-view" style="--route-color:${cat.accent}">
@@ -421,11 +424,13 @@ function renderTopicDetail(id) {
         </div>
       </div>
 
+      ${renderRelatedTrail({ type: 'topic', id, title: lesson.title }, trailGraph)}
+
       <section class="lesson-finish reveal">
         <div>
-          <span>MODULE STATUS</span>
-          <h2>${isCompleted(id) ? '这个术语模块已经通过。' : '完成学习与实验后，更新掌握状态。'}</h2>
-          <p>完成状态将同步至全局能力索引与控制台进度。</p>
+          <span>TOPIC STATUS</span>
+          <h2>${isCompleted(id) ? '这个术语已经学完。' : '学完定义、实验与检查清单后，标记一下。'}</h2>
+          <p>进度只保存在本地，与你的学习节奏无关，与展示无关。</p>
         </div>
         <button class="primary-action ${isCompleted(id) ? 'is-complete' : ''}" id="complete-topic" type="button">
           ${isCompleted(id) ? '✓ 已掌握 · 点击撤销' : '标记为已掌握 →'}
@@ -583,6 +588,11 @@ function renderNoteDetail(id) {
       </div>
 
       <!-- 05 RELATED -->
+      ${renderRelatedTrail(
+        { type: 'note', id: note.id, title: note.title },
+        { notes: getAllNotes(), work: getAllWork(), toolbox: getAllToolbox() }
+      )}
+
       <footer class="lesson-finish reveal" style="margin-top:35px;">
         <div>
           <span>RELATED CONNECTIONS</span>
@@ -827,6 +837,11 @@ function renderWorkDetail(id) {
         </div>
       `}
 
+      ${renderRelatedTrail(
+        { type: 'work', id: work.id, title: work.title, relatedTools: work.relatedTools },
+        { notes: getAllNotes(), work: getAllWork(), toolbox: getAllToolbox() }
+      )}
+
       <footer class="lesson-finish reveal" style="margin-top:35px;">
         <div>
           <span>RELATED CONNECTIONS</span>
@@ -1041,7 +1056,7 @@ function renderPractice() {
   main.innerHTML = `
     <section class="practice-page page-view">
       <header class="page-header reveal">
-        <p class="chapter-label"><span>PRACTICE</span> / TESTING RUNTIME</p>
+        <p class="chapter-label"><span>PRACTICE</span> / SELF CHECK</p>
         <div>
           <h1>在真实判断中，检验理解边界。</h1>
           <p>每天运行几组技术与产品测试，校准你的直觉与边界认知。</p>
@@ -1092,31 +1107,62 @@ function renderPractice() {
   });
 }
 
+function resolveFavorite(id) {
+  const topic = topicById(id);
+  if (topic) return { id, type: 'TOPICS', label: '术语', title: topic.title, desc: topic.excerpt, href: `#/topics/${topic.id}` };
+  const note = noteById(id);
+  if (note) return { id, type: 'NOTES', label: '笔记', title: note.title, desc: note.oneLiner, href: `#/notes/${note.id}` };
+  const work = workById(id);
+  if (work) return { id, type: 'WORK', label: '实践', title: work.title, desc: work.summary, href: `#/work/${work.id}` };
+  const tool = toolById(id);
+  if (tool) return { id, type: 'TOOLS', label: '工具', title: tool.title, desc: tool.problemSolved, href: `#/toolbox/${tool.id}` };
+  const paper = paperById(id);
+  if (paper) return { id, type: 'READING', label: '阅读', title: paper.title, desc: paper.oneLiner, href: `#/papers/${paper.id}` };
+  return null;
+}
+
 function renderSaved() {
-  const favorites = lessons.filter(lesson => state.favorites.includes(lesson.id));
+  const resolved = state.favorites.map(resolveFavorite).filter(Boolean);
+  const groupOrder = ['TOPICS', 'NOTES', 'READING', 'WORK', 'TOOLS'];
+  const groups = groupOrder.filter((g) => resolved.some((r) => r.type === g));
+
+  const groupsHtml = groups.map((g) => {
+    const items = resolved.filter((r) => r.type === g);
+    return `
+      <div class="v-domain-group">
+        <h3 class="c-timeline-year">${g} <span>${items.length}</span></h3>
+        <div class="v-rows">
+          ${items.map((r) => `
+            <div class="c-index-row">
+              <div class="row-main">
+                <h3 class="row-title"><a href="${r.href}">${escapeHTML(r.title)}</a></h3>
+                ${r.desc ? `<p class="row-desc">${escapeHTML(r.desc)}</p>` : ''}
+              </div>
+              <span class="row-aside">
+                <span class="c-meta">${r.label}</span>
+                <button type="button" class="favorite-button is-active" data-favorite="${r.id}" aria-label="取消固定 ${escapeHTML(r.title)}">◆</button>
+              </span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
 
   main.innerHTML = `
     <section class="favorites-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>SAVED</span> / PINNED WORKSPACE</p>
+      <header class="v-section-head v-page-head">
         <div>
-          <h1>把真正重要的知识与工具，固定在工作区。</h1>
-          <p>只留下正在影响当前项目或近期需要重点复习的模块。</p>
+          <p class="c-eyebrow">SAVED</p>
+          <h1 class="v-page-title">固定下来，反复使用的内容。</h1>
+          <p class="v-page-sub">只留正在影响当前项目、或近期需要重点复习的条目——按类型分组，保存在本地。</p>
         </div>
       </header>
 
-      <div class="favorites-summary reveal">
-        <span class="stamp">PINNED</span>
-        <div><strong>${favorites.length}</strong><p>个已固定条目</p></div>
-        <p>${favorites.length ? '这些条目已保存在本地，可随时点击详情页取消。' : '当前暂无固定条目，可在浏览时点击菱形按钮添加。'}</p>
-      </div>
-
-      ${favorites.length ? `<div class="lesson-grid">${favorites.map(topicCard).join('')}</div>` : `
+      ${resolved.length ? groupsHtml : `
         <div class="empty-state">
           <span>◇</span>
-          <h2>工作区暂无条目</h2>
-          <p>前往术语库或思考模块，将关键内容固定在此。</p>
-          <a class="primary-action" href="#/topics">BROWSE TOPICS →</a>
+          <h2>还没有固定任何条目</h2>
+          <p>浏览术语、笔记、实践与工具时，点击详情页的菱形按钮即可固定。</p>
+          <a class="c-btn c-btn--solid" href="#/topics">去逛逛术语 →</a>
         </div>
       `}
     </section>
@@ -1129,7 +1175,7 @@ function renderNotFound() {
       <span>404</span>
       <h1>这枚坐标不在海图上</h1>
       <p>地址可能已经调整，或者该知识条目正在编译中。</p>
-      <a class="primary-action" href="#/home">返回控制台 →</a>
+      <a class="primary-action" href="#/home">返回首页 →</a>
     </section>
   `;
 }
@@ -1148,18 +1194,34 @@ function updateGlobalSearch() {
     digests: getAllDigests()
   };
 
-  const results = searchAllEntities(dataset, globalSearch.value).slice(0, 10);
+  const results = searchAllEntities(dataset, globalSearch.value);
+  const groups = [];
+  const byType = new Map();
+  results.forEach((item) => {
+    if (!byType.has(item.type)) {
+      byType.set(item.type, []);
+      groups.push(item.type);
+    }
+    byType.get(item.type).push(item);
+  });
+
+  const rowHtml = (item) => `
+    <a href="${item.url}" data-search-result class="sg-row">
+      <span class="entity-badge" style="background:${item.badgeColor || '#45e0bf'}; color:#080d12;">${item.type}</span>
+      <span class="sg-main">
+        <span class="sg-title">${escapeHTML(item.title)}</span>
+        <span class="sg-desc">${escapeHTML(item.english || '')} · ${escapeHTML(item.excerpt || '')}</span>
+      </span>
+      <b class="sg-arrow" aria-hidden="true">↗</b>
+    </a>`;
+
   searchResults.innerHTML = results.length
-    ? results.map(item => `
-        <a href="${item.url}" data-search-result style="display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border-bottom:1px solid var(--line);">
-          <span class="entity-badge" style="background:${item.badgeColor || '#45e0bf'}; color:#080d12;">${item.type}</span>
-          <div style="flex:1;">
-            <div style="font-weight:700; font-size:14px; color:var(--ink);">${escapeHTML(item.title)}</div>
-            <div style="font-size:12px; color:var(--ink-soft); margin-top:2px;">${escapeHTML(item.english)} · ${escapeHTML(item.excerpt)}</div>
-          </div>
-          <b style="color:var(--ink-faint);">↗</b>
-        </a>
-      `).join('')
+    ? groups.map((type) => `
+        <div class="sg-group">
+          <p class="c-eyebrow">${type}</p>
+          ${byType.get(type).slice(0, 3).map(rowHtml).join('')}
+          ${byType.get(type).length > 3 ? `<p class="sg-more">+${byType.get(type).length - 3} 条更多…</p>` : ''}
+        </div>`).join('')
     : `<div class="search-empty"><strong>未找到匹配内容</strong><p>可尝试检索：Agent、RAG、MCP、Attention、评测、Prompt 或工具名。</p></div>`;
 
   document.querySelectorAll('[data-search-result]').forEach(link => {
@@ -1391,6 +1453,17 @@ function route() {
   else if (routeName === 'saved' || routeName === 'favorites') renderSaved();
   else if (routeName === 'about') renderAbout();
   else renderNotFound();
+
+  const currentTitle =
+    (routeName === 'topics' || routeName === 'topic' || routeName === 'lesson') && id ? topicById(id)?.title
+    : routeName === 'notes' && id ? noteById(id)?.title
+    : (routeName === 'work' || routeName === 'projects') && id ? workById(id)?.title
+    : routeName === 'papers' && id ? paperById(id)?.title
+    : routeName === 'toolbox' && id ? toolById(id)?.title
+    : '';
+  document.title = currentTitle
+    ? `${currentTitle} · ${site.name}`
+    : `${site.name} — ${site.tagline}`;
 
   window.scrollTo({ top: 0, behavior: 'instant' });
   main.focus({ preventScroll: true });

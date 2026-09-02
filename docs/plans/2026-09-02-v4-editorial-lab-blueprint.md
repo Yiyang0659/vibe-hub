@@ -794,13 +794,15 @@ AI Evaluation Checklist（toolbox）
 - [x] 测试补强：TOOL 可复用性门槛（promptTemplate 或 checklist 至少其一）；
 - 验收结果：`npm run check`（exit 0，18 个源文件全检）+ `npm test` **29/29 全绿**；三视图冒烟通过（reading 4 行 / toolbox 5 组 / library 3 组）。
 
-### Phase 4 —— 跨内容体验与收尾（1 天）
-- [ ] 搜索升级为分组式全实体结果（§8.1）；
-- [ ] Related Trail 组件 + 三个详情页接入；
-- [ ] SAVED 按类型分组；ABOUT 精简版上线；
-- [ ] 性能与 SEO：`<title>/description/OG` 按路由更新、favicon、`prefers-reduced-motion` 全覆盖、Lighthouse ≥ 95；
-- [ ] 全站文案走查（去掉残留的"航线/控制台/模块"等课程话术 → 统一为 Lab 话术）；
-- 验收：`npm test` 全绿（预计 ≥30 用例）；移动端 375px 全页走查无横向滚动。
+### Phase 4 —— 跨内容体验与收尾（1 天）✅
+- [x] 全局搜索分组化：结果按 TOPIC/NOTE/PAPER/WORK/TOOLBOX/LIBRARY/DIGEST 分组（每组 ≤3 条 + 更多提示），`styles/components/search-trail.css`；
+- [x] **Related Trail 认知路径**（`components/related-trail.js`）：topic ─深入推导→ note ─用于实践→ work ─沉淀为→ toolbox，真实数据验证 4 个词条全链路 4 节点；接入 Topic/Note/Work 三个详情页底部；
+- [x] SAVED 按类型分组：收藏跨实体解析（术语/笔记/阅读/实践/工具五组），行内一键取消固定；旧字符串收藏数据自动兼容；
+- [x] ABOUT 保持精简三段（CURRENT FOCUS / LAB MISSION / CONTACT）；
+- [x] SEO：`document.title` 按路由与实体动态更新；OG title/description/type；SVG data-URI favicon；theme-color 对齐日间纸色；
+- [x] 文案走查：清除「控制台 / 模块 / TESTING RUNTIME」残留 → 首页/自测/Lab 话术；
+- [ ] Lighthouse 跑分与 375px 真机走查（需浏览器环境，留给部署前人工验收）；
+- 验收结果：`npm run check` exit 0 + `npm test` **33/33 全绿**（新增 4 项 Trail 测试）。
 
 ### 工作量合计：约 5.5 个工作日（可按 Phase 独立交付与回滚）。
 

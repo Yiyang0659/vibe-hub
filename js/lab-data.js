@@ -292,6 +292,7 @@ export const workItems = [
     english: 'AI Image Synthesis & Miniprogram',
     status: 'COMPLETED',
     statusLabel: '已上线',
+    screenshot: './assets/work/wepictool-ai-image.png',
     role: '全栈开发 / 微信小程序 / 云开发托管 / 异步轮询任务流设计',
     time: '2026.06',
     domain: 'Fullstack & Generative AI',

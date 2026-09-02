@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./styles/tokens.css" />
     <link rel="stylesheet" href="./styles/base.css" />
+    <link rel="stylesheet" href="./styles/views/home.css" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -20,29 +21,30 @@
           <span class="brand-mark" aria-hidden="true"><i></i><b>AI</b></span>
           <span><strong>AI KNOWLEDGE LAB</strong><small>AI · PRODUCT · ENGINEERING</small></span>
         </a>
-        <p class="sidebar-caption"><span>$</span> cd ~/ai-knowledge-lab<br /><span>$</span> status --online</p>
+        <p class="sidebar-caption"><span>$</span> cd ~/knowledge-lab</p>
         
-        <nav class="main-nav">
+        <nav class="main-nav" aria-label="主导航">
           <a href="#/home" data-route="home"><span>01</span>首页</a>
-          <a href="#/topics" data-route="topics"><span>02</span>术语 (Topics)</a>
-          <a href="#/notes" data-route="notes"><span>03</span>思考 (Notes)</a>
-          <a href="#/papers" data-route="papers"><span>04</span>论文 (Papers)</a>
-          <a href="#/projects" data-route="projects"><span>05</span>项目 / 实验</a>
-          <a href="#/toolbox" data-route="toolbox"><span>06</span>工具箱 (Toolbox)</a>
-          <a href="#/library-resources" data-route="library-resources"><span>07</span>资源库 (Library)</a>
+          <a href="#/topics" data-route="topics"><span>02</span>术语</a>
+          <a href="#/notes" data-route="notes"><span>03</span>笔记</a>
+          <a href="#/reading" data-route="reading"><span>04</span>阅读</a>
+          <a href="#/work" data-route="work"><span>05</span>实践</a>
+          <a href="#/toolbox" data-route="toolbox"><span>06</span>工具箱</a>
+          <a href="#/library" data-route="library"><span>07</span>资源库</a>
         </nav>
 
         <div class="sidebar-aux-block">
-          <div class="nav-section-title">PRACTICE & WORKSPACE</div>
+          <div class="nav-section-title">PERSONAL TOOLS</div>
           <nav class="aux-nav">
             <a href="#/practice" data-route="practice"><span>▷</span>测试运行</a>
-            <a href="#/favorites" data-route="favorites"><span>◇</span>已保存</a>
+            <a href="#/saved" data-route="saved"><span>◇</span>已保存</a>
+            <a href="#/about" data-route="about"><span>◦</span>关于</a>
           </nav>
         </div>
 
         <div class="sidebar-foot">
           <div class="mini-progress">
-            <span>TOPIC COVERAGE</span><strong id="sidebar-progress">0%</strong>
+            <span>已学 <strong id="sidebar-progress">0%</strong></span>
             <i><b id="sidebar-progress-bar"></b></i>
           </div>
           <div class="sidebar-actions">
@@ -50,7 +52,6 @@
               <span>+</span> 快速记录推进 / 思考
             </button>
           </div>
-          <p class="runtime-label"><i></i> LOCAL RUNTIME ONLINE</p>
         </div>
       </aside>
 
@@ -76,11 +77,11 @@
     <nav class="mobile-nav" aria-label="移动端导航">
       <a href="#/home" data-route="home">首页</a>
       <a href="#/topics" data-route="topics">术语</a>
-      <a href="#/notes" data-route="notes">思考</a>
-      <a href="#/papers" data-route="papers">论文</a>
-      <a href="#/projects" data-route="projects">项目</a>
+      <a href="#/notes" data-route="notes">笔记</a>
+      <a href="#/reading" data-route="reading">阅读</a>
+      <a href="#/work" data-route="work">实践</a>
       <a href="#/toolbox" data-route="toolbox">工具</a>
-      <a href="#/library-resources" data-route="library-resources">资源</a>
+      <a href="#/library" data-route="library">资源</a>
     </nav>
 
     <!-- 全局检索弹窗 2.0 (支持 6 大核心模块全量检索) -->

@@ -768,12 +768,13 @@ AI Evaluation Checklist（toolbox）
 - [x] 目录骨架：`assets/ js/{content,views,components,lib,store} styles/{components,views} tests/{content,lib,store} scripts/ docs/guides/`；
 - 验收结果：新旧类名零碰撞；token 值与 legacy 1:1 对齐 = 零视觉突变；后续换肤只改 tokens.css。
 
-### Phase 1 —— 首页去仪表盘化（1 天）
-- [ ] `views/home.js` 重写：Hero（人话 + CTA）+ MiniTerminal + Now 卡；
-- [ ] 移除 System Monitor 大数字、CAPABILITY INDEX、状态灯（§3.3 清单）；
-- [ ] 「从问题开始」「做过/验证过」两个行式区块上线（读 `entryQuestion` / workItems）；
-- [ ] 侧栏导航重排为 §4.1 结构，覆盖率降级到页脚；
-- 验收：首页从上到下无一个 KPI 卡；SplitPair 两区块在 768px 下正确堆叠。
+### Phase 1 —— 首页去仪表盘化（1 天）✅
+- [x] `views/home.js` 重写（app.js 1819 → 1686 行，首页委托给视图模块）：Hero（人话 + 2 CTA）+ MiniTerminal（whoami/currently/building）+ NOW 卡；
+- [x] 移除 System Monitor 大数字、CAPABILITY INDEX、`LOCAL RUNTIME ONLINE` 状态灯、✦ focus 芯片与航线卡百分比；
+- [x] 「从问题开始」（6 个词条注入 `entryQuestion`）与「我做过 / 验证过的东西」（PROJECT → PROTOTYPE → EXPERIMENT 排序行式清单）上线；
+- [x] 侧栏导航重排 §4.1：7 主导航（中文为主）+ PERSONAL TOOLS 辅助区（含 About）；覆盖率降级为侧栏底部一行小字；路由 alias `#/reading → papers 视图`、`#/library → 资源库索引` 同步启用；
+- [x] `js/content/site.js`（Hero/Terminal/Now/页脚文案）+ `styles/views/home.css`（900px 双栏堆叠）；
+- 验收结果：视图空跑断言 0 仪表盘残留、11 个区块齐全；`npm run check && npm test` 14/14 全绿；服务器产物验证通过。
 
 ### Phase 2 —— 三大核心模板（2 天）
 - [ ] 数据迁移：`content/topics.js`（含 domain 重映射 + entryQuestion/whyLookup/usedIn 字段，先给 10 个高频词条补个人痕迹字段，其余允许空由测试标记 warning）；

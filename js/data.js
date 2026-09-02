@@ -80,6 +80,7 @@ const coreLessons = [
   {
     ...shared,
     id: 'state-management', title: '界面状态', english: 'UI State', category: '前端航线', level: '进阶', duration: 12,
+    entryQuestion: '为什么界面总是记不住上一步发生了什么？',
     tags: ['State', '交互', '数据流'], excerpt: '页面会变化，就需要明确记住“现在是什么状态”。',
     definition: '界面状态是决定当前显示内容与可执行操作的数据，例如搜索词、选中的筛选项、请求是否进行中、收藏是否成功。',
     why: '如果状态散落在元素文字和 CSS 类名里，页面很容易互相矛盾。把状态集中表达，渲染结果才可预测。',
@@ -158,6 +159,7 @@ const coreLessons = [
   {
     ...shared,
     id: 'prompt-context', title: '提示词上下文', english: 'Prompt Context', category: 'AI 协作', level: '入门', duration: 9,
+    entryQuestion: '为什么给 AI 的背景信息越多，回答反而越不靠谱？',
     tags: ['提示词', '上下文', '目标'], excerpt: '不是写得更长，而是给出真正影响判断的信息。',
     definition: '提示词上下文是模型完成任务所需的背景、目标、约束、已有材料和验收标准。有效上下文与任务直接相关。',
     why: '“帮我优化一下”没有说明为谁优化、解决什么问题、不能改变什么，模型只能用常见默认值补空白。',
@@ -236,6 +238,7 @@ const coreLessons = [
   {
     ...shared,
     id: 'git-workflow', title: 'Git 工作流', english: 'Git Workflow', category: '工程实践', level: '入门', duration: 10,
+    entryQuestion: 'AI 把代码改坏了，怎么放心地回退？',
     tags: ['Git', '版本', '协作'], excerpt: '用可理解的小步记录，让改变能够检查和回退。',
     definition: 'Git 工作流规定如何分支、提交、审查与合并代码，让团队知道每次变化的目的与边界。',
     why: '巨大且混杂的提交难以审查，也难以安全回退。小而完整的提交能保留清晰决策历史。',

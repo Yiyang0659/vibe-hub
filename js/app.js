@@ -21,6 +21,7 @@ import {
   searchLessons,
   searchAllEntities
 } from './utils.js';
+import { renderHomeView } from './views/home.js';
 
 const storageKey = 'pkl-v3-state';
 
@@ -194,151 +195,18 @@ function toggleCompleted(id) {
 }
 
 /* ==========================================================================
-   01 HOME 控制台 / 首页
+   01 HOME 首页 —— V4 编辑部长流（渲染逻辑见 js/views/home.js）
    ========================================================================== */
 function renderHome() {
-  const allNotes = getAllNotes();
-  const allWork = getAllWork();
-  const allToolbox = getAllToolbox();
-  const progress = calculateProgress(lessons.length, state.completed);
-  const routes = categoryProgress(lessons, state.completed);
-
-  const recentNotes = allNotes.slice(0, 3);
-  const selectedWork = allWork.slice(0, 2);
-  const featuredTools = allToolbox.slice(0, 3);
-
-  main.innerHTML = `
-    <section class="home-page page-view">
-      <!-- 第一屏：HERO & RUNTIME MONITOR -->
-      <div class="hero-grid">
-        <div class="hero-copy reveal">
-          <p class="chapter-label"><span>PERSONAL KNOWLEDGE LAB</span> / CAPABILITY REPOSITORY</p>
-          <h1>把模糊问题，<br /><em>编译成清晰知识。</em></h1>
-          <p class="hero-intro-english">Learning AI. Building Products. Distilling Methods.</p>
-          <p class="hero-intro">记录我在 AI、产品与工程实践中真正理解过的知识、研究过的问题、做过的实验，以及沉淀出的工具和方法。</p>
-          <div class="hero-actions">
-            <a class="primary-action" href="#/topics">EXPLORE TOPICS <span>→</span></a>
-            <a class="secondary-action" href="#/work">VIEW WORK <span>↗</span></a>
-          </div>
-        </div>
-
-        <div class="system-monitor reveal" style="--delay:100ms" aria-label="知识档案库运行状态">
-          <header><span>CAPABILITY INDEX</span><b><i></i> ONLINE</b></header>
-          <div class="monitor-value">
-            <strong>${lessons.length}</strong><span>Topics</span>
-            <small>KNOWLEDGE GRAPH</small>
-          </div>
-          <div class="monitor-bar"><i style="width:${progress.percent}%"></i></div>
-          <ul>
-            <li><span>01.topics</span><b>${lessons.length} Terms</b></li>
-            <li><span>02.notes</span><b>${allNotes.length} Insights</b></li>
-            <li><span>03.papers</span><b>${papers.length} Deconstructed</b></li>
-            <li><span>04.work</span><b>${allWork.length} Projects & Exp</b></li>
-            <li><span>05.toolbox</span><b>${allToolbox.length} Tools</b></li>
-          </ul>
-          <code><span>›</span> capability verification chain ready</code>
-        </div>
-      </div>
-
-      <!-- 第二屏：CURRENT FOCUS (当前研究雷达) -->
-      <section class="v2-exploring-strip reveal" style="--delay:140ms">
-        <span class="v2-exploring-badge">CURRENT FOCUS</span>
-        <div class="v2-exploring-main">
-          <small>近期重点研究雷达</small>
-          <div class="focus-tags-row">
-            ${currentFocus.map(f => `<span class="focus-chip">✦ ${escapeHTML(f)}</span>`).join('')}
-          </div>
-        </div>
-        <a class="secondary-action" href="#/notes">ALL NOTES →</a>
-      </section>
-
-      <!-- 第三屏：RECENT NOTES (最近思考) -->
-      <div class="section-heading reveal">
-        <div><p class="chapter-label">RECENT NOTES</p><h2>最近沉淀与思考</h2></div>
-        <a href="#/notes">查看全部 (${allNotes.length}) →</a>
-      </div>
-      <div class="notes-grid">
-        ${recentNotes.map((note, idx) => `
-          <article class="unified-card note-card reveal" style="--delay:${idx * 60}ms">
-            <div class="card-head">
-              <span class="entity-badge note">NOTE 0${idx + 1}</span>
-              <span class="card-sub">${escapeHTML(note.category)} · ${note.duration || 5} min</span>
-            </div>
-            <h3>${escapeHTML(note.title)}</h3>
-            <p class="card-oneliner">${escapeHTML(note.oneLiner || note.question)}</p>
-            <div class="card-foot">
-              <span class="card-date">${escapeHTML(note.date)}</span>
-              <a href="#/notes/${note.id}" class="card-link-btn">READ →</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-
-      <!-- 第四屏：SELECTED WORK (精选项目与实验) -->
-      <div class="section-heading reveal" style="margin-top:45px;">
-        <div><p class="chapter-label">SELECTED WORK</p><h2>精选项目与实验验证</h2></div>
-        <a href="#/work">查看全部项目与实验 (${allWork.length}) →</a>
-      </div>
-      <div class="work-grid">
-        ${selectedWork.map((work, idx) => `
-          <article class="unified-card work-card reveal" style="--delay:${idx * 60}ms">
-            <div class="card-head">
-              <span class="entity-badge ${work.badgeClass}">${work.kindLabel}</span>
-              <span class="card-sub">${escapeHTML(work.domain)} · ${escapeHTML(work.statusLabel)}</span>
-            </div>
-            <h3>${escapeHTML(work.title)}</h3>
-            <p class="card-english">${escapeHTML(work.english || '')}</p>
-            <p class="card-summary">${escapeHTML(work.summary)}</p>
-            <div class="card-foot">
-              <span class="card-role">${escapeHTML(work.role || work.time)}</span>
-              <a href="#/work/${work.id}" class="card-link-btn">${work.kind === 'PROJECT' ? 'VIEW CASE →' : 'VIEW EXPERIMENT →'}</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-
-      <!-- 第五屏：TOOLBOX (精选工具与方法) -->
-      <div class="section-heading reveal" style="margin-top:45px;">
-        <div><p class="chapter-label">TOOLBOX</p><h2>可复用的方法与工具</h2></div>
-        <a href="#/toolbox">进入工具箱 (${allToolbox.length}) →</a>
-      </div>
-      <div class="toolbox-grid">
-        ${featuredTools.map((tool, idx) => `
-          <article class="unified-card tool-card reveal" style="--delay:${idx * 60}ms">
-            <div class="card-head">
-              <span class="entity-badge toolbox">${tool.typeLabel}</span>
-              <span class="card-sub">${escapeHTML(tool.category)}</span>
-            </div>
-            <h3>${escapeHTML(tool.title)}</h3>
-            <p class="card-summary">${escapeHTML(tool.subtitle || tool.problemSolved)}</p>
-            <div class="card-foot">
-              <button type="button" class="btn-copy-sm" data-quick-copy="${tool.id}">COPY</button>
-              <a href="#/toolbox/${tool.id}" class="card-link-btn">OPEN →</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-
-      <!-- 第六屏：KNOWLEDGE DOMAINS (五大知识领域) -->
-      <div class="section-heading reveal" style="margin-top:45px;">
-        <div><p class="chapter-label">KNOWLEDGE DOMAINS</p><h2>五大专业领域知识体系</h2></div>
-        <a href="#/topics">进入术语知识库 (${lessons.length}) →</a>
-      </div>
-      <div class="route-grid">
-        ${categories.map((category, index) => {
-          const route = routes[category.id] || { total: 0, completed: 0, percent: 0 };
-          return `
-            <a class="route-card reveal" style="--route-color:${category.accent}; --delay:${index * 55}ms" href="#/topics?category=${encodeURIComponent(category.id)}">
-              <div><span class="route-number">0${index + 1}</span><span class="route-code">${category.code}</span></div>
-              <h3>${escapeHTML(category.title)}</h3>
-              <p>${escapeHTML(category.subtitle)}</p>
-              <footer><span>${route.completed} / ${route.total} 已掌握</span><i><b style="width:${route.percent}%"></b></i></footer>
-            </a>`;
-        }).join('')}
-      </div>
-    </section>
-  `;
-
+  main.innerHTML = renderHomeView({
+    lessons,
+    progress: calculateProgress(lessons.length, state.completed),
+    notes: getAllNotes(),
+    work: getAllWork(),
+    toolbox: getAllToolbox(),
+    papers,
+    library
+  });
   attachHomeQuickCopy();
 }
 
@@ -1723,10 +1591,16 @@ function route() {
   const [routeName, id] = parts;
 
   updateActiveNav(
-    routeName === 'topic' || routeName === 'topics' || routeName === 'lesson' || routeName === 'library' && !params.has('id')
+    routeName === 'topic' || routeName === 'lesson'
       ? 'topics'
+      : routeName === 'projects'
+      ? 'work'
+      : routeName === 'playbooks'
+      ? 'toolbox'
       : routeName === 'library-resources'
-      ? 'library-resources'
+      ? 'library'
+      : routeName === 'favorites'
+      ? 'saved'
       : routeName
   );
 
@@ -1739,7 +1613,7 @@ function route() {
     if (!id) renderNotes();
     else renderNoteDetail(id);
   }
-  else if (routeName === 'papers') {
+  else if (routeName === 'papers' || routeName === 'reading') {
     if (!id) renderPapers();
     else renderPaperDetail(id);
   }
@@ -1751,7 +1625,7 @@ function route() {
     if (!id) renderToolbox();
     else renderToolboxDetail(id);
   }
-  else if (routeName === 'library-resources' || (routeName === 'library' && params.has('id'))) {
+  else if (routeName === 'library-resources' || routeName === 'library') {
     renderLibrary(params.get('type') || 'ALL');
   }
   else if (routeName === 'practice') renderPractice();

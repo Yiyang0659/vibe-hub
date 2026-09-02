@@ -291,6 +291,7 @@ export const expandedLessons = [
   }),
   term({
     id: 'context-window', title: '上下文窗口', english: 'Context Window', aliases: ['上下文长度', 'Context Length'], category: 'AI 协作', level: '进阶',
+    entryQuestion: '模型一次到底能读多长？为什么聊久了它会忘事？',
     tags: ['上下文', 'Token', '模型'], excerpt: '模型一次能够共同参考的输入与输出容量。',
     definition: '上下文窗口是模型在一次任务中可处理的 Token 总容量，包含指令、对话、文件内容、工具结果和生成内容。',
     why: '内容超过窗口后，早期信息可能被截断或压缩；即使没有超限，过多噪声也会降低模型定位重点的能力。',
@@ -303,6 +304,7 @@ export const expandedLessons = [
   }),
   term({
     id: 'hallucination', title: '模型幻觉', english: 'Hallucination', aliases: ['AI 幻觉', '虚构事实'], category: 'AI 协作', level: '入门',
+    entryQuestion: 'AI 为什么会一本正经地瞎编？',
     tags: ['幻觉', '事实核查', '不确定性'], excerpt: '模型生成看似合理但缺少事实依据的内容。',
     definition: '模型幻觉指输出语气确定，却包含不存在的事实、链接、接口、文件或错误推断。',
     why: '语言流畅不等于事实正确。涉及版本、价格、法律、医学或具体代码库状态时，需要使用可靠来源和实际运行验证。',
@@ -327,6 +329,7 @@ export const expandedLessons = [
   }),
   term({
     id: 'tool-calling', title: '工具调用', english: 'Tool Calling', aliases: ['Function Calling', '函数调用', 'Agent 工具'], category: 'AI 协作', level: '进阶',
+    entryQuestion: 'Agent 为什么需要工具和 MCP，而不是把一切塞进提示词？',
     tags: ['工具', 'Agent', '结构化调用'], excerpt: '让模型通过受控接口查询数据或执行操作。',
     definition: '工具调用让模型选择一个预定义工具并生成结构化参数，由系统实际执行后把结果返回模型。',
     why: '模型本身不能可靠知道实时数据或直接改变外部系统；工具提供可验证能力，同时也需要权限和确认边界。',

@@ -786,12 +786,13 @@ AI Evaluation Checklist（toolbox）
 - [x] 测试：`tests/content/schema.test.js`（8 项发布门槛强校验）+ `tests/content/related-links.test.js`（四类实体关联死链 + 反向索引可用性）；
 - 验收结果：`npm run check && npm test` **28/28 全绿**；三视图真实数据冒烟通过（Tabs/分组计数/时间轴行/重点卡/实验结果）。
 
-### Phase 3 —— Reading / Toolbox / Library（1 天）
-- [ ] `views/reading.js`：四类型筛选索引 + 论文拆解详情（memorized=3 强校验）；
-- [ ] `views/toolbox.js`：按问题分组索引 + 八段详情（页内可勾选 checklist 持久化 + 复制 Prompt）；
-- [ ] `views/library.js`：单页清单（whySaved 必填）；
-- [ ] 删除 `projects-data.js` 与全部死代码；
-- 验收：六个内容模块的索引/详情形态一致性走查（同一清单行组件复用）。
+### Phase 3 —— Reading / Toolbox / Library（1 天）✅
+- [x] `views/reading.js`：论文 + 文章合并索引（类型筛选 + 行式清单，每行突出「我记住的」与已写笔记状态）；论文拆解详情沿用既有 §6.7 结构（problem/coreIdea/howItWorks/myTake[3]/productView 已达标）；
+- [x] `views/toolbox.js`：按问题域分组索引（5 组，行标题 = 它解决什么问题）+ 复制/打开动作；八段详情沿用，**新增 checklist 勾选状态 localStorage 持久化**；
+- [x] `views/library.js`：类型分组精选清单（whyRecommend 必填 + 我从中借鉴），外链 ↗ 直达；
+- [x] 删除 V2 遗留 `projects-data.js`（确认零引用）+ `package.json` check 脚本重写并覆盖全部 content/views/lib 模块；
+- [x] 测试补强：TOOL 可复用性门槛（promptTemplate 或 checklist 至少其一）；
+- 验收结果：`npm run check`（exit 0，18 个源文件全检）+ `npm test` **29/29 全绿**；三视图冒烟通过（reading 4 行 / toolbox 5 组 / library 3 组）。
 
 ### Phase 4 —— 跨内容体验与收尾（1 天）
 - [ ] 搜索升级为分组式全实体结果（§8.1）；

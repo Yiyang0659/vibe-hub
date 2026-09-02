@@ -6,6 +6,6 @@
   "scripts": {
     "dev": "node dev-server.mjs",
     "test": "node --test",
-    "check": "node --check js/data.js && node --check js/expanded-data.js && node --check js/projects-data.js && node --check js/compiler.js && node --check js/utils.js && node --check js/app.js && node --check dev-server.mjs"
+    "check": "node --check js/data.js && node --check js/expanded-data.js && node --check js/lab-data.js && node --check js/compiler.js && node --check js/utils.js && node --check js/app.js && node --check js/content/site.js && node --check js/content/topics.js && node --check js/views/home.js && node --check js/views/topics.js && node --check js/views/notes.js && node --check js/views/work.js && node --check js/views/reading.js && node --check js/views/toolbox.js && node --check js/views/library.js && node --check js/lib/search.js && node --check js/lib/progress.js && node --check dev-server.mjs"
   }
 }

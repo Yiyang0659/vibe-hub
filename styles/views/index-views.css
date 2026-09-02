@@ -85,6 +85,33 @@
 /* ---- 时间轴分组（Notes） ---- */
 .v-timeline-group { margin-top: var(--space-5); }
 
+/* ---- Toolbox 行：问题优先 + 动作 ---- */
+.v-tool-row { grid-template-columns: 1fr auto; }
+.v-tool-row .row-desc {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.v-tool-name { color: var(--ink-soft); font-weight: 700; }
+.v-tool-actions { gap: var(--space-3); }
+
+/* ---- Reading 行：笔记状态 ---- */
+.v-note-flag {
+  color: var(--pine);
+  font-weight: 700;
+  border-bottom: 1px solid var(--pine);
+}
+
+/* ---- Library 行：外链与借鉴 ---- */
+.v-ext { color: var(--ink-faint); font-size: 12px; }
+.v-lib-learned { color: var(--ink-faint); }
+.v-lib-learned::before {
+  content: "◆ ";
+  color: var(--vermilion);
+  font-size: 9px;
+}
+
 /* ---- 响应式 ---- */
 @media (max-width: 640px) {
   .v-filter-bar { flex-direction: column; align-items: stretch; }

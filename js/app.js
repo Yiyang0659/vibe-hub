@@ -26,6 +26,9 @@ import { renderTopicsIndex, mountTopicsIndex } from './views/topics.js';
 import { renderNotesTimeline } from './views/notes.js';
 import { renderWorkIndex } from './views/work.js';
 import { topicsWithDomain, WHY_LOOKUP } from './content/topics.js';
+import { renderReadingIndex } from './views/reading.js';
+import { renderToolboxIndex } from './views/toolbox.js';
+import { renderLibraryIndex } from './views/library.js';
 
 const storageKey = 'pkl-v3-state';
 
@@ -41,7 +44,8 @@ const defaultState = {
   userNotes: [],
   userWork: [],
   userToolbox: [],
-  userDigests: []
+  userDigests: [],
+  toolChecklist: {}
 };
 
 let state = loadState();
@@ -68,7 +72,8 @@ function loadState() {
     userNotes: Array.isArray(saved.userNotes) ? saved.userNotes : [],
     userWork: Array.isArray(saved.userWork) ? saved.userWork : [],
     userToolbox: Array.isArray(saved.userToolbox) ? saved.userToolbox : [],
-    userDigests: Array.isArray(saved.userDigests) ? saved.userDigests : []
+    userDigests: Array.isArray(saved.userDigests) ? saved.userDigests : [],
+    toolChecklist: saved.toolChecklist && typeof saved.toolChecklist === 'object' ? saved.toolChecklist : {}
   };
 }
 
@@ -596,36 +601,11 @@ function renderNoteDetail(id) {
 /* ==========================================================================
    04 PAPERS 论文拆解 (产品与实践视角)
    ========================================================================== */
-function renderPapers() {
-  main.innerHTML = `
-    <section class="papers-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>04 PAPERS</span> / 核心论文拆解</p>
-        <div>
-          <h1>这篇论文到底讲了什么？它为什么值得我知道？</h1>
-          <p>不搞全文翻译，而是把学术论文压缩成 AI 产品经理与实践者能理解的底层机制、核心创新与实际影响。</p>
-        </div>
-      </header>
-
-      <div class="papers-grid">
-        ${papers.map((paper, idx) => `
-          <article class="unified-card paper-card reveal" style="--delay:${idx * 60}ms">
-            <div class="card-head">
-              <span class="entity-badge paper">PAPER</span>
-              <span class="card-sub">${escapeHTML(paper.year)} · ${escapeHTML(paper.domain)}</span>
-            </div>
-            <h3>${escapeHTML(paper.title)}</h3>
-            <p class="card-english">${escapeHTML(paper.chineseTitle)}</p>
-            <p class="card-oneliner">${escapeHTML(paper.oneLiner)}</p>
-            <div class="card-foot">
-              <span class="card-author">${escapeHTML(paper.authors)}</span>
-              <a href="#/papers/${paper.id}" class="card-link-btn">DECONSTRUCT →</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
+function renderPapers(filterKind = 'ALL') {
+  main.innerHTML = renderReadingIndex({ items: papers, filterKind });
+  document.querySelectorAll('[data-reading-tab]').forEach(btn => {
+    btn.addEventListener('click', () => renderPapers(btn.dataset.readingTab));
+  });
 }
 
 function renderPaperDetail(id) {
@@ -864,51 +844,8 @@ function renderWorkDetail(id) {
 /* ==========================================================================
    06 TOOLBOX 工具箱 (Prompt / Skill / Workflow / Checklist / Template)
    ========================================================================== */
-function renderToolbox(filterType = 'ALL') {
-  const allTools = getAllToolbox();
-  const filtered = filterType === 'ALL' ? allTools : allTools.filter(t => t.type === filterType);
-
-  main.innerHTML = `
-    <section class="toolbox-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>06 TOOLBOX</span> / 生产力工具箱与复用方法</p>
-        <div>
-          <h1>我沉淀了什么可以直接拿去使用的方法？</h1>
-          <p>涵盖 Prompt 模板、Workflow 标准流程、Checklist 检查清单与 PRD 模板。让经验转化为标准化工具。</p>
-        </div>
-      </header>
-
-      <div class="filter-tabs-row reveal">
-        <button type="button" class="tab-btn ${filterType === 'ALL' ? 'is-active' : ''}" data-tool-tab="ALL">全部 (${allTools.length})</button>
-        <button type="button" class="tab-btn ${filterType === 'WORKFLOW' ? 'is-active' : ''}" data-tool-tab="WORKFLOW">Workflow (${allTools.filter(t => t.type === 'WORKFLOW').length})</button>
-        <button type="button" class="tab-btn ${filterType === 'CHECKLIST' ? 'is-active' : ''}" data-tool-tab="CHECKLIST">Checklist (${allTools.filter(t => t.type === 'CHECKLIST').length})</button>
-        <button type="button" class="tab-btn ${filterType === 'PROMPT' ? 'is-active' : ''}" data-tool-tab="PROMPT">Prompt (${allTools.filter(t => t.type === 'PROMPT').length})</button>
-        <button type="button" class="tab-btn ${filterType === 'TEMPLATE' ? 'is-active' : ''}" data-tool-tab="TEMPLATE">Template (${allTools.filter(t => t.type === 'TEMPLATE').length})</button>
-      </div>
-
-      <div class="toolbox-grid">
-        ${filtered.map((tool, idx) => `
-          <article class="unified-card tool-card reveal" style="--delay:${idx * 50}ms">
-            <div class="card-head">
-              <span class="entity-badge toolbox">${tool.typeLabel}</span>
-              <span class="card-sub">${escapeHTML(tool.category)}</span>
-            </div>
-            <h3>${escapeHTML(tool.title)}</h3>
-            <p class="card-summary">${escapeHTML(tool.subtitle || tool.problemSolved)}</p>
-            <div class="card-foot">
-              <button type="button" class="btn-copy-sm" data-quick-copy="${tool.id}">COPY</button>
-              <a href="#/toolbox/${tool.id}" class="card-link-btn">OPEN →</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
-
-  document.querySelectorAll('[data-tool-tab]').forEach(btn => {
-    btn.addEventListener('click', () => renderToolbox(btn.dataset.toolTab));
-  });
-
+function renderToolbox() {
+  main.innerHTML = renderToolboxIndex({ tools: getAllToolbox() });
   attachHomeQuickCopy();
 }
 
@@ -978,7 +915,7 @@ function renderToolboxDetail(id) {
             <div class="action-list">
               ${tool.checklist.map((item, idx) => `
                 <label>
-                  <input type="checkbox" />
+                  <input type="checkbox" data-tool-check="${tool.id}:${idx}" ${(state.toolChecklist[tool.id] || []).includes(idx) ? 'checked' : ''} />
                   <span>${escapeHTML(item)}</span>
                   <b>0${idx + 1}</b>
                 </label>
@@ -1025,68 +962,27 @@ function renderToolboxDetail(id) {
       showToast('模板已复制到剪贴板！');
     });
   });
+
+  // Checklist 勾选状态持久化（localStorage）
+  document.querySelectorAll('[data-tool-check]').forEach(box => {
+    box.addEventListener('change', () => {
+      const [toolId, idx] = box.dataset.toolCheck.split(':');
+      const done = new Set(state.toolChecklist[toolId] || []);
+      if (box.checked) done.add(Number(idx));
+      else done.delete(Number(idx));
+      state.toolChecklist[toolId] = [...done];
+      saveState();
+    });
+  });
 }
 
 /* ==========================================================================
    07 LIBRARY 精选资源库 (Articles, Websites, GitHub, Tools)
    ========================================================================== */
-function renderLibrary(filterType = 'ALL') {
-  const filtered = filterType === 'ALL' ? library : library.filter(item => item.type === filterType);
-
-  main.innerHTML = `
-    <section class="library-resources-page page-view">
-      <header class="page-header reveal">
-        <p class="chapter-label"><span>07 LIBRARY</span> / 精选高价值资源库</p>
-        <div>
-          <h1>我真正觉得好，并且愿意推荐给别人看的资源。</h1>
-          <p>拒绝无脑收藏。每条资源均由我精选，并注明“为什么推荐”以及“我从中借鉴了什么”。</p>
-        </div>
-      </header>
-
-      <div class="filter-tabs-row reveal">
-        <button type="button" class="tab-btn ${filterType === 'ALL' ? 'is-active' : ''}" data-lib-tab="ALL">全部 (${library.length})</button>
-        <button type="button" class="tab-btn ${filterType === 'WEBSITE' ? 'is-active' : ''}" data-lib-tab="WEBSITE">Websites (${library.filter(l => l.type === 'WEBSITE').length})</button>
-        <button type="button" class="tab-btn ${filterType === 'ARTICLE' ? 'is-active' : ''}" data-lib-tab="ARTICLE">Articles (${library.filter(l => l.type === 'ARTICLE').length})</button>
-        <button type="button" class="tab-btn ${filterType === 'GITHUB' ? 'is-active' : ''}" data-lib-tab="GITHUB">GitHub (${library.filter(l => l.type === 'GITHUB').length})</button>
-      </div>
-
-      <div class="library-res-grid">
-        ${filtered.map((item, idx) => `
-          <article class="unified-card library-card reveal" style="--delay:${idx * 50}ms">
-            <div class="card-head">
-              <span class="entity-badge library">${item.typeLabel}</span>
-              <span class="card-sub">${escapeHTML(item.author)}</span>
-            </div>
-            <h3>${escapeHTML(item.title)}</h3>
-            
-            <div class="curated-reason-block">
-              <strong>WHY I RECOMMEND · 推荐理由:</strong>
-              <p>${escapeHTML(item.whyRecommend)}</p>
-            </div>
-
-            <div class="curated-learned-block">
-              <strong>WHAT I LEARNED · 我从中借鉴:</strong>
-              <p>${escapeHTML(item.whatILearned)}</p>
-            </div>
-
-            <div class="card-foot" style="margin-top:auto;">
-              <div class="tag-row">${item.tags.map(t => `<span>${escapeHTML(t)}</span>`).join('')}</div>
-              <a href="${item.url}" target="_blank" rel="noreferrer" class="card-link-btn">OPEN ↗</a>
-            </div>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
-
-  document.querySelectorAll('[data-lib-tab]').forEach(btn => {
-    btn.addEventListener('click', () => renderLibrary(btn.dataset.libTab));
-  });
+function renderLibrary() {
+  main.innerHTML = renderLibraryIndex({ items: library });
 }
 
-/* ==========================================================================
-   08 ABOUT 关于页面
-   ========================================================================== */
 function renderAbout() {
   main.innerHTML = `
     <article class="about-page page-view">

@@ -36,6 +36,14 @@ test('V4 发布门槛：TOOL 的 problemSolved 非空（它解决什么问题）
   });
 });
 
+test('V4 发布门槛：TOOL 至少提供 promptTemplate 或 checklist 之一（可复用性）', () => {
+  toolbox.forEach((t) => {
+    const hasTemplate = (t.promptTemplate || '').trim().length > 0;
+    const hasChecklist = Array.isArray(t.checklist) && t.checklist.length > 0;
+    assert.ok(hasTemplate || hasChecklist, `tool ${t.id} 既无模板也无清单，不可复用`);
+  });
+});
+
 test('V4 发布门槛：LIBRARY 的 whyRecommend（为什么值得留下）非空', () => {
   library.forEach((item) => {
     assert.ok((item.whyRecommend || '').trim().length >= 6, `library ${item.id} 缺少 whyRecommend`);

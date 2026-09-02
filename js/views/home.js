@@ -84,9 +84,24 @@ function noteDirectory(notes) {
 }
 
 /* ========== 4. 非对称作品展示 ========== */
+function workMedia(w, featured) {
+  if (w.screenshot) {
+    return `<div class="h-work-media"><img src="${esc(w.screenshot)}" alt="${esc(w.title)} 项目截图" loading="lazy"></div>`;
+  }
+  return `<div class="h-work-media h-work-media--cover"><span>${esc((w.title || '?').slice(0, 1))}</span></div>`;
+}
+
 function workGallery(work) {
   if (!work.length) return '';
   const [featured, ...rest] = work;
+  const cardInner = (w, featured = false) => `
+    ${workMedia(w, featured)}
+    <div class="h-work-body">
+      <h3>${esc(w.title)}</h3>
+      ${featured ? `<p>${esc(w.summary || w.problem || '')}</p>` : ''}
+      <span class="h-work-meta">${esc(w.kindLabel || w.kind || '项目')} · ${esc(w.statusLabel || w.status || '')}</span>
+      <span class="h-work-view">查看 <span aria-hidden="true">→</span></span>
+    </div>`;
   return `
     <section class="h-section">
       <div class="h-section-head">
@@ -94,24 +109,8 @@ function workGallery(work) {
         <a href="#/work">全部项目 <span aria-hidden="true">→</span></a>
       </div>
       <div class="h-work-grid">
-        <a class="h-work-card h-work-card--featured" href="#/work/${esc(featured.id)}">
-          <div class="h-work-thumb"></div>
-          <div class="h-work-body">
-            <span class="h-work-label">${esc(featured.kind || 'PROJECT')}</span>
-            <h3>${esc(featured.title)}</h3>
-            <p>${esc(featured.summary || featured.problem || '')}</p>
-            <span class="h-work-arrow">→</span>
-          </div>
-        </a>
-        ${rest.slice(0, 2).map((w) => `
-          <a class="h-work-card" href="#/work/${esc(w.id)}">
-            <div class="h-work-thumb"></div>
-            <div class="h-work-body">
-              <span class="h-work-label">${esc(w.kind || 'PROJECT')}</span>
-              <h3>${esc(w.title)}</h3>
-              <span class="h-work-arrow">→</span>
-            </div>
-          </a>`).join('')}
+        <a class="h-work-card h-work-card--featured" href="#/work/${esc(featured.id)}">${cardInner(featured, true)}</a>
+        ${rest.slice(0, 2).map((w) => `<a class="h-work-card" href="#/work/${esc(w.id)}">${cardInner(w)}</a>`).join('')}
       </div>
     </section>`;
 }
@@ -136,10 +135,7 @@ function topicIndex(lessons) {
           <ul>
             ${items.slice(0, 6).map((l) => `
               <li>
-                <a href="#/topics/${esc(l.id)}">
-                  <span>${esc(l.title)}</span>
-                  <span class="h-topic-count">${l.entryQuestion ? '?' : ''}</span>
-                </a>
+                <a href="#/topics/${esc(l.id)}"><span>${esc(l.title)}</span></a>
               </li>`).join('')}
           </ul>
         </div>`;

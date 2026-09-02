@@ -218,17 +218,36 @@
   grid-row: span 2;
 }
 
-.h-work-thumb {
-  height: 100%;
-  min-height: 120px;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(201, 75, 50, 0.06), transparent 40%),
-    linear-gradient(135deg, var(--paper-deep), var(--paper));
+.h-work-media {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
   border-bottom: 1px solid var(--line);
+  background: var(--paper-deep);
 }
 
-.h-work-card--featured .h-work-thumb {
-  min-height: 220px;
+.h-work-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* 暂无真实截图的项目：安静的字体封面，等待替换 */
+.h-work-media--cover {
+  display: grid;
+  place-items: center;
+}
+
+.h-work-media--cover span {
+  font: 500 44px / 1 var(--serif);
+  color: var(--line-strong);
+}
+
+.h-work-card--featured .h-work-media {
+  aspect-ratio: auto;
+  flex: 1;
+  min-height: 240px;
 }
 
 .h-work-body {
@@ -236,13 +255,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-.h-work-label {
-  font: 400 var(--fs-eyebrow) / 1 var(--mono);
-  letter-spacing: var(--track-eyebrow);
-  color: var(--ink-faint);
-  text-transform: uppercase;
 }
 
 .h-work-body h3 {
@@ -253,7 +265,7 @@
 
 .h-work-body p {
   margin: 0;
-  font: 400 var(--fs-body) / 1.7 var(--sans);
+  font: 400 var(--fs-body) / 1.8 var(--sans);
   color: var(--ink-soft);
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -261,12 +273,22 @@
   overflow: hidden;
 }
 
-.h-work-arrow {
+.h-work-meta {
+  font: 400 var(--fs-meta) / 1 var(--mono);
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
+
+.h-work-view {
   margin-top: auto;
   padding-top: var(--space-3);
-  font: 400 var(--fs-h3) / 1 var(--mono);
-  color: var(--vermilion);
+  font: 400 var(--fs-meta) / 1 var(--sans);
+  color: var(--ink-soft);
+  transition: color var(--dur-fast) var(--ease-out);
 }
+
+.h-work-card:hover .h-work-view { color: var(--vermilion); }
+.h-work-view span { color: var(--vermilion); }
 
 /* ---- 主题索引 ---- */
 .h-topic-grid {
@@ -294,9 +316,7 @@
 }
 
 .h-topic-col a {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  display: block;
   padding: var(--space-2) 0;
   color: var(--ink);
   font: 400 var(--fs-body) / 1.6 var(--sans);
@@ -308,10 +328,7 @@
   color: var(--vermilion);
 }
 
-.h-topic-count {
-  font: 400 var(--fs-meta) / 1 var(--mono);
-  color: var(--ink-faint);
-}
+
 
 /* ---- 工具箱 ---- */
 .h-tool-list {

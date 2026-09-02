@@ -264,6 +264,7 @@ export const workItems = [
     english: 'Personal Knowledge Lab & AI Content Engine',
     status: 'IN PROGRESS',
     statusLabel: '迭代中',
+    screenshot: './assets/work/personal-knowledge-lab.png',
     role: '全栈架构 / 内容引擎算法 / 交互设计 / 知识体系梳理',
     time: '2026.08',
     domain: 'Knowledge Engineering & Tooling',

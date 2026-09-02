@@ -1,0 +1,172 @@
+/* ==========================================================================
+   V4 DESIGN TOKENS — AI Knowledge & Practice Lab
+   Editorial Developer Lab · 单一变量源（全站换肤只改本文件）
+
+   加载顺序：styles.css(legacy, 过渡期) → styles/tokens.css → styles/base.css
+   Phase 0 约定：纸墨色值与 legacy 1:1 对齐 = 零视觉突变；
+   结构性新 token（域色/字号阶梯/间距/布局尺度）在此定义，供新组件消费。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 纸与墨 · 日间（暖白纸张，印刷品质感）
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-theme="day"] {
+  /* 纸面 */
+  --paper: #f5f0e6;
+  --paper-deep: #e9e1d1;
+  --paper-light: #fcf9f2;
+
+  /* 墨色 */
+  --ink: #1b1f23;
+  --ink-soft: #4b5563;
+  --ink-faint: #788290;
+
+  /* 线 */
+  --line: rgba(35, 30, 20, 0.14);
+  --line-strong: rgba(35, 30, 20, 0.32);
+
+  /* 强调 —— 全站唯一强调色：可点击 / 当前项 / 关键标记 */
+  --vermilion: #c9442a;
+  --vermilion-dark: #9e301b;
+
+  /* 功能色（仅内联标记：✓ / ✗） */
+  --pine: #1b6f63;
+  --gold: #966724;
+
+  --shadow: 0 12px 36px rgba(45, 38, 24, 0.08);
+
+  /* 知识域功能色（V4 新增：只允许 顶线 2px / eyebrow 文字 / 进度线 三种用法，
+     禁止大面积色块）。映射：AI=青绿 Product=蓝 Agent=紫 Engineering=赭黄 */
+  --domain-ai: #2f7d6d;
+  --domain-product: #3d6ba8;
+  --domain-agent: #7b5ea7;
+  --domain-engineering: #b0722d;
+
+  /* 实体徽章（过渡期保留 legacy 用法；Phase 3 起由 c-eyebrow + 域色取代） */
+  --badge-topic-bg: #e6f7f3;
+  --badge-topic-ink: #1b6f63;
+  --badge-note-bg: #eaf2ff;
+  --badge-note-ink: #2563eb;
+  --badge-paper-bg: #f3e8ff;
+  --badge-paper-ink: #7c3aed;
+  --badge-work-bg: #ffedd5;
+  --badge-work-ink: #c2410c;
+  --badge-tool-bg: #fef3c7;
+  --badge-tool-ink: #b45309;
+  --badge-lib-bg: #f1f5f9;
+  --badge-lib-ink: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   2. 纸与墨 · 夜航（同一套编辑排版换纸，不是反色）
+   -------------------------------------------------------------------------- */
+:root[data-theme="night"] {
+  --paper: #080d12;
+  --paper-deep: #0e1620;
+  --paper-light: #131e2b;
+
+  --ink: #e8eef5;
+  --ink-soft: #9daab8;
+  --ink-faint: #637180;
+
+  --line: rgba(157, 170, 184, 0.16);
+  --line-strong: rgba(157, 170, 184, 0.32);
+
+  --vermilion: #ff6b5f;
+  --vermilion-dark: #ff8a80;
+
+  --pine: #45e0bf;
+  --gold: #f2b84b;
+
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  /* 域色夜航提亮 */
+  --domain-ai: #4ecdb4;
+  --domain-product: #6fa8e8;
+  --domain-agent: #a58ad8;
+  --domain-engineering: #d99a54;
+
+  --badge-topic-bg: rgba(69, 224, 191, 0.15);
+  --badge-topic-ink: #45e0bf;
+  --badge-note-bg: rgba(88, 166, 255, 0.15);
+  --badge-note-ink: #58a6ff;
+  --badge-paper-bg: rgba(167, 139, 250, 0.15);
+  --badge-paper-ink: #a78bfa;
+  --badge-work-bg: rgba(255, 122, 69, 0.15);
+  --badge-work-ink: #ff7a45;
+  --badge-tool-bg: rgba(242, 184, 75, 0.15);
+  --badge-tool-ink: #f2b84b;
+  --badge-lib-bg: rgba(148, 163, 184, 0.15);
+  --badge-lib-ink: #94a3b8;
+}
+
+/* --------------------------------------------------------------------------
+   3. 字体与字号阶梯（V4 新增；legacy px 字面量在后续 Phase 逐步切换）
+   -------------------------------------------------------------------------- */
+:root {
+  --serif: "方正书宋_GBK", "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
+  --sans: "霞鹜文楷", "LXGW WenKai", "Microsoft YaHei", -apple-system, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, Menlo, monospace;
+
+  /* 字号阶梯（正文型页面基准） */
+  --fs-display: clamp(30px, 4vw, 44px); /* 首页主标题 */
+  --fs-h1: 30px;                        /* 页面标题 */
+  --fs-h2: 21px;                        /* 区块标题 */
+  --fs-h3: 16px;                        /* 列表项标题 */
+  --fs-body: 15px;                      /* 正文 */
+  --fs-meta: 12px;                      /* 日期 / 时长 / 序号 */
+  --fs-eyebrow: 11px;                   /* 类型标签 */
+
+  /* 行高：正文行高是阅读感的核心，1.9 起步 */
+  --lh-display: 1.25;
+  --lh-heading: 1.4;
+  --lh-body: 1.9;
+
+  /* 字距：eyebrow 专用 */
+  --track-eyebrow: 0.14em;
+}
+
+/* --------------------------------------------------------------------------
+   4. 间距与布局尺度（V4 新增）
+   -------------------------------------------------------------------------- */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  /* 布局尺度（蓝图 §5.3） */
+  --measure-article: 720px;  /* 正文列 */
+  --measure-page: 1040px;    /* 主内容最大宽 */
+  --toc-width: 200px;        /* 长文 TOC */
+  --header-h: 56px;          /* 移动端吸顶头 */
+  --sidebar-width: 258px;    /* Phase 1 重排侧栏时收敛为 232px */
+
+  /* 内容嵌套红线：禁止超过 3 层视觉嵌套 */
+}
+
+/* --------------------------------------------------------------------------
+   5. 形状 / 线条 / 动效 / 层级（V4 新增）
+   -------------------------------------------------------------------------- */
+:root {
+  /* 圆角：编辑部语言，克制 */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* 动效 */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 0.15s;
+  --dur-base: 0.25s;
+
+  /* z-index 层级表（全站唯一出处） */
+  --z-grain: 30;       /* 纸张纹理 */
+  --z-topbar: 40;      /* 吸顶头 */
+  --z-hover-card: 70;  /* Hover Explain 浮层 */
+  --z-overlay: 60;     /* dialog */
+  --z-toast: 80;       /* toast 最高 */
+}

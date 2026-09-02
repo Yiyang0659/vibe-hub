@@ -760,12 +760,13 @@ AI Evaluation Checklist（toolbox）
 
 > 每个 Phase 结束时：`npm run check && npm test` 全绿 + 手工过一遍该 Phase 验收清单，独立 commit。
 
-### Phase 0 —— 基线与设计 Token（0.5 天）
+### Phase 0 —— 基线与设计 Token（0.5 天）✅
 - [x] 新建分支 `feature/v4-editorial-lab`，提交 V3 检查点 `d662127`；
-- [ ] 写入本蓝图（本文档）与部署指南；
-- [ ] 建 `styles/tokens.css`（§5.1 全部变量）+ `styles/base.css`（排版/清单/分隔线基础类）；
-- [ ] `index.html` 引入顺序改为 tokens → base → 各 component css；
-- 验收：双主题下只改 tokens 即可全站换肤；旧样式零冲突（旧 styles.css 暂时共存，逐步迁移）。
+- [x] 写入本蓝图、部署指南与文件架构文档（`2026-09-02-v4-file-architecture.md`）；
+- [x] 建 `styles/tokens.css`（§5.1 全部变量 + 域色/字号阶梯/间距/布局尺度/动效/z-index 层级表）+ `styles/base.css`（12 组 c-*/u-* 原语 + 全站 prefers-reduced-motion 兜底）；
+- [x] `index.html` 加载顺序：legacy styles.css → tokens → base（过渡期共存，token 层拥有变量最终决定权）；
+- [x] 目录骨架：`assets/ js/{content,views,components,lib,store} styles/{components,views} tests/{content,lib,store} scripts/ docs/guides/`；
+- 验收结果：新旧类名零碰撞；token 值与 legacy 1:1 对齐 = 零视觉突变；后续换肤只改 tokens.css。
 
 ### Phase 1 —— 首页去仪表盘化（1 天）
 - [ ] `views/home.js` 重写：Hero（人话 + CTA）+ MiniTerminal + Now 卡；

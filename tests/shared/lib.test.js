@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateProgress, categoryProgress, getNextLesson, safeParse, searchLessons, searchAllEntities } from '../src/shared/lib/index.js';
+import { calculateProgress, categoryProgress, getNextLesson, safeParse, searchLessons, searchAllEntities } from '../../src/shared/lib/index.js';
 
 const lessons = [
   { id: 'state', title: '状态', english: 'State', aliases: ['UI 状态'], category: '前端航线', level: '入门', excerpt: '界面记住变化', definition: '', tags: ['交互'] },

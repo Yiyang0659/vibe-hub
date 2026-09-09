@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lessons, categories } from '../src/features/topics/index.js';
+import { lessons, categories } from '../../src/features/topics/index.js';
 import {
   papers,
   notes,
@@ -9,13 +9,13 @@ import {
   library,
   initialDigests,
   aboutData
-} from '../src/features/index.js';
+} from '../../src/features/index.js';
 import {
   compileProjectDigest,
   generateNoteDraft,
   generateToolboxDraft
-} from '../src/features/workspace/compiler.js';
-import { searchAllEntities } from '../src/shared/lib/index.js';
+} from '../../src/features/workspace/compiler.js';
+import { searchAllEntities } from '../../src/shared/lib/index.js';
 
 test('V3 Full Capability Repository Dataset integrity', () => {
   // Topics (术语)

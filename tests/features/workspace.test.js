@@ -4,8 +4,8 @@ import {
   compileProjectDigest,
   generateNoteDraft,
   generateToolboxDraft
-} from '../src/features/workspace/compiler.js';
-import { workItems, initialDigests } from '../js/lab-data.js';
+} from '../../src/features/workspace/compiler.js';
+import { workItems, initialDigests } from '../../src/features/index.js';
 
 test('compileProjectDigest extracts all 6 core fields from raw description', () => {
   const rawInput = '今天重新调整了 rating 和 LLM Judge 的关系。rating 本身已经有明确业务规则，所以不应该继续让模型判断，现在把规则判断和语义判断拆开了。确定性问题规则化，非确定性语义问题模型化。可以沉淀为通用的 AI Evaluation 分层架构设计方法。';

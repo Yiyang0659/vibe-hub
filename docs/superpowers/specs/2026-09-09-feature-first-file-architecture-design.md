@@ -79,7 +79,9 @@ vibe-hub/
 │   │   ├── toolbox/
 │   │   ├── library/
 │   │   ├── practice/
-│   │   └── saved/
+│   │   ├── saved/
+│   │   ├── workspace/
+│   │   └── about/
 │   ├── shared/
 │   │   ├── components/
 │   │   ├── lib/
@@ -188,7 +190,7 @@ export { topicRoutes } from './routes.js';
 | 现有位置 | 目标位置 |
 | --- | --- |
 | `js/data.js`、`js/expanded-data.js`、`js/content/topics.js` | `src/features/topics/` |
-| `js/lab-data.js` | 按实体拆到 `src/features/notes|reading|work|toolbox|library/` |
+| `js/lab-data.js` | 按实体拆到 `src/features/home|about|notes|reading|work|toolbox|library|workspace/` |
 | `js/views/*.js` | 对应的 `src/features/<栏目>/` |
 | `js/app.js` | `src/main.js`、`src/app/` 与各栏目详情页 |
 | `js/components/*` | `src/shared/components/`，或仅由一个栏目使用时移入该栏目 |

@@ -20,7 +20,7 @@ npm run check    # 检查 src/ 下全部 JavaScript 语法
 vibe-hub/
 ├── index.html              # 页面外壳和浏览器入口
 ├── src/
-│   ├── main.js             # 应用启动与现有路由调度
+│   ├── main.js             # 最小浏览器入口
 │   ├── app/                # 路由、页面元信息、全局外壳逻辑
 │   ├── features/           # 按网站栏目聚合的内容与页面
 │   ├── shared/             # 跨栏目复用的组件、逻辑、状态和站点文案

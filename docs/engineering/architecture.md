@@ -39,7 +39,7 @@ src/features/topics/
 - 本地状态 key：`pkl-v3-state`
 - 路由形式：`#/route/:id`
 
-栏目详情页和事件逻辑位于对应的 `runtime.js`，通过运行上下文接收 store 和跨栏目数据。`src/main.js` 负责组装这些栏目运行模块及全局搜索、捕获与导航流程。
+栏目详情页和事件逻辑位于对应的 `runtime.js`，通过运行上下文接收 store 和跨栏目数据。`src/main.js` 是最小浏览器入口；`src/app/runtime.js` 负责组装栏目运行模块及全局搜索、捕获与导航流程。
 
 ## 路由兼容
 

@@ -89,3 +89,11 @@ test('feature-specific styles are colocated with their owners', () => {
   assert.deepEqual(expectedPaths.filter((path) => !existsSync(resolve(root, path))), []);
   assert.equal(existsSync(resolve(root, 'src/styles/feature-pages.css')), false);
 });
+
+test('main is a small entry and orchestration lives in app', () => {
+  const mainSource = readFileSync(resolve(root, 'src/main.js'), 'utf8');
+
+  assert.equal(existsSync(resolve(root, 'src/app/runtime.js')), true);
+  assert.match(mainSource, /\.\/app\/runtime\.js/);
+  assert.ok(mainSource.split(/\r?\n/).length <= 20);
+});

@@ -2,6 +2,10 @@
 @import url('./tokens.css');
 @import url('./base.css');
 @import url('../features/home/home.css');
-@import url('./feature-pages.css');
+@import url('./index-pages.css');
+@import url('../features/workspace/workspace.css');
+@import url('../features/notes/notes.css');
+@import url('./detail-pages.css');
+@import url('../features/topics/topics.css');
 @import url('../shared/components/hover-explain.css');
 @import url('../shared/components/search-trail.css');

@@ -56,3 +56,36 @@ test('stable project documentation entry points exist', () => {
   const missing = expectedPaths.filter((path) => !existsSync(resolve(root, path)));
   assert.deepEqual(missing, []);
 });
+
+test('feature page renderers do not live in the application entry', () => {
+  const mainSource = readFileSync(resolve(root, 'src/main.js'), 'utf8');
+  const featureRenderers = [
+    'src/features/topics/runtime.js',
+    'src/features/notes/runtime.js',
+    'src/features/reading/runtime.js',
+    'src/features/work/runtime.js',
+    'src/features/toolbox/runtime.js',
+    'src/features/library/runtime.js',
+    'src/features/about/runtime.js',
+    'src/features/workspace/runtime.js',
+    'src/features/practice/runtime.js',
+    'src/features/saved/runtime.js'
+  ];
+
+  assert.deepEqual(featureRenderers.filter((path) => !existsSync(resolve(root, path))), []);
+  assert.doesNotMatch(mainSource, /function renderTopicDetail/);
+  assert.doesNotMatch(mainSource, /function renderWorkDetail/);
+  assert.doesNotMatch(mainSource, /function renderToolboxDetail/);
+});
+
+test('feature-specific styles are colocated with their owners', () => {
+  const expectedPaths = [
+    'src/features/home/home.css',
+    'src/features/notes/notes.css',
+    'src/features/topics/topics.css',
+    'src/features/workspace/workspace.css'
+  ];
+
+  assert.deepEqual(expectedPaths.filter((path) => !existsSync(resolve(root, path))), []);
+  assert.equal(existsSync(resolve(root, 'src/styles/feature-pages.css')), false);
+});

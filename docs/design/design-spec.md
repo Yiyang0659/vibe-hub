@@ -11,7 +11,9 @@
 - `src/styles/base.css`：基础排版和通用元素。
 - `src/styles/layout.css`：应用外壳、通用页面布局和详情页骨架。
 - `src/features/home/home.css`：首页专属样式。
-- `src/styles/feature-pages.css`：迁移期间保留的栏目索引与详情样式集合。
+- `src/styles/index-pages.css`：多个栏目共用的索引页骨架。
+- `src/styles/detail-pages.css`：多个栏目共用的详情页排版。
+- `src/features/<栏目>/*.css`：首页、文章、术语和工作台等栏目专属样式。
 - `src/shared/components/*.css`：跨栏目组件样式。
 
 ## 修改原则

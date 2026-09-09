@@ -13,6 +13,8 @@
 
 ### 设计
 
+- [已确认首页的基础规范](design/home-foundations.md)：首页容器、字体、间距、导航与按钮的当前执行标准；其他栏目模板保持开放。
+
 - [设计规范](design/design-spec.md)：视觉基调、设计变量、页面与组件规则。
 
 ### 工程
@@ -23,6 +25,8 @@
 - [新增内容指南](guides/add-content.md)：添加术语、文章、项目和工具的实际路径。
 
 ## 研究和历史
+
+- [最新首页迭代与规范统一交接](conversations/2026-09-10-homepage-standardization/README.md)：本轮对话、参考图、最终状态、已撤销方案和后续开放事项。
 
 - [首页优化对话与交接](conversations/2026-09-09-homepage/README.md)：当前 Codex 任务的可见对话、参考图片、已实现内容及待定设计。
 

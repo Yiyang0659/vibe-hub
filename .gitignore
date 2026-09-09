@@ -5,3 +5,7 @@ coverage/
 *.log
 *.tmp
 .superpowers/**/state/
+
+# Local browser verification artifacts
+.playwright-cli/
+output/playwright/

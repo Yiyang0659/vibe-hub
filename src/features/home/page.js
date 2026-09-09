@@ -84,16 +84,17 @@ function heroHtml(ctx) {
           <h1>把 AI 想明白，<br>也把它做出来。</h1>
           <p class="zh-hero-lead">围绕 AI Evaluation、Agent 和真实产品场景，记录我如何拆解问题、搭建原型、验证结果，再把方法留给下一次使用。</p>
 
+          <div class="zh-hero-actions">
+            <a class="zh-button zh-button--primary" href="#/work">查看项目 <span aria-hidden="true">→</span></a>
+            <a class="zh-button zh-button--secondary" href="#/notes">读最近文章 <span aria-hidden="true">&lt;/&gt;</span></a>
+          </div>
+
           <div class="zh-metrics" aria-label="内容概览">
             <div><strong>${projects || '03'}</strong><span>持续迭代的完整项目</span></div>
             <div><strong>${notes || 'AI'}</strong><span>来自实践的思考与文章</span></div>
             <div><strong>${tools || '0→1'}</strong><span>可复用的方法与工具</span></div>
           </div>
 
-          <div class="zh-hero-actions">
-            <a class="zh-button zh-button--primary" href="#/work">查看项目 <span aria-hidden="true">→</span></a>
-            <a class="zh-button zh-button--secondary" href="#/notes">读最近文章 <span aria-hidden="true">&lt;/&gt;</span></a>
-          </div>
         </div>
 
         <div class="zh-hero-side">
@@ -107,7 +108,13 @@ function heroHtml(ctx) {
               <h2 id="currently-building-title">AI Learning OS</h2>
               <p class="zh-building-description">正在把零散的 AI、产品和开发学习，整理成一个能够持续积累、实践和复盘的个人知识系统。</p>
               <p class="zh-building-status"><span aria-hidden="true">↗</span> BUILDING · 2026</p>
-              <a class="zh-button zh-building-link" href="#/work/personal-knowledge-lab" aria-label="View Case Study：AI Learning OS">View Case Study <span aria-hidden="true">→</span></a>
+              <div class="zh-desk-note">
+                <svg class="zh-desk-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M16 11c-3-3-8-3-12-2v17c4-1 9-1 12 2 3-3 8-3 12-2v-9M16 11v17M8 14h4M8 18h4" />
+                  <path d="m20 14 1-5 6-6 3 3-6 6-4 2ZM25 5l3 3" />
+                </svg>
+                <div><h3>想与做的书桌</h3><p>把问题摆上桌，<br>把想法一点点做出来。</p></div>
+              </div>
             </div>
             ${characterHtml()}
           </section>
@@ -138,31 +145,31 @@ function sectionIntro(label, title, desc = '') {
     </div>`;
 }
 
-function capabilitySection(about = {}) {
-  const areas = [
-    ...(about.focusAreas || []),
-    {
-      title: '持续发布',
-      desc: '让项目、文章与工具互相连接，形成可以继续迭代的作品。'
-    }
-  ].slice(0, 5);
-
+function aboutSection() {
+  const entries = [
+    { name: '文章与笔记', route: 'notes', tone: 'green', description: '从一个没弄懂的问题开始，记录理解、判断与复盘。', icon: '<path d="M14 21H5V3h14v9M9 8h6M9 12h4M9 16h2m4 5 1-4 5-5 3 3-5 5-4 1Z"/>' },
+    { name: '项目与实验', route: 'work', tone: 'blue', description: '把想法做成原型或实际应用，留下过程、取舍和验证结果。', icon: '<path d="M6 3h9l5 5v13H6ZM15 3v6h5"/>' },
+    { name: '工具与方法', route: 'toolbox', tone: 'purple', description: '把实践中有用的提示词、清单和流程整理下来，方便再次使用。', icon: '<path d="M9 5H5v17h15V5h-4M9 3h7v5H9Zm0 12 3 3 5-6"/>' }
+  ];
   return `
-    <section class="zh-section" id="home-about">
-      <div class="zh-container">
-        ${sectionIntro(
-          '现在关注什么',
-          '把复杂的 AI 能力，放进清楚的产品场景。',
-          '我更关心能力边界、工作流和验证方式，而不是给每个页面都加一个聊天框。'
-        )}
-        <ul class="zh-capability-grid">
-          ${areas.map((area, index) => `
-            <li>
-              <span>0${index + 1}</span>
-              <h3>${esc(area.title)}</h3>
-              <p>${esc(area.desc)}</p>
-            </li>`).join('')}
-        </ul>
+    <section class="zh-section zh-about-section" id="home-about" aria-labelledby="home-about-title">
+      <div class="zh-container zh-about-layout">
+        <div class="zh-about-copy">
+          <p class="zh-pill"><span aria-hidden="true">&gt;_</span> 关于我与这里 <i aria-hidden="true"></i></p>
+          <h2 id="home-about-title">在学习 AI 的路上，<br>把过程认真留下来。</h2>
+          <p class="zh-about-intro">我把学习 AI 时遇到的问题、动手做过的实验，以及实践后的复盘记录在这里。有些已经得到验证，有些还在探索，内容也会随着理解持续更新。</p>
+          <a class="zh-button zh-about-more" href="#/about">了解更多关于我 <span aria-hidden="true">→</span></a>
+          <img class="zh-about-art" src="./assets/hero/learning-desk.png" alt="戴眼镜的学习者坐在书桌前记录想法，身旁有电脑、书本、绿植和休息的小宠物" loading="lazy" decoding="async">
+        </div>
+        <div class="zh-content-guide">
+          <header><h3><span aria-hidden="true"></span>这里记录了什么</h3><p>理解问题 <span aria-hidden="true">→</span> 动手尝试 <span aria-hidden="true">→</span> 记录复盘</p></header>
+          <ul>${entries.map(entry => `
+            <li><a class="zh-guide-row zh-guide-row--${entry.tone}" href="#/${entry.route}">
+              <span class="zh-guide-icon" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">${entry.icon}</svg></span>
+              <h4>${entry.name}</h4><p>${entry.description}</p><span class="zh-guide-arrow" aria-hidden="true">→</span>
+            </a></li>`).join('')}
+          </ul>
+        </div>
       </div>
     </section>`;
 }
@@ -305,7 +312,7 @@ export function renderHomeView(ctx) {
     <article class="home-view">
       <div class="home-main">
         ${heroHtml(ctx)}
-        ${capabilitySection(ctx.about)}
+        ${aboutSection()}
         ${projectsSection(ctx.work)}
         ${methodsSection(ctx.toolbox)}
         ${notesSection(ctx.notes)}

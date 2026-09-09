@@ -1,0 +1,112 @@
+/* Approved home foundations. Future pages opt in; their templates remain open. */
+:root {
+  --site-content-max: 1216px;
+  --site-gutter: clamp(24px, 6vw, 96px);
+  --site-column-gap: clamp(32px, 4vw, 56px);
+  --site-section-space: 64px;
+  --site-hero-top: 116px;
+  --site-hero-bottom: 48px;
+  --site-text-hero: clamp(40px, 4.5vw, 64px);
+  --site-text-section: clamp(28px, 3.2vw, 42px);
+  --site-text-panel: clamp(24px, 2.3vw, 30px);
+  --site-text-card: 18px;
+  --site-text-body: 16px;
+  --site-text-small: 14px;
+  --site-text-meta: 12px;
+  --site-leading-title: 1.35;
+  --site-leading-body: 1.8;
+  --site-control-height: 48px;
+  --site-control-gap: 12px;
+  --site-nav-hit: 44px;
+  --site-nav-max: 1024px;
+}
+/* Opt-in utilities are available to future custom pages. */
+.site-container, .home-view .zh-container {
+  box-sizing: border-box;
+  width: min(var(--site-content-max), calc(100% - var(--site-gutter) * 2));
+  max-width: none;
+  margin-inline: auto;
+}
+.site-section, .home-view .zh-section { padding-block: var(--site-section-space); }
+.site-section-title { font-size: var(--site-text-section); line-height: var(--site-leading-title); }
+.site-body { font-size: var(--site-text-body); line-height: var(--site-leading-body); }
+.home-view .zh-hero {
+  box-sizing: border-box;
+  min-height: clamp(680px, 100svh, 860px);
+  padding-block: var(--site-hero-top) var(--site-hero-bottom);
+}
+.home-view .zh-hero-grid, .home-view .zh-about-layout { gap: var(--site-column-gap); }
+.home-view .zh-hero h1 { font-size: var(--site-text-hero); }
+.home-view .zh-about-copy h2, .home-view .zh-section-intro h2 {
+  font-size: var(--site-text-section);
+  line-height: var(--site-leading-title);
+  letter-spacing: -.045em;
+}
+.home-view .zh-about-copy h2 { margin-block: 28px 24px; }
+.home-view .zh-content-guide h3 { font-size: var(--site-text-panel); line-height: var(--site-leading-title); }
+.home-view .zh-hero-lead, .home-view .zh-about-intro,
+.home-view .zh-section-intro > p:last-child:not(.zh-section-label) {
+  font-size: var(--site-text-body);
+  line-height: var(--site-leading-body);
+}
+.home-view .zh-guide-row h4 { font-size: var(--site-text-card); }
+.home-view .zh-guide-row p, .home-view .zh-content-guide header > p {
+  font-size: var(--site-text-small);
+  line-height: var(--site-leading-body);
+}
+/* Shared controls apply to the existing navigation on every route. */
+.zh-site-header, .zh-site-header.is-scrolled {
+  width: min(var(--site-nav-max), calc(100% - var(--site-gutter) * 2));
+}
+.zh-nav-links a, .zh-nav-actions button {
+  min-height: var(--site-nav-hit);
+}
+.zh-nav-links a { font-size: var(--site-text-small); }
+.zh-nav-actions button { width: var(--site-nav-hit); height: var(--site-nav-hit); }
+.zh-mobile-menu-links a { min-height: var(--site-nav-hit); }
+.home-view .zh-button, .site-button {
+  box-sizing: border-box;
+  min-height: var(--site-control-height);
+  padding-inline: 21px;
+  border-radius: var(--radius-pill);
+  font-size: var(--site-text-small);
+  line-height: 1.4;
+}
+.home-view .zh-hero-actions { gap: var(--site-control-gap); }
+.home-view .zh-button--secondary { background: var(--zh-card); color: var(--zh-primary); }
+.zh-nav-links a:focus-visible, .zh-nav-actions button:focus-visible,
+.zh-mobile-menu a:focus-visible, .home-view .zh-button:focus-visible,
+.home-view .zh-guide-row:focus-visible {
+  outline: 2px solid var(--zh-primary);
+  outline-offset: 3px;
+}
+.home-view .zh-pill { font-size: var(--site-text-meta); }
+.home-view .zh-guide-row { min-width: 0; }
+@media (max-width: 1100px) {
+  .zh-brand, .zh-nav-actions { min-width: 0; }
+}
+@media (max-width: 900px) {
+  :root { --site-gutter: 32px; --site-column-gap: 32px; }
+  .home-view .zh-hero { min-height: 0; }
+}
+@media (max-width: 760px) {
+  :root {
+    --site-gutter: 24px;
+    --site-section-space: 40px;
+    --site-hero-top: 112px;
+    --site-hero-bottom: 40px;
+    --site-text-hero: clamp(34px, 6.8vw, 44px);
+    --site-text-section: clamp(26px, 5vw, 32px);
+    --site-text-panel: 24px;
+  }
+  .zh-site-header, .zh-site-header.is-scrolled { width: calc(100% - 24px); }
+  .home-view .zh-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .home-view .zh-hero-side { margin-top: 0; }
+}
+@media (max-width: 380px) {
+  :root { --site-gutter: 20px; }
+}
+@media (min-width: 901px) and (max-height: 740px) {
+  :root { --site-hero-top: 108px; --site-hero-bottom: 36px; }
+  .home-view .zh-hero { min-height: 0; }
+}

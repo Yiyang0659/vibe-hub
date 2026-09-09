@@ -3,17 +3,27 @@ import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 
-const [sessionDirectory, threadId, destination] = process.argv.slice(2);
+const [sessionDirectory, threadId, destination, title = '首页优化'] = process.argv.slice(2);
 if (!sessionDirectory || !threadId || !destination) {
   throw new Error('Usage: node scripts/export-codex-conversation.mjs SESSION_DIRECTORY THREAD_ID DESTINATION');
 }
 const output = resolve(destination);
 await mkdir(join(output, 'images'), { recursive: true });
-const files = (await readdir(sessionDirectory)).filter((name) => name.endsWith('.jsonl') && name.includes(threadId)).sort();
+async function findRecords(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const paths = [];
+  for (const entry of entries) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) paths.push(...await findRecords(path));
+    else if (entry.name.endsWith('.jsonl') && entry.name.includes(threadId)) paths.push(path);
+  }
+  return paths.sort();
+}
+const files = await findRecords(sessionDirectory);
 if (!files.length) throw new Error('No matching task records found.');
 const messages = [];
 for (const file of files) {
-  for (const line of (await readFile(join(sessionDirectory, file), 'utf8')).split('\n').filter(Boolean)) {
+  for (const line of (await readFile(file, 'utf8')).split('\n').filter(Boolean)) {
     const record = JSON.parse(line);
     const message = record.payload;
     if (record.type !== 'response_item' || message?.type !== 'message') continue;
@@ -39,6 +49,7 @@ for (const message of messages) {
   let body = message.body;
   // Local attachment paths are machine-specific; original images are embedded below.
   body = body.replace(/C:[/\\]Users[/\\][^\r\n]*?[/\\]codex-clipboard-([\w-]+\.png)/gi, '[原附件：codex-clipboard-$1，见本条附图]');
+  body = body.replace(/\/(?:var\/folders|Users)\/[^\s\"<>]*?\/codex-clipboard-([\w-]+\.png)/g, '[原附件：codex-clipboard-$1，见本条附图]');
   const attachments = [];
   for (const part of message.parts) {
     const match = /^data:image\/(png|jpeg|webp);base64,([\s\S]+)$/.exec(part.image_url || '');
@@ -56,6 +67,6 @@ for (const message of messages) {
   const time = new Date(message.timestamp).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
   sections.push(`## ${sections.length + 1}. ${message.role === 'user' ? '用户' : 'Codex'} · ${time}\n\n${body}${attachments.length ? '\n\n' + attachments.join('\n\n') : ''}`);
 }
-const header = `# 首页优化：Codex 对话记录\n\n- 任务：优化首页首屏页面\n- 任务 ID：\`${threadId}\`\n- 导出时间：${new Date().toISOString()}\n- 时区：Asia/Shanghai\n- 范围：截至本次导出时，本任务本地记录中的用户消息、Codex 可见回复和进度说明；包括中断前已记录的消息。\n- 整理说明：移除平台注入的环境信息；本机附件路径替换为附件说明，原始参考图保存在 images/。不包含系统指令、内部推理、工具调用及日志。正文保留当时的建议与表述，不代表每个方案都已实施。\n- 记录数量：${sections.length} 条消息，${images.size} 张独立参考图。\n\n---\n\n`;
+const header = `# ${title}：Codex 对话记录\n\n- 任务：${title}\n- 任务 ID：\`${threadId}\`\n- 导出时间：${new Date().toISOString()}\n- 时区：Asia/Shanghai\n- 范围：截至本次导出时，本任务本地记录中的用户消息、Codex 可见回复和进度说明；包括中断前已记录的消息。\n- 整理说明：移除平台注入的环境信息；本机附件路径替换为附件说明，原始参考图保存在 images/。不包含系统指令、内部推理、工具调用及日志。正文保留当时的建议与表述，不代表每个方案都已实施。\n- 记录数量：${sections.length} 条消息，${images.size} 张独立参考图。\n\n---\n\n`;
 await writeFile(join(output, 'conversation.md'), header + sections.join('\n\n---\n\n') + '\n');
 console.log(JSON.stringify({ messages: sections.length, images: images.size, document: join(output, 'conversation.md') }));

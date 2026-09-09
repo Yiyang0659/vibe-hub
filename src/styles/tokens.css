@@ -104,9 +104,9 @@
    3. 字体与字号阶梯
    -------------------------------------------------------------------------- */
 :root {
-  --serif: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", Georgia, serif;
+  --serif: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
   --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
-  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, Menlo, monospace;
+  --mono: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* 字号：编辑部克制尺度 */
   --fs-hero: clamp(38px, 5.25vw, 72px);   /* 首页主标题 */

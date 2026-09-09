@@ -4,3 +4,4 @@ coverage/
 .worktrees/
 *.log
 *.tmp
+.superpowers/**/state/

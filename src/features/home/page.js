@@ -26,8 +26,9 @@ function readTime(note = {}) {
 function characterHtml() {
   return `
     <div class="h-character-stage" aria-label="可互动的个人插画">
-      <div class="h-character-art" role="img" aria-label="戴眼镜、穿连帽外套，在电脑前思考的手绘人物">
-        <img class="h-character-image" src="./assets/hero/person-hero.png" alt="" decoding="async" fetchpriority="high">
+      <div class="h-character-art">
+        <img class="h-character-image" src="./assets/hero/person-hero.png" alt="戴眼镜、穿连帽外套，在电脑前思考的手绘人物" decoding="async" fetchpriority="high">
+        <img class="h-character-leaves" src="./assets/hero/person-hero.png" alt="" aria-hidden="true" decoding="async">
         <span class="h-character-companion" aria-hidden="true">
           <span class="h-pet-motion">
             <span class="h-pet-raster h-pet-raster--body">
@@ -62,10 +63,10 @@ function characterHtml() {
         </span>
         <span class="h-raster-eye h-raster-eye--left" aria-hidden="true"><i></i></span>
         <span class="h-raster-eye h-raster-eye--right" aria-hidden="true"><i></i></span>
-      </div>
       <button class="h-orb" type="button" aria-label="和 AI 小助手互动" aria-describedby="h-companion-message">
         <span class="h-orb-symbol" aria-hidden="true">✦</span>
       </button>
+      </div>
       <p class="h-companion-message" id="h-companion-message" aria-live="polite">移动鼠标，它会注意到你。</p>
     </div>`;
 }
@@ -79,7 +80,7 @@ function heroHtml(ctx) {
     <section class="zh-hero">
       <div class="zh-container zh-hero-grid">
         <div class="zh-hero-copy">
-          <p class="zh-pill"><span aria-hidden="true">&gt;_</span> AI 产品 / Agent / Engineering <i aria-hidden="true"></i></p>
+          <p class="zh-pill"><span aria-hidden="true">&gt;_</span> AI PRODUCT / AGENT / BUILDING <i aria-hidden="true"></i></p>
           <h1>把 AI 想明白，<br>也把它做出来。</h1>
           <p class="zh-hero-lead">围绕 AI Evaluation、Agent 和真实产品场景，记录我如何拆解问题、搭建原型、验证结果，再把方法留给下一次使用。</p>
 
@@ -90,20 +91,26 @@ function heroHtml(ctx) {
           </div>
 
           <div class="zh-hero-actions">
-            <a class="zh-button zh-button--primary" href="#/work">看看项目 <span aria-hidden="true">→</span></a>
+            <a class="zh-button zh-button--primary" href="#/work">查看项目 <span aria-hidden="true">→</span></a>
             <a class="zh-button zh-button--secondary" href="#/notes">读最近文章 <span aria-hidden="true">&lt;/&gt;</span></a>
           </div>
         </div>
 
         <div class="zh-hero-side">
-          <div class="zh-visual-card">
+          <section class="zh-visual-card" aria-labelledby="currently-building-title">
             <div class="zh-window-bar">
               <span class="zh-window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
               <span>&gt; currently-building</span>
               <b>interactive</b>
             </div>
+            <div class="zh-building-copy">
+              <h2 id="currently-building-title">AI Learning OS</h2>
+              <p class="zh-building-description">正在把零散的 AI、产品和开发学习，整理成一个能够持续积累、实践和复盘的个人知识系统。</p>
+              <p class="zh-building-status"><span aria-hidden="true">↗</span> BUILDING · 2026</p>
+              <a class="zh-button zh-building-link" href="#/work/personal-knowledge-lab" aria-label="View Case Study：AI Learning OS">View Case Study <span aria-hidden="true">→</span></a>
+            </div>
             ${characterHtml()}
-          </div>
+          </section>
 
           <div class="zh-principles">
             <div>
@@ -114,7 +121,7 @@ function heroHtml(ctx) {
             <div>
               <span aria-hidden="true">◇</span>
               <strong>让结果可验证</strong>
-              <p>原型、指标和复盘，比概念更有说服力。</p>
+              <p>用原型、测试、数据和复盘验证结果，而不是只展示概念。</p>
             </div>
           </div>
         </div>
@@ -416,15 +423,12 @@ export function mountHomeView() {
   };
 
   const scheduleExpression = () => {
-    if (reduceMotion.matches) return;
     clearTimeout(expressionTimer);
     expressionTimer = window.setTimeout(() => {
-      const current = petFace?.dataset.expression || 'neutral';
-      const choices = expressionNames.filter((name) => name !== current);
-      const next = choices[Math.floor(Math.random() * choices.length)] || 'neutral';
-      setExpression(next, next === 'happy' || next === 'wink');
+      if (!running || !stage.isConnected) return;
+      onOrbClick();
       scheduleExpression();
-    }, 2800 + Math.random() * 3300);
+    }, 5000);
   };
 
   const onOrbClick = () => {

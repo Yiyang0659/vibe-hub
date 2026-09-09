@@ -1,0 +1,93 @@
+<style>
+  :root { --ink:#151c27; --muted:#6f7b8f; --navy:#304a74; --green:#27b87a; --line:#dfe5eb; --paper:#fbfcfd; }
+  body { background:#f4f7f8 !important; }
+  .compare-note { max-width:1040px; margin:0 auto 22px; }
+  .compare-note h2 { margin-bottom:6px; color:var(--ink); }
+  .compare-note p { max-width:780px; }
+  .design-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; max-width:1180px; margin:0 auto; }
+  .design { overflow:hidden; border:1px solid var(--line); border-radius:22px; background:rgba(255,255,255,.9); box-shadow:0 18px 50px rgba(35,54,76,.08); cursor:pointer; transition:.2s ease; }
+  .design:hover { transform:translateY(-3px); box-shadow:0 24px 60px rgba(35,54,76,.14); }
+  .design[data-selected="true"] { outline:3px solid var(--green); outline-offset:3px; }
+  .choice-head { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line); }
+  .letter { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:#edf2f7; color:var(--navy); font-weight:800; }
+  .choice-head strong { color:var(--ink); font-size:14px; }
+  .choice-head em { margin-left:auto; padding:4px 8px; border-radius:99px; background:#dbf7ea; color:#08754a; font-style:normal; font-size:10px; font-weight:800; }
+  .mini-site { min-height:560px; padding:14px; background-color:#f8fafb; background-image:linear-gradient(rgba(49,72,111,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(49,72,111,.055) 1px,transparent 1px); background-size:16px 16px; }
+  .mini-nav { display:flex; align-items:center; gap:8px; height:38px; padding:0 12px; border:1px solid var(--line); border-radius:99px; background:white; color:var(--muted); font-size:9px; }
+  .mini-nav b { margin-right:auto; color:var(--ink); font-size:11px; }
+  .mini-shell { display:grid; grid-template-columns:.9fr 1.1fr; gap:12px; margin-top:16px; }
+  .mini-copy { padding:8px 2px; }
+  .eyebrow { display:inline-flex; padding:5px 8px; border:1px solid var(--line); border-radius:99px; background:white; color:var(--navy); font:700 8px/1 monospace; }
+  .mini-copy h3 { margin:14px 0 9px; color:var(--ink); font-size:22px; line-height:1.08; letter-spacing:-.05em; }
+  .mini-copy p { margin:0; color:var(--muted); font-size:9px; line-height:1.7; }
+  .metric-row { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:14px; }
+  .metric-row i { height:44px; border:1px solid var(--line); border-radius:8px; background:white; }
+  .build { overflow:hidden; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.92); box-shadow:0 12px 28px rgba(30,45,70,.1); }
+  .window { display:flex; align-items:center; height:30px; padding:0 9px; border-bottom:1px solid var(--line); color:var(--muted); font:7px/1 monospace; }
+  .window span { color:#ef755e; letter-spacing:2px; margin-right:6px; }
+  .window b { margin-left:auto; color:var(--green); }
+  .build-inner { position:relative; min-height:224px; padding:14px; }
+  .status { display:inline-flex; padding:5px 8px; border-radius:99px; background:#ddf7eb; color:#08754a; font:800 7px/1 monospace; }
+  .build h4 { margin:10px 0 6px; color:var(--ink); font-size:18px; }
+  .build p { width:54%; margin:0; color:var(--muted); font-size:8px; line-height:1.6; }
+  .build .year { display:inline-flex; margin-top:10px; color:#08754a; font:700 7px/1 monospace; }
+  .build .cta { display:block; width:max-content; margin-top:12px; padding:6px 9px; border:1px solid var(--line); border-radius:99px; color:var(--navy); font-size:7px; font-weight:800; }
+  .person { position:absolute; right:9px; bottom:15px; width:41%; height:118px; }
+  .person::before { content:""; position:absolute; inset:16px 18px 30px; border:3px solid #1c2530; border-radius:45% 45% 35% 35%; transform:rotate(-5deg); }
+  .person::after { content:"⌁  ◡  </>"; position:absolute; right:0; bottom:0; display:grid; place-items:center; width:100%; height:54px; border:3px solid #1c2530; border-radius:10px 10px 4px 4px; background:#eef3f6; color:#1986f4; font:800 12px/1 monospace; transform:skew(-5deg); }
+  .principles { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:8px; }
+  .principles div { min-height:74px; padding:11px; border:1px solid var(--line); border-radius:10px; background:white; }
+  .principles b { display:block; color:var(--ink); font-size:10px; }
+  .principles small { display:block; margin-top:5px; color:var(--muted); font-size:7px; line-height:1.55; }
+  .variant-b .mini-shell { grid-template-columns:1fr; }
+  .variant-b .mini-copy { display:none; }
+  .variant-b .build-inner { min-height:270px; padding:16px; }
+  .variant-b .build p { width:88%; }
+  .variant-b .person { right:16px; width:55%; opacity:.8; }
+  .variant-b .principles { margin-top:12px; }
+  .variant-c .build-inner { min-height:270px; }
+  .variant-c .build p { position:absolute; left:10px; right:10px; bottom:10px; z-index:2; width:auto; padding:9px; border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.92); }
+  .variant-c .build .year,.variant-c .build .cta { display:none; }
+  .variant-c .person { right:13%; bottom:50px; width:72%; height:150px; }
+  .variant-c .principles { grid-template-columns:1fr; }
+  .tradeoff { padding:14px 16px 17px; border-top:1px solid var(--line); }
+  .tradeoff p { margin:0; color:#556275; font-size:12px; line-height:1.6; }
+  @media (max-width:900px){ .design-grid{grid-template-columns:1fr}.mini-site{min-height:auto}.mini-shell{grid-template-columns:.9fr 1.1fr} }
+</style>
+
+<div class="compare-note">
+  <h2>首页首屏：当前项目卡片如何承担主叙事？</h2>
+  <p class="subtitle">三种方案都保留网格背景、留白、线稿人物和蓝绿点缀。请选择最符合“学习系统入口 + 正在构建状态页”的一种。</p>
+</div>
+
+<div class="design-grid">
+  <div class="design" data-choice="a" onclick="toggleSelect(this)">
+    <div class="choice-head"><span class="letter">A</span><strong>信息与插画并重</strong><em>推荐</em></div>
+    <div class="mini-site">
+      <div class="mini-nav"><b>想与做</b><span>首页</span><span>项目</span><span>文章</span><span>工具</span><span>关于</span></div>
+      <div class="mini-shell">
+        <div class="mini-copy"><span class="eyebrow">AI PRODUCT / AGENT / BUILDING</span><h3>把 AI 想明白，<br>也把它做出来。</h3><p>围绕 AI Evaluation、Agent 和真实产品场景，记录问题、原型与验证。</p><div class="metric-row"><i></i><i></i><i></i></div></div>
+        <div><div class="build"><div class="window"><span>●●●</span>&gt; currently-building <b>interactive</b></div><div class="build-inner"><span class="status">CURRENTLY BUILDING</span><h4>AI Learning OS</h4><p>正在把零散的 AI、产品和开发学习，整理成可持续积累、实践和复盘的个人知识系统。</p><span class="year">BUILDING · 2026</span><span class="cta">View Case Study →</span><div class="person"></div></div></div><div class="principles"><div><b>⌁ 从问题开始</b><small>先说清楚为什么做，再决定用不用 AI。</small></div><div><b>◇ 让结果可验证</b><small>用原型、测试、数据和复盘验证结果。</small></div></div></div>
+      </div>
+    </div>
+    <div class="tradeoff"><p>最接近参考图。文字和人物各占半边，首屏信息完整，项目语义清楚；需要精细控制窄屏换行。</p></div>
+  </div>
+
+  <div class="design variant-b" data-choice="b" onclick="toggleSelect(this)">
+    <div class="choice-head"><span class="letter">B</span><strong>项目卡纵向叙事</strong></div>
+    <div class="mini-site">
+      <div class="mini-nav"><b>想与做</b><span>首页</span><span>项目</span><span>文章</span><span>工具</span><span>关于</span></div>
+      <div class="mini-shell"><div><div class="build"><div class="window"><span>●●●</span>&gt; currently-building <b>interactive</b></div><div class="build-inner"><span class="status">CURRENTLY BUILDING</span><h4>AI Learning OS</h4><p>先完整阅读项目定位，再进入下方的大幅人物场景。</p><span class="year">BUILDING · 2026</span><span class="cta">View Case Study →</span><div class="person"></div></div></div><div class="principles"><div><b>⌁ 从问题开始</b><small>问题定义优先。</small></div><div><b>◇ 让结果可验证</b><small>用证据验证结果。</small></div></div></div></div>
+    </div>
+    <div class="tradeoff"><p>叙事顺序最清楚、移动端最好适配，但会削弱“左右主叙述”的原有结构，也更像单独项目页。</p></div>
+  </div>
+
+  <div class="design variant-c" data-choice="c" onclick="toggleSelect(this)">
+    <div class="choice-head"><span class="letter">C</span><strong>插画主导展示</strong></div>
+    <div class="mini-site">
+      <div class="mini-nav"><b>想与做</b><span>首页</span><span>项目</span><span>文章</span><span>工具</span><span>关于</span></div>
+      <div class="mini-shell"><div><div class="build"><div class="window"><span>●●●</span>&gt; currently-building <b>interactive</b></div><div class="build-inner"><span class="status">CURRENTLY BUILDING</span><h4>AI Learning OS</h4><p>项目说明作为浮层，人物场景成为视觉中心。</p><div class="person"></div></div></div><div class="principles"><div><b>⌁ 从问题开始</b><small>先定义问题，再决定 AI 如何参与。</small></div><div><b>◇ 让结果可验证</b><small>原型、测试、数据与复盘。</small></div></div></div></div>
+    </div>
+    <div class="tradeoff"><p>个性最强、情绪最友好，但内容层级弱，容易再次退回“装饰性插画卡片”。</p></div>
+  </div>
+</div>

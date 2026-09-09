@@ -24,6 +24,8 @@
 
 ## 研究和历史
 
+- [首页优化对话与交接](conversations/2026-09-09-homepage/README.md)：当前 Codex 任务的可见对话、参考图片、已实现内容及待定设计。
+
 - `research/`：竞品、交互与视觉研究的原始材料。
 - `plans/`：按日期记录的旧版设计与实施计划，用于追溯决策。
 - `superpowers/specs/`：已经确认的规格说明。

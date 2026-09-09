@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lessons, categories } from '../js/data.js';
+import { lessons, categories } from '../src/features/topics/index.js';
 import {
   papers,
   notes,
@@ -9,7 +9,7 @@ import {
   library,
   initialDigests,
   aboutData
-} from '../js/lab-data.js';
+} from '../src/features/index.js';
 import {
   compileProjectDigest,
   generateNoteDraft,

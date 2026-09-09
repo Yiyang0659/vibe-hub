@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lessons } from '../../js/data.js';
-import { notes, workItems, papers, toolbox, library } from '../../js/lab-data.js';
-import { WHY_LOOKUP, topicsWithDomain, domainOf } from '../../js/content/topics.js';
+import { lessons, WHY_LOOKUP, topicsWithDomain, domainOf } from '../../src/features/topics/index.js';
+import { notes, workItems, papers, toolbox, library } from '../../src/features/index.js';
 
 test('V4 发布门槛：每条 Note 的 unresolved（我还没想清楚什么）非空', () => {
   notes.forEach((note) => {

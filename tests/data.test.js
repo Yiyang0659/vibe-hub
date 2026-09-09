@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lessons } from '../js/data.js';
+import { lessons } from '../src/features/topics/index.js';
 
 test('every lesson has a stable unique id and valid quiz answer', () => {
   assert.equal(lessons.length, 60);

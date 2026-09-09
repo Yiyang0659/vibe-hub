@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lessons } from '../../js/data.js';
-import { notes, workItems, papers, toolbox } from '../../js/lab-data.js';
-import { usedInReverse } from '../../js/content/topics.js';
+import { lessons, usedInReverse } from '../../src/features/topics/index.js';
+import { notes, workItems, papers, toolbox } from '../../src/features/index.js';
 
 const topicIds = new Set(lessons.map((l) => l.id));
 const noteIds = new Set(notes.map((n) => n.id));

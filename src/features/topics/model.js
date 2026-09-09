@@ -1,12 +1,11 @@
 /**
- * V4 内容层 · Topics 域映射与个人痕迹（content/topics.js）
+ * Topics 栏目 · 域映射与个人痕迹
  *
- * Phase 2 过渡态：lessons 物理合并（data.js + expanded-data.js → 本文件）安排在
- * Phase 3 清理时执行；本模块先作为唯一「域映射 + 个人痕迹」访问层：
+ * 术语正文统一保存在 data.js；本模块负责可独立测试的派生逻辑：
  *   - domainOf()      五航线 → 四知识域（蓝图 §7.1）
  *   - WHY_LOOKUP      「我为什么会查这个」个人痕迹（10 个高频词条）
  *   - usedInReverse() 「我在哪真正用过它」反向索引（从 notes/work/toolbox 派生）
- * 本文件除 legacy 数据源外不 import 任何逻辑模块。
+ * 本文件只依赖本栏目的静态数据。
  */
 
 import { lessons, categories, learningQuote } from './data.js';

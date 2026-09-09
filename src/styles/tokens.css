@@ -2,7 +2,7 @@
    V5 DESIGN TOKENS — AI Product Portfolio
    冷白画布 + 深海军蓝 + 绿色状态强调（2026-09-05）
 
-   加载顺序：styles.css(legacy, 过渡期) → styles/tokens.css → styles/base.css
+   由 src/styles/index.css 统一加载并控制层叠顺序。
    统一首页与内容页的颜色、间距、圆角、阴影和内容宽度。
    ========================================================================== */
 

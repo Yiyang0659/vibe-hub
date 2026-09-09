@@ -1,0 +1,167 @@
+/* ==========================================================================
+   V5 DESIGN TOKENS — AI Product Portfolio
+   冷白画布 + 深海军蓝 + 绿色状态强调（2026-09-05）
+
+   加载顺序：styles.css(legacy, 过渡期) → styles/tokens.css → styles/base.css
+   统一首页与内容页的颜色、间距、圆角、阴影和内容宽度。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 日间：冷静、轻量、偏产品与工程
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-theme="day"] {
+  color-scheme: light;
+  /* 纸面 */
+  --paper: #F7F8FA;
+  --paper-deep: #EFF2F6;
+  --paper-light: #FFFFFF;
+
+  /* 墨色 */
+  --ink: #181C25;
+  --ink-soft: #626A78;
+  --ink-faint: #8B929E;
+
+  /* 线 */
+  --line: #E1E4E9;
+  --line-strong: #CFD4DC;
+
+  /* 保留旧变量名以兼容内容页；实际品牌色调整为海军蓝 */
+  --vermilion: #31486F;
+  --vermilion-dark: #263B61;
+
+  /* 功能色（仅状态点 / 成功标记，禁止大面积使用） */
+  --pine: #38B779;
+  --gold: #B78335;
+
+  --shadow: 0 14px 40px rgba(26, 34, 48, 0.08);
+
+  /* 知识域色（保留变量但首页不再使用；详情页 eyebrow 可继续用单色小标签） */
+  --domain-ai: #31486F;
+  --domain-product: #50678E;
+  --domain-agent: #3D7B6A;
+  --domain-engineering: #626A78;
+
+  /* 实体徽章（过渡期保留 legacy 用法，首页已废弃） */
+  --badge-topic-bg: transparent;
+  --badge-topic-ink: var(--ink-soft);
+  --badge-note-bg: transparent;
+  --badge-note-ink: var(--ink-soft);
+  --badge-paper-bg: transparent;
+  --badge-paper-ink: var(--ink-soft);
+  --badge-work-bg: transparent;
+  --badge-work-ink: var(--ink-soft);
+  --badge-tool-bg: transparent;
+  --badge-tool-ink: var(--ink-soft);
+  --badge-lib-bg: transparent;
+  --badge-lib-ink: var(--ink-soft);
+}
+
+/* --------------------------------------------------------------------------
+   2. 夜间：保持相同层级，减少纯黑对比
+   -------------------------------------------------------------------------- */
+:root[data-theme="night"] {
+  color-scheme: dark;
+  --paper: #10141B;
+  --paper-deep: #1C2330;
+  --paper-light: #171C25;
+
+  --ink: #EEF1F6;
+  --ink-soft: #A7AFBC;
+  --ink-faint: #7D8796;
+
+  --line: rgba(224, 232, 244, 0.13);
+  --line-strong: rgba(224, 232, 244, 0.25);
+
+  --vermilion: #9CB7EC;
+  --vermilion-dark: #BDD0F5;
+
+  --pine: #54D59C;
+  --gold: #D4A85A;
+
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+
+  --domain-ai: #9CB7EC;
+  --domain-product: #AFC4EE;
+  --domain-agent: #65D5A5;
+  --domain-engineering: #A7AFBC;
+
+  --badge-topic-bg: rgba(227, 221, 212, 0.08);
+  --badge-topic-ink: #A39E96;
+  --badge-note-bg: rgba(227, 221, 212, 0.08);
+  --badge-note-ink: #A39E96;
+  --badge-paper-bg: rgba(227, 221, 212, 0.08);
+  --badge-paper-ink: #A39E96;
+  --badge-work-bg: rgba(227, 221, 212, 0.08);
+  --badge-work-ink: #A39E96;
+  --badge-tool-bg: rgba(227, 221, 212, 0.08);
+  --badge-tool-ink: #A39E96;
+  --badge-lib-bg: rgba(227, 221, 212, 0.08);
+  --badge-lib-ink: #A39E96;
+}
+
+/* --------------------------------------------------------------------------
+   3. 字体与字号阶梯
+   -------------------------------------------------------------------------- */
+:root {
+  --serif: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", Georgia, serif;
+  --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, Menlo, monospace;
+
+  /* 字号：编辑部克制尺度 */
+  --fs-hero: clamp(38px, 5.25vw, 72px);   /* 首页主标题 */
+  --fs-display: clamp(32px, 4vw, 48px);   /* 区块标题 */
+  --fs-h1: 26px;                          /* 页面标题 */
+  --fs-h2: 20px;                          /* 列表项标题 / 小标题 */
+  --fs-h3: 15px;                          /* 元信息标题 */
+  --fs-body: 15px;                        /* 正文 */
+  --fs-meta: 12px;                        /* 日期 / 时长 / 序号 */
+  --fs-eyebrow: 11px;                     /* 类型标签 */
+
+  --lh-hero: 1.28;
+  --lh-display: 1.4;
+  --lh-heading: 1.45;
+  --lh-body: 1.95;
+
+  --track-eyebrow: 0.12em;
+}
+
+/* --------------------------------------------------------------------------
+   4. 间距与布局尺度
+   -------------------------------------------------------------------------- */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  --measure-article: 680px;   /* 正文列 */
+  --measure-page: 1216px;     /* 主内容最大宽 */
+  --toc-width: 200px;
+  --header-h: 56px;
+  --sidebar-width: 204px;
+}
+
+/* --------------------------------------------------------------------------
+   5. 形状 / 线条 / 动效 / 层级
+   -------------------------------------------------------------------------- */
+:root {
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 0.15s;
+  --dur-base: 0.25s;
+
+  --z-grain: 30;
+  --z-topbar: 40;
+  --z-hover-card: 70;
+  --z-overlay: 60;
+  --z-toast: 80;
+}

@@ -3,103 +3,114 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AI Knowledge & Practice Lab——我在 AI、产品与工程实践中真正理解、研究过和沉淀下来的东西。" />
-    <meta name="theme-color" content="#F7F4EC" />
-    <meta property="og:title" content="AI Knowledge & Practice Lab" />
-    <meta property="og:description" content="把模糊问题编译成清晰知识：术语、笔记、论文拆解、项目实验与可复用工具。" />
+    <meta name="description" content="关于 AI、产品和工程的一些思考、项目与顺手留下的工具。" />
+    <meta name="theme-color" content="#F7F8FA" />
+    <meta property="og:title" content="想与做" />
+    <meta property="og:description" content="把问题想清楚，也把答案做出来。" />
     <meta property="og:type" content="website" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F7F4EC'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='16' font-weight='bold' text-anchor='middle' fill='%23C94B32'%3EAI%3C/text%3E%3C/svg%3E" />
-    <title>AI Knowledge & Practice Lab</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23F7F8FA'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='15' font-weight='bold' text-anchor='middle' fill='%2331486F'%3EAI%3C/text%3E%3C/svg%3E" />
+    <title>想与做</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./styles/tokens.css" />
-    <link rel="stylesheet" href="./styles/base.css" />
-    <link rel="stylesheet" href="./styles/views/home.css" />
-    <link rel="stylesheet" href="./styles/views/index-views.css" />
-    <link rel="stylesheet" href="./styles/components/hover-explain.css" />
-    <link rel="stylesheet" href="./styles/components/search-trail.css" />
+    <link rel="stylesheet" href="./src/styles/index.css" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">跳到主要内容</a>
     <div class="paper-grain" aria-hidden="true"></div>
     <div class="app-shell">
-      <aside class="sidebar" aria-label="主要导航">
-        <a class="brand" href="#/home" aria-label="AI Knowledge & Practice Lab 首页">
-          <span class="brand-mark" aria-hidden="true"><i></i><b>AI</b></span>
-          <span><strong>AI KNOWLEDGE LAB</strong><small>AI · PRODUCT · ENGINEERING</small></span>
-        </a>
-        <p class="sidebar-caption"><span>$</span> cd ~/knowledge<br><span>$</span> status --learning</p>
+      <header class="zh-site-header" id="site-header">
+        <nav class="zh-nav" aria-label="全站导航">
+          <a class="zh-brand" href="#/home" aria-label="想与做首页">
+            <span class="zh-brand-avatar" aria-hidden="true"></span>
+            <span class="zh-brand-copy">
+              <strong>想与做</strong>
+              <small>AI 产品与应用实践</small>
+            </span>
+          </a>
 
-        <nav class="main-nav" aria-label="主导航">
-          <a href="#/home" data-route="home"><span>首页</span><i>Home</i></a>
-          <a href="#/topics" data-route="topics"><span>术语</span><i>Topics</i></a>
-          <a href="#/notes" data-route="notes"><span>笔记</span><i>Notes</i></a>
-          <a href="#/reading" data-route="reading"><span>阅读</span><i>Reading</i></a>
-          <a href="#/work" data-route="work"><span>项目</span><i>Work</i></a>
-          <a href="#/toolbox" data-route="toolbox"><span>工具箱</span><i>Toolbox</i></a>
-          <a href="#/library" data-route="library"><span>资源库</span><i>Library</i></a>
+          <div class="zh-nav-links" aria-label="主要页面">
+            <a href="#/home" data-route="home"><span aria-hidden="true">&gt;</span>首页</a>
+            <a href="#/work" data-route="work"><span aria-hidden="true">&gt;</span>项目</a>
+            <a href="#/notes" data-route="notes"><span aria-hidden="true">&gt;</span>文章</a>
+            <a href="#/toolbox" data-route="toolbox"><span aria-hidden="true">&gt;</span>工具</a>
+            <a href="#/about" data-route="about"><span aria-hidden="true">&gt;</span>关于</a>
+          </div>
+
+          <div class="zh-nav-actions">
+            <button id="workspace-launcher" type="button" aria-label="打开个人工作台" title="个人工作台">⌘</button>
+            <button id="search-launcher" type="button" aria-label="搜索网站内容" title="搜索（/）">⌕</button>
+            <button id="theme-toggle" type="button" aria-label="切换夜航模式" title="切换颜色主题">◐</button>
+            <button class="zh-menu-trigger" id="site-menu-trigger" type="button" aria-label="打开导航菜单" aria-expanded="false">
+              <i></i><i></i><i></i>
+            </button>
+          </div>
         </nav>
 
-        <div class="sidebar-aux-block">
-          <div class="nav-section-title">Personal</div>
-          <nav class="aux-nav">
-            <a href="#/practice" data-route="practice"><span>练习</span><i>Practice</i></a>
-            <a href="#/saved" data-route="saved"><span>已保存</span><i>Saved</i></a>
-            <a href="#/about" data-route="about"><span>关于</span><i>About</i></a>
-          </nav>
-        </div>
-
-        <div class="sidebar-foot">
-          <p>Built slowly,<br>with curiosity & AI.</p>
-          <div class="sidebar-links">
-            <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:developer@example.com">Email</a>
+        <div class="zh-mobile-menu" id="site-mobile-menu" aria-label="移动端导航" aria-hidden="true">
+          <div class="zh-mobile-menu-head">
+            <span>EXPLORE / 浏览</span>
+            <small>从项目、文章或工具开始</small>
           </div>
+          <div class="zh-mobile-menu-links">
+            <a href="#/home" data-route="home"><b>01</b><span>首页</span><small>Home</small></a>
+            <a href="#/work" data-route="work"><b>02</b><span>项目</span><small>Work</small></a>
+            <a href="#/notes" data-route="notes"><b>03</b><span>文章</span><small>Writing</small></a>
+            <a href="#/toolbox" data-route="toolbox"><b>04</b><span>工具</span><small>Toolbox</small></a>
+            <a href="#/about" data-route="about"><b>05</b><span>关于</span><small>About</small></a>
+          </div>
+          <button class="zh-mobile-search" id="mobile-search-launcher" type="button">
+            <span>⌕</span><strong>搜索全部内容</strong><kbd>/</kbd>
+          </button>
         </div>
-      </aside>
+      </header>
 
       <div class="content-shell">
-        <header class="topbar">
-          <button class="search-launcher" id="search-launcher" type="button">
-            <span aria-hidden="true">⌕</span>
-            <span>搜索…</span>
-            <kbd>/</kbd>
-          </button>
-          <div class="topbar-meta">
-            <button class="topbar-capture-btn" id="topbar-quick-capture" type="button">+ 记录</button>
-            <span id="today-label"></span>
-            <button class="theme-toggle-btn" id="theme-toggle" type="button" aria-label="切换夜航模式">夜航</button>
-          </div>
-        </header>
         <main id="main-content" tabindex="-1"></main>
       </div>
+
+      <footer class="site-footer" id="site-footer">
+        <div class="site-footer-inner">
+          <div class="site-footer-statement">
+            <p><i></i> STILL BUILDING</p>
+            <strong>把问题想清楚，<br />也把答案做出来。</strong>
+          </div>
+          <nav class="site-footer-nav" aria-label="页脚导航">
+            <a href="#/work"><span>01</span><b>项目</b><small>看我做过什么</small></a>
+            <a href="#/notes"><span>02</span><b>文章</b><small>看我如何思考</small></a>
+            <a href="#/toolbox"><span>03</span><b>工具</b><small>拿走可复用的方法</small></a>
+            <a href="#/about"><span>04</span><b>关于</b><small>了解现在的方向</small></a>
+          </nav>
+          <div class="site-footer-bottom">
+            <span id="site-footer-year"></span>
+            <p>AI Product · Agent · Engineering</p>
+            <a href="#/about">About →</a>
+          </div>
+        </div>
+      </footer>
     </div>
 
-    <nav class="mobile-nav" aria-label="移动端导航">
-      <a href="#/home" data-route="home">首页</a>
-      <a href="#/topics" data-route="topics">术语</a>
-      <a href="#/notes" data-route="notes">笔记</a>
-      <a href="#/reading" data-route="reading">阅读</a>
-      <a href="#/work" data-route="work">项目</a>
-      <a href="#/toolbox" data-route="toolbox">工具</a>
-      <a href="#/library" data-route="library">资源</a>
-    </nav>
+    <button class="back-to-top" id="back-to-top" type="button" aria-label="返回页面顶部">
+      <span>↑</span><small>TOP</small>
+    </button>
 
     <dialog class="search-dialog" id="search-dialog">
       <form method="dialog" class="search-dialog-head">
-        <label for="global-search">Global Search</label>
-        <button aria-label="关闭搜索" value="cancel">关闭</button>
+        <label for="global-search">
+          <span>FIND SOMETHING</span>
+          <strong>从一个问题开始</strong>
+        </label>
+        <button class="search-close" aria-label="关闭搜索" value="cancel">×</button>
       </form>
       <div class="search-field">
         <span aria-hidden="true">⌕</span>
-        <input id="global-search" type="search" autocomplete="off" placeholder="Agent、RAG、MCP、评测、Prompt…" />
+        <input id="global-search" type="search" autocomplete="off" placeholder="试试：如何评测 Agent？" aria-describedby="search-guidance" />
+        <kbd>/</kbd>
       </div>
       <div class="search-results" id="search-results"></div>
-      <p class="search-tip"><kbd>↑</kbd><kbd>↓</kbd> 浏览 · <kbd>Enter</kbd> 打开 · <kbd>Esc</kbd> 关闭</p>
+      <p class="search-tip" id="search-guidance"><span><kbd>↑</kbd><kbd>↓</kbd> 选择</span><span><kbd>Enter</kbd> 打开</span><span><kbd>Esc</kbd> 关闭</span></p>
     </dialog>
 
     <dialog class="capture-dialog" id="capture-dialog">
@@ -107,6 +118,6 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script type="module" src="./js/app.js"></script>
+    <script type="module" src="./src/main.js"></script>
   </body>
 </html>

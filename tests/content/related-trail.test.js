@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { notes, workItems, toolbox } from '../../src/features/index.js';
-import { buildTrail, renderRelatedTrail } from '../../js/components/related-trail.js';
+import { buildTrail, renderRelatedTrail } from '../../src/shared/components/related-trail.js';
 
 const graph = { notes, work: workItems, toolbox };
 

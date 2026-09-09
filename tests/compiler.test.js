@@ -4,7 +4,7 @@ import {
   compileProjectDigest,
   generateNoteDraft,
   generateToolboxDraft
-} from '../js/compiler.js';
+} from '../src/features/workspace/compiler.js';
 import { workItems, initialDigests } from '../js/lab-data.js';
 
 test('compileProjectDigest extracts all 6 core fields from raw description', () => {

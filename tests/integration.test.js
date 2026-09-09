@@ -14,8 +14,8 @@ import {
   compileProjectDigest,
   generateNoteDraft,
   generateToolboxDraft
-} from '../js/compiler.js';
-import { searchAllEntities } from '../js/utils.js';
+} from '../src/features/workspace/compiler.js';
+import { searchAllEntities } from '../src/shared/lib/index.js';
 
 test('V3 Full Capability Repository Dataset integrity', () => {
   // Topics (术语)

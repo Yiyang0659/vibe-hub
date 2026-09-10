@@ -1,7 +1,7 @@
 export const routeMeta = {
   home: { title: '首页', description: '关于 AI 产品、Agent 与应用工程的项目、文章和实用工具。' },
   work: { title: '项目', description: '真正动手做过或验证过的 AI 产品、原型与实验。' },
-  notes: { title: '文章', description: '从项目与阅读中留下的 AI 产品、Agent 和工程思考。' },
+  notes: { title: '学习', description: '从项目与阅读中留下的 AI 产品、Agent 和工程思考。' },
   topics: { title: '术语', description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
   reading: { title: '阅读', description: '影响当前实践判断的论文、文章与阅读笔记。' },
   toolbox: { title: '工具', description: '可以直接带走复用的 AI 工作方法、清单与模板。' },

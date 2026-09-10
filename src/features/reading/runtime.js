@@ -17,7 +17,7 @@ function renderPaperDetail(id) {
   main.innerHTML = `
     <article class="paper-detail-page page-view portfolio-detail">
       <nav class="breadcrumb reveal" aria-label="面包屑">
-        <a href="#/notes">文章</a>
+        <a href="#/learning">学习</a>
         <span>/</span>
         <span>阅读</span>
         <span>/</span>

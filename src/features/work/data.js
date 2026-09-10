@@ -1,4 +1,5 @@
-export const workItems = [
+import { workEntries } from './entries.js';
+const legacyItems = [
   // 1. Projects (完整项目)
   {
     id: 'ai-seven-dimension-eval',
@@ -182,3 +183,5 @@ export const workItems = [
     relatedTools: ['tool-prompt-debugging-workflow']
   }
 ];
+
+export const workItems = [...workEntries, ...legacyItems.map(item => ({...item, publication: 'review'}))];

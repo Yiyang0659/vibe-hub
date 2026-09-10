@@ -1,4 +1,5 @@
-export const toolbox = [
+import { toolEntries } from './entries.js';
+const legacyItems = [
   {
     id: 'tool-ai-eval-rule-design',
     type: 'WORKFLOW',
@@ -202,3 +203,5 @@ export const toolbox = [
     limitations: ['只写理想路径，完全忽略模型超时、格式错误与幻觉时的产品降级交互。']
   }
 ];
+
+export const toolbox = [...toolEntries, ...legacyItems.map(item => ({...item, publication: 'review'}))];

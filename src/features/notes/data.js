@@ -1,4 +1,5 @@
-export const notes = [
+import { noteEntries } from './entries.js';
+const legacyItems = [
   {
     id: 'note-eval-rules-vs-judge',
     title: '为什么规则明确的 AI Evaluation 不应该完全交给 LLM？',
@@ -80,3 +81,5 @@ export const notes = [
     relatedWork: ['personal-knowledge-lab']
   }
 ];
+
+export const notes = [...noteEntries, ...legacyItems.map(item => ({...item, publication: 'review'}))];

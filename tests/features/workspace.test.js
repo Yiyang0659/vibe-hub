@@ -13,7 +13,7 @@ test('compileProjectDigest extracts all 6 core fields from raw description', () 
     { type: 'prompt', title: '评测 Prompt 拆分草稿', content: 'System: 只进行同理心判定' },
     { type: 'code', title: 'Rule Engine 代码片段', content: 'if (!trace.hasRating) return false;' }
   ];
-  const project = workItems[0];
+  const project = workItems.find(item => item.id === 'ai-seven-dimension-eval');
 
   const digest = compileProjectDigest(rawInput, materials, project);
 
@@ -35,7 +35,7 @@ test('compileProjectDigest extracts all 6 core fields from raw description', () 
 
 test('generateNoteDraft creates a valid 5-field Note structure from a digest', () => {
   const digest = initialDigests[0];
-  const project = workItems[0];
+  const project = workItems.find(item => item.id === 'ai-seven-dimension-eval');
   const note = generateNoteDraft(digest, project);
 
   assert.ok(note.id);
@@ -50,7 +50,7 @@ test('generateNoteDraft creates a valid 5-field Note structure from a digest', (
 
 test('generateToolboxDraft creates a valid Toolbox structure from a digest', () => {
   const digest = initialDigests[0];
-  const project = workItems[0];
+  const project = workItems.find(item => item.id === 'ai-seven-dimension-eval');
   const tool = generateToolboxDraft(digest, project);
 
   assert.ok(tool.id);

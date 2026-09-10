@@ -1,0 +1,129 @@
+<div id="vh-layouts" aria-label="想与做页面布局讨论稿">
+  <style>
+    #vh-layouts { --vh-bg:light-dark(#f5f7fa,#151d29);--vh-paper:light-dark(#fff,#202c3b);--vh-ink:light-dark(#1d2d43,#edf2f7);--vh-muted:light-dark(#5f6e80,#b2c0cf);--vh-line:light-dark(#dce3eb,#3d4a5c);--vh-accent:light-dark(#31537a,#c2dbff);--vh-soft:light-dark(#eaf0f7,#2b3d53);--vh-green:light-dark(#28795f,#8be0c0);font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;color:var(--vh-ink);background:var(--vh-bg);font-size:14px;line-height:1.7;padding:24px;box-sizing:border-box;border-radius:16px; }
+    #vh-layouts *{box-sizing:border-box}
+    #vh-layouts button,#vh-layouts input{font:inherit}
+    #vh-layouts button{cursor:pointer;color:var(--vh-ink)}
+    #vh-layouts .vh-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+    #vh-layouts .vh-caption{font-size:12px;color:var(--vh-muted)}
+    #vh-layouts .vh-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;border:1px solid var(--vh-line);background:var(--vh-paper);border-radius:32px;margin-bottom:32px;flex-wrap:wrap}
+    #vh-layouts .vh-nav-items{display:flex;gap:4px;flex-wrap:wrap}
+    #vh-layouts .vh-nav button,#vh-layouts .vh-toggle{border:0;background:transparent;border-radius:24px;padding:8px 14px;min-height:44px}
+    #vh-layouts .vh-nav button[aria-current="page"],#vh-layouts .vh-toggle[aria-pressed="true"]{background:var(--vh-soft);color:var(--vh-accent)}
+    #vh-layouts .vh-brand{font-size:19px;font-weight:700}
+    #vh-layouts .vh-brand small{display:block;font-size:10px;letter-spacing:2px;color:var(--vh-muted);font-weight:400}
+    #vh-layouts .vh-page{max-width:950px;margin:auto}
+    #vh-layouts h1{font-size:36px;line-height:1.3;margin:8px 0 12px;font-weight:700}
+    #vh-layouts h2{font-size:24px;line-height:1.4;margin:0;font-weight:600}
+    #vh-layouts h3{font-size:18px;line-height:1.5;margin:10px 0 8px;font-weight:600}
+    #vh-layouts p{margin:6px 0 14px;color:var(--vh-muted)}
+    #vh-layouts .vh-kicker{font-size:11px;letter-spacing:2px;color:var(--vh-green)}
+    #vh-layouts .vh-section{margin:36px 0}
+    #vh-layouts .vh-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+    #vh-layouts .vh-link{background:none;border:0;color:var(--vh-accent);padding:8px 0;text-align:left;min-height:44px}
+    #vh-layouts .vh-card{border:1px solid var(--vh-line);border-radius:18px;overflow:hidden;background:var(--vh-paper)}
+    #vh-layouts .vh-card-inner{padding:20px}
+    #vh-layouts .vh-media{aspect-ratio:16/10;background:var(--vh-soft);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--vh-muted);padding:16px;text-align:center}
+    #vh-layouts .vh-media b{border:1px solid var(--vh-line);border-radius:8px;padding:20px 30px;background:var(--vh-paper);font-weight:500}
+    #vh-layouts .vh-feature{display:grid;grid-template-columns:1.1fr 1fr;margin-bottom:20px}
+    #vh-layouts .vh-feature .vh-media{height:100%;min-height:220px;aspect-ratio:auto}
+    #vh-layouts .vh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+    #vh-layouts .vh-tools{grid-template-columns:repeat(3,minmax(0,1fr))}
+    #vh-layouts .vh-tag{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--vh-soft);font-size:11px;color:var(--vh-muted);margin:0 5px 5px 0}
+    #vh-layouts .vh-row{display:flex;gap:20px;align-items:center;border-bottom:1px solid var(--vh-line);padding:20px 0}
+    #vh-layouts .vh-row-main{flex:1;min-width:0}
+    #vh-layouts .vh-row h3{margin:4px 0}
+    #vh-layouts .vh-row .vh-media{width:120px;min-width:120px;aspect-ratio:16/10;font-size:11px;border-radius:8px}
+    #vh-layouts .vh-row .vh-media b{padding:5px}
+    #vh-layouts .vh-locked{border:1px dashed var(--vh-line);border-radius:18px;padding:20px;margin:14px 0;display:flex;justify-content:space-between;gap:24px;background:var(--vh-paper)}
+    #vh-layouts .vh-locked h3{margin:0 0 5px}
+    #vh-layouts .vh-locked span{color:var(--vh-green);font-size:12px;white-space:nowrap}
+    #vh-layouts .vh-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:24px 0}
+    #vh-layouts .vh-filter button{background:var(--vh-paper);border:1px solid var(--vh-line);border-radius:22px;padding:8px 14px;min-height:44px}
+    #vh-layouts .vh-filter button[aria-pressed="true"]{background:var(--vh-accent);color:var(--vh-bg)}
+    #vh-layouts .vh-search{margin-left:auto;border:1px solid var(--vh-line);background:var(--vh-paper);border-radius:12px;min-width:140px;width:200px;padding:10px 12px;color:var(--vh-ink);font-size:16px}
+    #vh-layouts .vh-reading{display:grid;grid-template-columns:minmax(0,3fr) minmax(140px,1fr);gap:40px;margin-top:28px}
+    #vh-layouts .vh-prose{background:var(--vh-paper);padding:28px;border-radius:16px;min-width:0}
+    #vh-layouts .vh-prose section{margin:0 0 30px;scroll-margin-top:20px}
+    #vh-layouts .vh-prose h2{font-size:21px;margin-bottom:14px}
+    #vh-layouts .vh-lines{height:64px;background:repeating-linear-gradient(transparent 0,transparent 16px,var(--vh-line) 16px,var(--vh-line) 18px,transparent 18px,transparent 25px);opacity:.65;margin:14px 0}
+    #vh-layouts .vh-lines.short{height:40px;width:70%}
+    #vh-layouts .vh-toc{font-size:13px;padding:18px 0}
+    #vh-layouts .vh-toc a{display:block;color:var(--vh-muted);padding:8px 0;text-decoration:none}
+    #vh-layouts .vh-button{border:1px solid var(--vh-line);background:var(--vh-paper);border-radius:24px;min-height:44px;padding:10px 18px;margin-right:8px}
+    #vh-layouts .vh-button.primary{background:var(--vh-accent);color:var(--vh-bg);border-color:var(--vh-accent)}
+    #vh-layouts .vh-operation{border:1px solid var(--vh-line);border-radius:14px;padding:22px;background:var(--vh-soft);margin:24px 0}
+    #vh-layouts pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;color:var(--vh-ink)}
+    #vh-layouts .vh-timeline{border-left:2px solid var(--vh-line);padding-left:22px;margin:20px 0}
+    #vh-layouts .vh-timeline article{margin-bottom:24px}
+    #vh-layouts .vh-foot{border-top:1px solid var(--vh-line);margin-top:40px;padding-top:18px;color:var(--vh-muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px}
+    #vh-layouts .vh-mobile{max-width:390px}
+    #vh-layouts .vh-mobile .vh-grid,#vh-layouts .vh-mobile .vh-feature,#vh-layouts .vh-mobile .vh-reading{grid-template-columns:1fr}
+    #vh-layouts .vh-mobile .vh-row .vh-media{display:none}
+    #vh-layouts .vh-mobile .vh-toc{order:-1;background:var(--vh-paper);border-radius:12px;padding:12px}
+    #vh-layouts .vh-mobile h1{font-size:30px}
+    #vh-layouts .vh-mobile .vh-heading{align-items:start}
+    #vh-layouts .vh-mobile .vh-locked{flex-direction:column;gap:8px}
+    #vh-layouts .vh-mobile .vh-search{width:100%;margin:0}
+    #vh-layouts[data-project-form="rows"] .vh-projects{grid-template-columns:1fr}
+    #vh-layouts[data-project-form="rows"] .vh-projects .vh-card{display:grid;grid-template-columns:180px 1fr}
+    #vh-layouts[data-thumbs="false"] .vh-row .vh-media{display:none}
+    #vh-layouts [hidden]{display:none!important}
+    @media(max-width:650px){#vh-layouts{padding:16px}#vh-layouts h1{font-size:30px}#vh-layouts .vh-nav{padding:12px;border-radius:20px}#vh-layouts .vh-nav button{padding:8px 10px}#vh-layouts .vh-grid,#vh-layouts .vh-feature,#vh-layouts .vh-reading{grid-template-columns:1fr}#vh-layouts .vh-toc{order:-1}#vh-layouts .vh-row .vh-media{display:none}#vh-layouts .vh-locked{flex-direction:column;gap:8px}#vh-layouts .vh-search{width:100%;margin:0}#vh-layouts[data-project-form="rows"] .vh-projects .vh-card{grid-template-columns:1fr}}
+  </style>
+  <div class="vh-toolbar"><span class="vh-caption">布局讨论稿 · 示意字段，不是最终内容</span><div><button class="vh-toggle" data-device="desktop" aria-pressed="true">桌面</button><button class="vh-toggle" data-device="mobile" aria-pressed="false">手机</button></div></div>
+  <div class="vh-page">
+    <nav class="vh-nav" aria-label="页面示意切换"><div class="vh-brand">想与做<small>AI 产品与应用实践</small></div><div class="vh-nav-items"><button data-page="home" aria-current="page">首页</button><button data-page="projects">项目</button><button data-page="articles">文章</button><button data-page="tools">工具</button><button data-page="about">关于</button></div></nav>
+    <main class="vh-content" aria-live="polite"></main>
+    <footer class="vh-foot"><span>想与做 · AI 产品与应用实践</span><span>项目　文章　工具　关于</span></footer>
+  </div>
+  <script>
+    (()=>{
+      const root=document.getElementById('vh-layouts');
+      const content=root.querySelector('.vh-content');
+      const settings={projectForm:'cards',articleThumbnails:false};
+      const titles={home:'首页',projects:'项目',articles:'文章',tools:'工具',about:'关于'};
+      let page='home',filter='全部',query='',toolType='Prompt';
+      const demoProjects=[{title:'项目 A',type:'完整项目',status:'进行中'},{title:'项目 B',type:'快速原型',status:'已验证'},{title:'项目 C',type:'完整项目',status:'已发布'},{title:'项目 D',type:'实验',status:'已完成'}];
+      const demoTools=[{title:'提示词模板',type:'Prompt'},{title:'检查清单',type:'Checklist'},{title:'流程方法',type:'Workflow'}];
+      const media=(label='项目封面')=>`<div class="vh-media"><b>${label}</b><small>统一媒体区 · 16:10</small></div>`;
+      const link=(label,target)=>`<button class="vh-link" data-page="${target}">${label}${label.startsWith('←')?'':' →'}</button>`;
+      const lines=()=>'<div class="vh-lines" aria-hidden="true"></div><div class="vh-lines short" aria-hidden="true"></div>';
+      const project=(p,featured=false)=>`<article class="vh-card ${featured?'vh-feature':''}">${media()}<div class="vh-card-inner"><span class="vh-tag">${p.type}</span><span class="vh-tag">${p.status}</span><h3>${p.title} · 名称与一句价值说明</h3><p>这里展示简短摘要，详细过程留在案例页。</p>${link('查看案例','project-detail')}</div></article>`;
+      const row=(i)=>`<article class="vh-row"><div class="vh-row-main"><small class="vh-caption">发布日期 · 分类 · 阅读时长</small><h3>文章 ${i} · 标题的位置与阅读层级</h3><p>一到两行摘要，帮助读者决定是否打开。</p>${link('阅读全文','article-detail')}</div>${media('可选缩略图')}</article>`;
+      const tool=(t)=>`<article class="vh-card"><div class="vh-card-inner"><span class="vh-tag">${t.type}</span><h3>${t.title}</h3><p>一行用途说明，说明打开后能获得什么。</p><button class="vh-link" data-tool="${t.type}">查看工具 →</button></div></article>`;
+      const head=(k,t,d)=>`<div class="vh-kicker">${k}</div><h1>${t}</h1><p>${d}</p>`;
+      const section=(title,target,body)=>`<section class="vh-section"><div class="vh-heading"><h2>${title}</h2>${link('查看全部',target)}</div>${body}</section>`;
+      function controls(values){return `<div class="vh-filter" aria-label="筛选示意">${values.map(v=>`<button data-filter="${v}" aria-pressed="${v===filter}">${v}</button>`).join('')}<input class="vh-search" aria-label="搜索当前栏目" placeholder="搜索" value="${query}"></div>`;}
+      const toc=(labels)=>`<aside class="vh-toc"><details open><summary>本页目录</summary>${labels.map((l,i)=>`<a href="#vh-sec-${i}">${l}</a>`).join('')}</details></aside>`;
+      function render(){
+        const active=page.startsWith('project')?'projects':page.startsWith('article')?'articles':page==='tool-detail'?'tools':page;
+        root.querySelectorAll('.vh-nav [data-page]').forEach(b=>{if(b.dataset.page===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+        if(page==='home')content.innerHTML=`<div class="vh-locked"><div><h3>01 · 首屏</h3><p>主标题、行动按钮、三张统计卡与互动书桌</p></div><span>沿用已确认设计</span></div><div class="vh-locked"><div><h3>02 · 关于我与这里</h3><p>自述、学习插画与三个内容入口</p></div><span>沿用已确认设计</span></div>${section('03 · 精选项目','projects',project(demoProjects[0],true)+`<div class="vh-grid">${demoProjects.slice(1,3).map(p=>project(p)).join('')}</div>`)}${section('04 · 近期文章','articles',[1,2,3].map(row).join(''))}${section('05 · 工具与方法','tools',`<div class="vh-grid vh-tools">${demoTools.map(tool).join('')}</div>`)}<section class="vh-section"><h2>保持联系</h2><p>简短联系入口，自然收束首页。</p>${link('了解更多关于我','about')}</section>`;
+        if(page==='projects'){content.innerHTML=head('PROJECTS','项目与实验','紧凑页头 · 封面卡片 · 类型与状态')+controls(['全部','完整项目','快速原型','实验'])+'<div class="vh-grid vh-projects" data-results></div>';results();}
+        if(page==='articles'){content.innerHTML=head('WRITING','文章与笔记','单列阅读列表 · 封面可选 · 标题优先')+controls(['全部','文章','阅读','概念'])+'<div data-results></div>';results();}
+        if(page==='tools'){content.innerHTML=head('TOOLBOX','工具与方法','按类型浏览，进入详情即可复制、勾选或使用')+controls(['全部','Prompt','Checklist','Workflow'])+'<div class="vh-grid vh-tools" data-results></div>';results();}
+        if(page==='project-detail'){const labels=['项目概览','过程与关键选择','展示与结果'];content.innerHTML=link('← 返回项目','projects')+head('PROJECT / CASE','项目名称','一句摘要，说明项目的用途与当前范围。')+'<div><span class="vh-tag">进行中</span><span class="vh-tag">角色</span><span class="vh-tag">时间</span></div>'+media('项目封面或演示')+`<div class="vh-reading"><div class="vh-prose">${labels.map((l,i)=>`<section id="vh-sec-${i}"><h2>${l}</h2>${lines()}${i===1?media('过程图 / 截图 / 对比'):''}</section>`).join('')}<p>可选章节随内容出现。</p>${link('相关项目','projects')}</div>${toc(labels)}</div>`;}
+        if(page==='article-detail'){const labels=['问题与背景','观点或实践过程','总结与延伸'];content.innerHTML=link('← 返回文章','articles')+head('ARTICLE','文章标题：清晰表达一个主题','摘要区域，可留空；正文无需固定成问答表单。')+'<span class="vh-caption">发布日期 · 分类 · 阅读时长 · 可选更新时间</span>'+`<div class="vh-reading"><div class="vh-prose">${labels.map((l,i)=>`<section id="vh-sec-${i}"><h2>${l}</h2>${lines()}${i===1?'<div class="vh-operation">提示块、图片、代码或交互演示</div>':''}</section>`).join('')}${link('相关文章','articles')}</div>${toc(labels)}</div>`;}
+        if(page==='tool-detail'){content.innerHTML=link('← 返回工具','tools')+head('TOOL / '+toolType,demoTools.find(t=>t.type===toolType).title,'说明用途与适用场景，核心操作直接可见。')+`<div class="vh-operation">${toolType==='Checklist'?'<h3>可勾选清单</h3>'+['检查项一','检查项二','检查项三'].map(x=>`<label style="display:block;padding:8px 0"><input type="checkbox"> ${x}</label>`).join('')+'<button class="vh-button" data-reset>重置</button>':`<h3>${toolType==='Prompt'?'模板内容':'操作步骤'}</h3><pre data-copytext>${toolType==='Prompt'?'任务：填写本次目标\n输入：填写所需材料\n输出：填写期望格式':'1. 准备输入材料\n2. 按步骤执行\n3. 核对输出结果'}</pre><button class="vh-button primary" data-copy>复制${toolType==='Prompt'?'模板':'步骤'}</button><span class="vh-caption" data-feedback></span>`}</div><div class="vh-prose"><h2>如何使用</h2>${lines()}<h2>示例与补充说明</h2>${lines()}</div>`;}
+        if(page==='about')content.innerHTML=head('ABOUT','关于我','个人介绍与经历采用自然展开的版式')+`<div class="vh-feature"><div class="vh-media"><b>照片 / 插画</b></div><div class="vh-card-inner"><h2>姓名与当前身份</h2><p>简短介绍，说明目前在做什么。</p><span class="vh-tag">联系方式</span><span class="vh-tag">社交入口</span></div></div><div class="vh-reading"><div class="vh-prose"><h2>我的经历与建站动机</h2>${lines()}<h2>经历 / 学习路径</h2><div class="vh-timeline">${['现在','上一阶段','起点'].map(x=>`<article><small class="vh-caption">${x}</small><h3>阶段名称</h3><p>一段简短说明，按实际经历自然增减。</p></article>`).join('')}</div><h2>代表实践</h2>${link('查看项目','projects')}</div><aside class="vh-card"><div class="vh-card-inner"><span class="vh-kicker">NOW</span><h3>最近在关注</h3><p>近况内容</p><h3>兴趣与方向</h3><p>少量关键词与说明</p></div></aside></div>`;
+        applySettings();
+        const details=root.querySelector('.vh-toc details');if(details)details.open=!root.querySelector('.vh-page').classList.contains('vh-mobile');
+      }
+      function results(){const holder=content.querySelector('[data-results]');if(!holder)return;let html='';const q=query.toLowerCase();if(page==='projects')html=demoProjects.filter(p=>(filter==='全部'||p.type===filter)&&p.title.toLowerCase().includes(q)).map(p=>project(p)).join('');if(page==='tools')html=demoTools.filter(t=>(filter==='全部'||t.type===filter)&&t.title.toLowerCase().includes(q)).map(tool).join('');if(page==='articles')html=[1,2,3,4].filter(i=>(filter==='全部'||['文章','阅读','概念','文章'][i-1]===filter)&&('文章 '+i).includes(q)).map(row).join('');holder.innerHTML=html||'<p>没有匹配内容，请更换搜索词或清除筛选。</p>';}
+      function applySettings(){root.dataset.projectForm=settings.projectForm;root.dataset.thumbs=String(settings.articleThumbnails);}
+      root.addEventListener('input',e=>{if(e.target.matches('.vh-search')){query=e.target.value;results();}});
+      root.addEventListener('click',async e=>{
+        const b=e.target.closest('button');if(!b)return;
+        if(b.dataset.page){page=b.dataset.page;filter='全部';query='';render();}
+        if(b.dataset.tool){toolType=b.dataset.tool;page='tool-detail';render();}
+        if(b.dataset.filter){filter=b.dataset.filter;root.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.filter===filter)));results();}
+        if(b.dataset.device){root.querySelector('.vh-page').classList.toggle('vh-mobile',b.dataset.device==='mobile');root.querySelectorAll('[data-device]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));const d=root.querySelector('.vh-toc details');if(d)d.open=b.dataset.device==='desktop';}
+        if(b.hasAttribute('data-reset'))root.querySelectorAll('input[type=checkbox]').forEach(x=>x.checked=false);
+        if(b.hasAttribute('data-copy')){const f=root.querySelector('[data-feedback]');try{await navigator.clipboard.writeText(root.querySelector('[data-copytext]').textContent);f.textContent='已复制示意模板';}catch{f.textContent='可选中上方文字手动复制';}}
+      });
+      render();
+      if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:applySettings});tweak.addSelect(settings,'projectForm',{label:'项目栏目布局',options:[{label:'两列封面卡（推荐）',value:'cards'},{label:'横向列表',value:'rows'}]});tweak.addToggle(settings,'articleThumbnails',{label:'文章显示缩略图'});}
+    })();
+  </script>
+</div>

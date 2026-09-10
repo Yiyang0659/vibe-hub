@@ -1,8 +1,11 @@
 export function createPracticeRuntime(context) {
-  const { main, state, practice, lessons, topicsWithDomain, WHY_LOOKUP, papers, library, aboutData, getAllNotes, getAllWork, getAllToolbox, getAllDigests, topicById, noteById, paperById, workById, toolById, categoryOf, showToast, saveState, isFavorite, isCompleted, toggleCompleted, renderTopicsIndex, mountTopicsIndex, renderArticlesIndex, renderReadingIndex, renderWorkIndex, renderToolboxIndex, renderLibraryIndex, renderRelatedTrail, escapeHTML, openQuickCaptureModal, calculateProgress } = context;
+  const { main, state, lessons, topicsWithDomain, WHY_LOOKUP, papers, library, aboutData, getAllNotes, getAllWork, getAllToolbox, getAllDigests, topicById, noteById, paperById, workById, toolById, categoryOf, showToast, saveState, isFavorite, isCompleted, toggleCompleted, renderTopicsIndex, mountTopicsIndex, renderArticlesIndex, renderReadingIndex, renderWorkIndex, renderToolboxIndex, renderLibraryIndex, renderRelatedTrail, escapeHTML, openQuickCaptureModal, calculateProgress } = context;
 
+let practice = context.practice;
 function renderPractice() {
-  const current = lessons[practice.index % lessons.length];
+  const quizLessons = lessons.filter(item => item.question?.choices?.length && item.publication !== 'draft');
+  if (!quizLessons.length) { main.innerHTML = '<section class="learning-page site-container"><h1>还没有练习题</h1><a href="#/learning">返回学习</a></section>'; return; }
+  const current = quizLessons[practice.index % quizLessons.length];
   const cat = categoryOf(current.category);
   const answered = practice.selected !== null;
   const isCorrect = practice.selected === current.question.answer;
@@ -19,7 +22,7 @@ function renderPractice() {
 
       <div class="practice-board reveal" style="--route-color:${cat.accent}">
         <div class="practice-stats">
-          <span>PROGRESS</span><strong>${String((practice.index % lessons.length) + 1).padStart(2, '0')} / ${String(lessons.length).padStart(2, '0')}</strong>
+          <span>PROGRESS</span><strong>${String((practice.index % quizLessons.length) + 1).padStart(2, '0')} / ${String(quizLessons.length).padStart(2, '0')}</strong>
           <span>ACCURACY</span><strong>${state.practiceAnswered ? Math.round((state.practiceCorrect / state.practiceAnswered) * 100) : 0}%</strong>
         </div>
         <div class="practice-question">

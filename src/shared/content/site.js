@@ -41,7 +41,7 @@ export const site = {
   // 页脚
   footerLinks: [
     { label: 'Work', href: '#/work' },
-    { label: 'Writing', href: '#/notes' },
+    { label: 'Learning', href: '#/learning' },
     { label: 'About', href: '#/about' }
   ]
 };

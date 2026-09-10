@@ -1,3 +1,4 @@
+import { isPublished } from '../shared/content/validation.js';
 import { categories, lessons, createTopicsRuntime } from '../features/topics/index.js';
 import {
   currentFocus,
@@ -56,6 +57,7 @@ let practice = { index: 0, selected: null };
 let toastTimer;
 let captureMaterials = [];
 let searchCursor = 0;
+let routeFailed = false;
 
 const main = document.querySelector('#main-content');
 const searchDialog = document.querySelector('#search-dialog');
@@ -100,11 +102,11 @@ function getAllDigests() {
 }
 
 function topicById(id) {
-  return lessons.find(l => l.id === id);
+  return lessons.find(l => l.id === id && l.publication !== 'draft');
 }
 
 function noteById(id) {
-  return getAllNotes().find(n => n.id === id);
+  return getAllNotes().find(n => n.id === id && n.publication !== 'draft');
 }
 
 function paperById(id) {
@@ -112,11 +114,11 @@ function paperById(id) {
 }
 
 function workById(id) {
-  return getAllWork().find(w => w.id === id);
+  return getAllWork().find(w => w.id === id && w.publication !== 'draft');
 }
 
 function toolById(id) {
-  return getAllToolbox().find(t => t.id === id);
+  return getAllToolbox().find(t => t.id === id && t.publication !== 'draft');
 }
 
 function categoryOf(name) {
@@ -246,7 +248,8 @@ const featureContext = {
   renderRelatedTrail,
   escapeHTML,
   openQuickCaptureModal,
-  calculateProgress
+  calculateProgress,
+  renderNotFound
 };
 
 const { renderTopics, renderTopicDetail } = createTopicsRuntime(featureContext);
@@ -261,6 +264,7 @@ const { renderPractice } = createPracticeRuntime(featureContext);
 const { resolveFavorite, renderSaved } = createSavedRuntime(featureContext);
 
 function renderNotFound() {
+  routeFailed = true;
   main.innerHTML = `
     <section class="not-found page-view">
       <span>404</span>
@@ -309,7 +313,7 @@ function updateGlobalSearch() {
 
   const rowHtml = (item) => `
     <a href="${item.url}" data-search-result class="sg-row sg-row--${item.type.toLowerCase()}">
-      <span class="sg-type">${typeLabel[item.type] || item.type}</span>
+      <span class="sg-type">${escapeHTML(item.typeLabel || typeLabel[item.type] || item.type)}</span>
       <span class="sg-main">
         <span class="sg-title">${escapeHTML(item.title)}</span>
         <span class="sg-desc">${escapeHTML([item.english, item.excerpt].filter(Boolean).join(' · '))}</span>
@@ -318,9 +322,9 @@ function updateGlobalSearch() {
     </a>`;
 
   if (!query) {
-    const latestNote = [...getAllNotes()].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
-    const featuredWork = getAllWork().find((item) => item.kind === 'PROJECT') || getAllWork()[0];
-    const featuredTool = getAllToolbox()[0];
+    const latestNote = [...getAllNotes().filter(isPublished)].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+    const featuredWork = getAllWork().filter(isPublished).find((item) => item.kind === 'PROJECT') || getAllWork().filter(isPublished)[0];
+    const featuredTool = getAllToolbox().filter(isPublished)[0];
     const starters = [
       featuredWork && { type: '项目', title: featuredWork.title, desc: featuredWork.summary, url: `#/work/${featuredWork.id}` },
       latestNote && { type: '思考', title: latestNote.title, desc: latestNote.oneLiner, url: `#/notes/${latestNote.id}` },
@@ -582,6 +586,7 @@ function toggleSiteMenu() {
 }
 
 function route() {
+  routeFailed = false;
   const { routeName, id, query } = parseHash(location.hash);
   const normalizedRoute = normalizeRouteName(routeName);
   const params = new URLSearchParams(query);
@@ -599,8 +604,8 @@ function route() {
     if (!id) renderTopics(params);
     else renderTopicDetail(id);
   }
-  else if (routeName === 'notes') {
-    if (!id) renderNotes();
+  else if (routeName === 'notes' || routeName === 'learning') {
+    if (!id) renderNotes(params);
     else renderNoteDetail(id);
   }
   else if (routeName === 'papers' || routeName === 'reading') {
@@ -628,7 +633,8 @@ function route() {
     home: { title: `${site.name} — ${site.tagline}`, description: '关于 AI 产品、Agent 与应用工程的项目、文章和实用工具。' },
     work: { title: `项目 · ${site.name}`, description: '真正动手做过或验证过的 AI 产品、原型与实验。' },
     projects: { title: `项目 · ${site.name}`, description: '真正动手做过或验证过的 AI 产品、原型与实验。' },
-    notes: { title: `文章 · ${site.name}`, description: '从项目与阅读中留下的 AI 产品、Agent 和工程思考。' },
+    learning: { title: `学习 · ${site.name}`, description: '记录知识、笔记与学习过程。' },
+    notes: { title: `学习 · ${site.name}`, description: '从项目与阅读中留下的 AI 产品、Agent 和工程思考。' },
     topics: { title: `术语 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
     topic: { title: `术语 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
     lesson: { title: `术语 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
@@ -646,13 +652,13 @@ function route() {
   };
   const detail =
     (routeName === 'topics' || routeName === 'topic' || routeName === 'lesson') && id ? topicById(id)
-    : routeName === 'notes' && id ? noteById(id)
+    : (routeName === 'notes' || routeName === 'learning') && id ? noteById(id)
     : (routeName === 'work' || routeName === 'projects') && id ? workById(id)
     : (routeName === 'papers' || routeName === 'reading') && id ? paperById(id)
     : (routeName === 'toolbox' || routeName === 'playbooks') && id ? toolById(id)
     : null;
   const detailDescription = detail && (detail.excerpt || detail.oneLiner || detail.summary || detail.problemSolved || detail.problem);
-  const meta = detail
+  const meta = routeFailed ? {title: '页面未找到 · ' + site.name, description: '这个页面暂时不存在。'} : detail
     ? { title: `${detail.title} · ${site.name}`, description: detailDescription || routeMeta[routeName]?.description }
     : routeMeta[routeName] || { title: `页面未找到 · ${site.name}`, description: '这个页面暂时不存在。' };
   applyPageMeta(meta);
@@ -744,7 +750,10 @@ window.addEventListener('resize', () => {
 
 // 快捷键 /
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeSiteMenu();
+  if (e.key === 'Escape') {
+    closeSiteMenu();
+    if (searchDialog.open) searchDialog.close();
+  }
   if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
     e.preventDefault();
     document.querySelector('#search-launcher')?.click();

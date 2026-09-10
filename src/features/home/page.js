@@ -1,3 +1,5 @@
+import { isPublished } from '../../shared/content/validation.js';
+import { homeLearningSections } from '../learning/home-sections.js';
 /**
  * 首页：参考成熟个人作品站的信息架构，以项目、方法与文章呈现个人能力。
  */
@@ -9,20 +11,6 @@ function esc(value = '') {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
   })[char]);
 }
-function formatDate(iso = '') {
-  if (!iso) return '';
-  const d = new Date(iso);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
-
-function readTime(note = {}) {
-  if (note.duration) return `${note.duration} 分钟`;
-  return `${Math.max(1, Math.round(String(note.myUnderstanding || note.oneLiner || '').length / 450))} 分钟`;
-}
-
 function characterHtml() {
   return `
     <div class="h-character-stage" aria-label="可互动的个人插画">
@@ -72,9 +60,9 @@ function characterHtml() {
 }
 
 function heroHtml(ctx) {
-  const projects = (ctx.work || []).filter((item) => item.kind === 'PROJECT').length;
-  const notes = (ctx.notes || []).length;
-  const tools = (ctx.toolbox || []).length;
+  const concepts = (ctx.lessons || []).filter(isPublished).length;
+  const notes = (ctx.notes || []).filter(isPublished).length;
+  const tools = (ctx.toolbox || []).filter(isPublished).length;
 
   return `
     <section class="zh-hero">
@@ -82,17 +70,17 @@ function heroHtml(ctx) {
         <div class="zh-hero-copy">
           <p class="zh-pill"><span aria-hidden="true">&gt;_</span> AI PRODUCT / AGENT / BUILDING <i aria-hidden="true"></i></p>
           <h1>把 AI 想明白，<br>也把它做出来。</h1>
-          <p class="zh-hero-lead">围绕 AI Evaluation、Agent 和真实产品场景，记录我如何拆解问题、搭建原型、验证结果，再把方法留给下一次使用。</p>
+          <p class="zh-hero-lead">记录学习 AI、产品和开发时遇到的问题，把逐渐弄懂的概念、动手尝试的过程，以及有用的小工具整理在这里。</p>
 
           <div class="zh-hero-actions">
-            <a class="zh-button zh-button--primary" href="#/work">查看项目 <span aria-hidden="true">→</span></a>
-            <a class="zh-button zh-button--secondary" href="#/notes">读最近文章 <span aria-hidden="true">&lt;/&gt;</span></a>
+            <a class="zh-button zh-button--primary" href="#/learning">浏览学习记录 <span aria-hidden="true">→</span></a>
+            <a class="zh-button zh-button--secondary" href="#/work">看看我的实践 <span aria-hidden="true">&lt;/&gt;</span></a>
           </div>
 
           <div class="zh-metrics" aria-label="内容概览">
-            <div><strong>${projects || '03'}</strong><span>持续迭代的完整项目</span></div>
-            <div><strong>${notes || 'AI'}</strong><span>来自实践的思考与文章</span></div>
-            <div><strong>${tools || '0→1'}</strong><span>可复用的方法与工具</span></div>
+            <div><strong>${concepts}</strong><span>整理中的知识条目</span></div>
+            <div><strong>${notes}</strong><span>理解与学习记录</span></div>
+            <div><strong>${tools}</strong><span>小工具与复用方法</span></div>
           </div>
 
         </div>
@@ -136,18 +124,9 @@ function heroHtml(ctx) {
     </section>`;
 }
 
-function sectionIntro(label, title, desc = '') {
-  return `
-    <div class="zh-section-intro">
-      <p class="zh-section-label"><span aria-hidden="true">⌁</span> ${label}</p>
-      <h2>${title}</h2>
-      ${desc ? `<p>${desc}</p>` : ''}
-    </div>`;
-}
-
 function aboutSection() {
   const entries = [
-    { name: '文章与笔记', route: 'notes', tone: 'green', description: '从一个没弄懂的问题开始，记录理解、判断与复盘。', icon: '<path d="M14 21H5V3h14v9M9 8h6M9 12h4M9 16h2m4 5 1-4 5-5 3 3-5 5-4 1Z"/>' },
+    { name: '知识与学习笔记', route: 'learning', tone: 'green', description: '从一个没弄懂的问题开始，记录理解、判断与复盘。', icon: '<path d="M14 21H5V3h14v9M9 8h6M9 12h4M9 16h2m4 5 1-4 5-5 3 3-5 5-4 1Z"/>' },
     { name: '项目与实验', route: 'work', tone: 'blue', description: '把想法做成原型或实际应用，留下过程、取舍和验证结果。', icon: '<path d="M6 3h9l5 5v13H6ZM15 3v6h5"/>' },
     { name: '工具与方法', route: 'toolbox', tone: 'purple', description: '把实践中有用的提示词、清单和流程整理下来，方便再次使用。', icon: '<path d="M9 5H5v17h15V5h-4M9 3h7v5H9Zm0 12 3 3 5-6"/>' }
   ];
@@ -169,120 +148,6 @@ function aboutSection() {
               <h4>${entry.name}</h4><p>${entry.description}</p><span class="zh-guide-arrow" aria-hidden="true">→</span>
             </a></li>`).join('')}
           </ul>
-        </div>
-      </div>
-    </section>`;
-}
-
-function projectsSection(work = []) {
-  const items = work.slice(0, 4);
-  if (!items.length) return '';
-
-  return `
-    <section class="zh-section zh-project-section" id="home-work">
-      <div class="zh-container">
-        ${sectionIntro(
-          '代表项目',
-          '先讲问题，再讲项目。',
-          '这些项目不只展示结果，也保留关键选择、验证过程和我从中学到的东西。'
-        )}
-        <div class="zh-project-grid">
-          ${items.map((item, index) => `
-            <a class="zh-project-card" href="#/work/${esc(item.id)}">
-              <div class="zh-project-card-top">
-                <span>${esc(item.kindLabel || item.kind || 'PROJECT')}</span>
-                <b>0${index + 1}</b>
-              </div>
-              <h3>${esc(item.title)}</h3>
-              <p class="zh-project-question">${esc(item.problem || item.summary || '')}</p>
-              <p class="zh-project-summary">${esc(item.summary || item.solution || '')}</p>
-              <footer>
-                <span>${esc(item.statusLabel || item.status || '查看项目')}</span>
-                <b>查看项目 →</b>
-              </footer>
-            </a>`).join('')}
-        </div>
-        <a class="zh-button zh-button--small" href="#/work">查看全部项目 <span aria-hidden="true">→</span></a>
-      </div>
-    </section>`;
-}
-
-function methodsSection(toolbox = []) {
-  const items = toolbox.slice(0, 6);
-  if (!items.length) return '';
-
-  return `
-    <section class="zh-section zh-method-section" id="home-tools">
-      <div class="zh-container zh-method-grid">
-        <div>
-          ${sectionIntro(
-            '我如何工作',
-            '小工具，也要边界清楚。',
-            '把常用的判断方式、提示词和检查清单留下来，让下一次解决问题更直接。'
-          )}
-          <a class="zh-button zh-button--secondary zh-button--small" href="#/toolbox">浏览全部工具 <span aria-hidden="true">→</span></a>
-        </div>
-        <div class="zh-method-list">
-          ${items.map((tool, index) => `
-            <a href="#/toolbox/${esc(tool.id)}">
-              <span>0${index + 1}</span>
-              <div>
-                <h3>${esc(tool.title)}</h3>
-                <p>${esc(tool.problemSolved || tool.subtitle || '')}</p>
-              </div>
-              <b aria-hidden="true">↗</b>
-            </a>`).join('')}
-        </div>
-      </div>
-    </section>`;
-}
-
-function notesSection(notes = []) {
-  const items = notes.slice(0, 3);
-  if (!items.length) return '';
-
-  return `
-    <section class="zh-section" id="home-writing">
-      <div class="zh-container">
-        ${sectionIntro(
-          '近期文章',
-          '写下判断，也保留还没想清楚的地方。',
-          '文章从具体项目和问题出发，记录方法、取舍与下一步验证方向。'
-        )}
-        <div class="zh-note-list">
-          ${items.map((note, index) => `
-            <a class="zh-note-card" href="#/notes/${esc(note.id)}">
-              <div class="zh-note-main">
-                <p class="zh-note-meta"><span>${formatDate(note.date)}</span><i></i><span>约 ${readTime(note)}</span></p>
-                <h3>${esc(note.title)}</h3>
-                <p>${esc(note.oneLiner || note.myTake || '')}</p>
-                <span class="zh-note-tag">${esc(note.category || 'NOTE')}</span>
-              </div>
-              <aside>
-                <span>note/</span>
-                <strong>00${index + 1}</strong>
-                <b>阅读全文 →</b>
-              </aside>
-            </a>`).join('')}
-        </div>
-        <a class="zh-button zh-button--small" href="#/notes">阅读全部文章 <span aria-hidden="true">→</span></a>
-      </div>
-    </section>`;
-}
-
-function closingSection() {
-  return `
-    <section class="zh-closing">
-      <div class="zh-container">
-        <div class="zh-closing-card">
-          <div>
-            <p>AI-READABLE PORTFOLIO</p>
-            <h2>先看项目，<br>再看它们如何长成文章。</h2>
-          </div>
-          <div class="zh-closing-actions">
-            <a class="zh-button zh-button--light" href="#/work">从项目开始 →</a>
-            <a href="#/about">了解我正在做什么</a>
-          </div>
         </div>
       </div>
     </section>`;
@@ -313,10 +178,7 @@ export function renderHomeView(ctx) {
       <div class="home-main">
         ${heroHtml(ctx)}
         ${aboutSection()}
-        ${projectsSection(ctx.work)}
-        ${methodsSection(ctx.toolbox)}
-        ${notesSection(ctx.notes)}
-        ${closingSection()}
+        ${homeLearningSections(ctx)}
       </div>
       ${footerHtml()}
     </article>`;

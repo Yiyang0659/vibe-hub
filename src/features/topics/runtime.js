@@ -1,10 +1,12 @@
+import { renderKnowledge } from './detail.js';
+import { isPublished } from '../../shared/content/validation.js';
 export function createTopicsRuntime(context) {
-  const { main, state, practice, lessons, topicsWithDomain, WHY_LOOKUP, papers, library, aboutData, getAllNotes, getAllWork, getAllToolbox, getAllDigests, topicById, noteById, paperById, workById, toolById, categoryOf, showToast, saveState, isFavorite, isCompleted, toggleCompleted, renderTopicsIndex, mountTopicsIndex, renderArticlesIndex, renderReadingIndex, renderWorkIndex, renderToolboxIndex, renderLibraryIndex, renderRelatedTrail, escapeHTML, openQuickCaptureModal, calculateProgress } = context;
+  const { main, state, practice, lessons, topicsWithDomain, WHY_LOOKUP, papers, library, aboutData, getAllNotes, getAllWork, getAllToolbox, getAllDigests, topicById, noteById, paperById, workById, toolById, categoryOf, showToast, saveState, isFavorite, isCompleted, toggleCompleted, renderTopicsIndex, mountTopicsIndex, renderArticlesIndex, renderReadingIndex, renderWorkIndex, renderToolboxIndex, renderLibraryIndex, renderRelatedTrail, escapeHTML, openQuickCaptureModal, calculateProgress, renderNotFound } = context;
 
 function renderTopics(params) {
-  main.innerHTML = renderTopicsIndex({ topics: topicsWithDomain, params });
+  main.innerHTML = renderTopicsIndex({ topics: topicsWithDomain.filter(isPublished), params });
   mountTopicsIndex({
-    topics: topicsWithDomain,
+    topics: topicsWithDomain.filter(isPublished),
     initialDomain: params.get('domain') || 'all',
     isCompleted
   });
@@ -12,21 +14,21 @@ function renderTopics(params) {
 
 function renderTopicDetail(id) {
   const lesson = topicById(id);
-  if (!lesson) return renderNotFound();
+  if (!lesson || lesson.publication === 'draft') return renderNotFound();
   const cat = categoryOf(lesson.category);
   state.lastViewed = id;
   saveState();
 
-  const relatedLessons = lesson.related.map(topicById).filter(Boolean);
-  const relatedNotes = getAllNotes().filter(n => (n.relatedTopics || []).includes(id));
-  const relatedWork = getAllWork().filter(w => (w.relatedTopics || []).includes(id));
-  const relatedTools = getAllToolbox().filter(t => (t.relatedTopics || []).includes(id));
-  const trailGraph = { notes: getAllNotes(), work: getAllWork(), toolbox: getAllToolbox() };
+  const relatedLessons = (lesson.related || []).map(topicById).filter(x => x && isPublished(x));
+  const relatedNotes = getAllNotes().filter(isPublished).filter(n => (n.relatedTopics || []).includes(id));
+  const relatedWork = getAllWork().filter(isPublished).filter(w => (w.relatedTopics || []).includes(id));
+  const relatedTools = getAllToolbox().filter(isPublished).filter(t => (t.relatedTopics || []).includes(id));
+  const trailGraph = { notes: getAllNotes().filter(isPublished), work: getAllWork().filter(isPublished), toolbox: getAllToolbox().filter(isPublished) };
 
-  main.innerHTML = `
+  main.innerHTML = lesson.scenario ? `
     <article class="lesson-page page-view portfolio-detail concept-detail" style="--route-color:${cat.accent}">
       <nav class="breadcrumb reveal" aria-label="面包屑">
-        <a href="#/notes">文章</a>
+        <a href="#/learning">学习</a>
         <span>/</span>
         <a href="#/topics">概念索引</a>
         <span>/</span>
@@ -39,11 +41,11 @@ function renderTopicDetail(id) {
           <h1 class="detail-title">${escapeHTML(lesson.title)}</h1>
           <p class="detail-meta">${escapeHTML(lesson.english)}${lesson.aliases?.length ? ` · AKA ${lesson.aliases.map(escapeHTML).join(' / ')}` : ''}</p>
           <p class="concept-lead">${escapeHTML(lesson.excerpt)}</p>
-          <div class="tag-row concept-tags">${lesson.tags.map(t => `<span>${escapeHTML(t)}</span>`).join('')}</div>
+          <div class="tag-row concept-tags">${(lesson.tags || []).map(t => `<span>${escapeHTML(t)}</span>`).join('')}</div>
         </div>
         <div class="concept-hero-side">
           <dl class="concept-facts">
-            <div><dt>理解成本</dt><dd>${lesson.duration} 分钟</dd></div>
+            <div><dt>理解成本</dt><dd>${lesson.duration || '—'} 分钟</dd></div>
             <div><dt>当前层级</dt><dd>${escapeHTML(lesson.level)}</dd></div>
             <div><dt>所属方向</dt><dd>${escapeHTML(lesson.category)}</dd></div>
           </dl>
@@ -56,24 +58,24 @@ function renderTopicDetail(id) {
       <div class="lesson-layout concept-layout">
         <aside class="lesson-toc concept-toc reveal" aria-label="本页章节">
           <span>ON THIS PAGE</span>
-          <a class="is-active" href="#/topics/${id}" data-scroll-target="sec-lookup">01 从哪里遇到它</a>
+          ${WHY_LOOKUP[id] || lesson.userSays || lesson.why ? `<a class="is-active" href="#/topics/${id}" data-scroll-target="sec-lookup">01 从哪里遇到它</a>` : ''}
           <a href="#/topics/${id}" data-scroll-target="sec-def">02 一句话理解</a>
-          <a href="#/topics/${id}" data-scroll-target="sec-why">03 为什么重要</a>
-          <a href="#/topics/${id}" data-scroll-target="sec-used">04 在哪里用过</a>
+          ${lesson.why || lesson.points?.length ? `<a href="#/topics/${id}" data-scroll-target="sec-why">03 为什么重要</a>` : ''}
+          ${relatedLessons.length || relatedNotes.length || relatedWork.length || relatedTools.length ? `<a href="#/topics/${id}" data-scroll-target="sec-used">04 在哪里用过</a>` : ''}
           ${lesson.scenario ? `<a href="#/topics/${id}" data-scroll-target="sec-lab">05 看它如何工作</a>` : ''}
           <a href="#/topics/${id}" data-scroll-target="sec-exp">${lesson.scenario ? '06' : '05'} 真实例子</a>
-          <a href="#/topics/${id}" data-scroll-target="sec-pit">${lesson.scenario ? '07' : '06'} 容易误解什么</a>
-          <a href="#/topics/${id}" data-scroll-target="sec-chk">${lesson.scenario ? '08' : '07'} 下次怎么做</a>
-          <a href="#/topics/${id}" data-scroll-target="sec-chk2">${lesson.scenario ? '09' : '08'} 快速校准</a>
+          ${lesson.pitfalls?.length ? `<a href="#/topics/${id}" data-scroll-target="sec-pit">${lesson.scenario ? '07' : '06'} 容易误解什么</a>` : ''}
+          ${lesson.checklist?.length ? `<a href="#/topics/${id}" data-scroll-target="sec-chk">${lesson.scenario ? '08' : '07'} 下次怎么做</a>` : ''}
+          ${lesson.question?.choices?.length ? `<a href="#/topics/${id}" data-scroll-target="sec-chk2">${lesson.scenario ? '09' : '08'} 快速校准</a>` : ''}
           <a href="#/topics/${id}" data-scroll-target="sec-note">${lesson.scenario ? '10' : '09'} 留下笔记</a>
         </aside>
 
         <div class="lesson-content concept-content">
-          <section id="sec-lookup" class="content-section concept-origin reveal">
+          ${WHY_LOOKUP[id] || lesson.userSays || lesson.why ? `<section id="sec-lookup" class="content-section concept-origin reveal">
             <p class="section-no">01 / WHY THIS CAME UP</p>
             <h2>我从哪里遇到它？</h2>
-            <p>${escapeHTML(WHY_LOOKUP[id] || `我通常会在这个问题出现时回到这个概念：${lesson.userSays || lesson.why}`)}</p>
-          </section>
+            <p>${escapeHTML(WHY_LOOKUP[id] || `我通常会在这个问题出现时回到这个概念：${lesson.userSays || lesson.why || ''}`)}</p>
+          </section>` : ''}
 
           <section id="sec-def" class="content-section reveal">
             <p class="section-no">02 / A WORKING DEFINITION</p>
@@ -82,16 +84,16 @@ function renderTopicDetail(id) {
             ${lesson.userSays ? `<div class="user-says"><span>它通常以这个问题出现</span><p>${escapeHTML(lesson.userSays)}</p></div>` : ''}
           </section>
 
-          <section id="sec-why" class="content-section reveal">
+          ${lesson.why || lesson.points?.length ? `<section id="sec-why" class="content-section reveal">
             <p class="section-no">03 / WHY IT MATTERS</p>
             <h2>为什么值得理解？</h2>
             <p>${escapeHTML(lesson.why)}</p>
             <div class="key-points">
-              ${lesson.points.map((pt, i) => `<div><span>0${i + 1}</span><p>${escapeHTML(pt)}</p></div>`).join('')}
+              ${(lesson.points || []).map((pt, i) => `<div><span>0${i + 1}</span><p>${escapeHTML(pt)}</p></div>`).join('')}
             </div>
-          </section>
+          </section>` : ''}
 
-          <section id="sec-used" class="content-section reveal">
+          ${relatedLessons.length || relatedNotes.length || relatedWork.length || relatedTools.length ? `<section id="sec-used" class="content-section reveal">
             <p class="section-no">04 / WHERE IT BECAME USEFUL</p>
             <h2>它后来出现在哪里？</h2>
             <div class="concept-evidence-list">
@@ -100,7 +102,7 @@ function renderTopicDetail(id) {
               ${relatedTools.map(t => `<a href="#/toolbox/${t.id}"><span>TOOL</span><strong>${escapeHTML(t.title)}</strong><b>↗</b></a>`).join('')}
               ${relatedLessons.slice(0, 4).map(l => `<a href="#/topics/${l.id}"><span>CONCEPT</span><strong>${escapeHTML(l.title)}</strong><b>→</b></a>`).join('')}
             </div>
-          </section>
+          </section>` : ''}
 
           ${lesson.scenario ? scenarioMarkup(lesson) : ''}
 
@@ -112,19 +114,19 @@ function renderTopicDetail(id) {
             </div>
           </section>
 
-          <section id="sec-pit" class="content-section reveal">
+          ${lesson.pitfalls?.length ? `<section id="sec-pit" class="content-section reveal">
             <p class="section-no">${lesson.scenario ? '07' : '06'} / WHAT IT IS NOT</p>
             <h2>最容易误解什么？</h2>
             <ul class="pitfall-list">
-              ${lesson.pitfalls.map(p => `<li><span>×</span>${escapeHTML(p)}</li>`).join('')}
+              ${(lesson.pitfalls || []).map(p => `<li><span>×</span>${escapeHTML(p)}</li>`).join('')}
             </ul>
-          </section>
+          </section>` : ''}
 
-          <section id="sec-chk" class="content-section reveal">
+          ${lesson.checklist?.length ? `<section id="sec-chk" class="content-section reveal">
             <p class="section-no">${lesson.scenario ? '08' : '07'} / NEXT TIME</p>
             <h2>下次遇到它，我会怎么做？</h2>
             <div class="action-list">
-              ${lesson.checklist.map((item, i) => `
+              ${(lesson.checklist || []).map((item, i) => `
                 <label>
                   <input type="checkbox" />
                   <span>${escapeHTML(item)}</span>
@@ -132,9 +134,9 @@ function renderTopicDetail(id) {
                 </label>
               `).join('')}
             </div>
-          </section>
+          </section>` : ''}
 
-          <section id="sec-chk2" class="quick-check reveal">
+          ${lesson.question?.choices?.length ? `<section id="sec-chk2" class="quick-check reveal">
             <span class="ink-label">${lesson.scenario ? '09' : '08'} / QUICK CHECK</span>
             <h2>${escapeHTML(lesson.question.prompt)}</h2>
             <div class="mini-choices">
@@ -145,7 +147,7 @@ function renderTopicDetail(id) {
               `).join('')}
             </div>
             <p class="mini-feedback" id="mini-feedback" aria-live="polite"></p>
-          </section>
+          </section>` : ''}
 
           <section id="sec-note" class="content-section note-section reveal">
             <p class="section-no">${lesson.scenario ? '10' : '09'} / LEAVE A NOTE</p>
@@ -172,7 +174,12 @@ function renderTopicDetail(id) {
         </button>
       </section>
     </article>
-  `;
+  ` : renderKnowledge(lesson, {note:state.notes[id],completed:isCompleted(id),favorite:isFavorite(id),related:[
+    ...relatedLessons.map(x=>({title:x.title,href:'#/topics/'+x.id,label:'知识'})),
+    ...relatedNotes.map(x=>({title:x.title,href:'#/notes/'+x.id,label:'笔记'})),
+    ...relatedWork.map(x=>({title:x.title,href:'#/work/'+x.id,label:'实践'})),
+    ...relatedTools.map(x=>({title:x.title,href:'#/toolbox/'+x.id,label:'工具'}))
+  ]});
 
   // 绑定滚动 TOC
   const tocLinks = [...document.querySelectorAll('.lesson-toc [data-scroll-target]')];
@@ -214,7 +221,7 @@ function renderTopicDetail(id) {
 }
 
 function scenarioMarkup(lesson) {
-  if (!lesson.scenario) return '';
+  if (!lesson.scenario?.steps?.length) return '';
   const steps = lesson.scenario.steps;
   return `
     <section id="sec-lab" class="content-section scenario-section reveal">

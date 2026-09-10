@@ -1,3 +1,4 @@
+import {validateContent} from '../../src/shared/content/validation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { lessons, categories } from '../../src/features/topics/index.js';
@@ -25,7 +26,7 @@ test('V3 Full Capability Repository Dataset integrity', () => {
   // Notes (思考)
   assert.ok(notes.length >= 4, 'Should have at least 4 note pieces');
   notes.forEach(n => {
-    assert.ok(n.id && n.title && n.oneLiner && n.question && n.myUnderstanding && n.example && n.myTake);
+    assert.deepEqual(validateContent('note',n),[],n.id);
   });
 
   // Papers (论文)
@@ -44,7 +45,7 @@ test('V3 Full Capability Repository Dataset integrity', () => {
   // Toolbox (工具箱)
   assert.ok(toolbox.length >= 4, 'Should have at least 4 toolbox items');
   toolbox.forEach(t => {
-    assert.ok(t.id && t.title && t.problemSolved && t.whenToUse && t.promptTemplate);
+    assert.deepEqual(validateContent('tool',t),[],t.id);
   });
 
   // Library (精选资源)
@@ -54,7 +55,7 @@ test('V3 Full Capability Repository Dataset integrity', () => {
   });
 
   // About (关于)
-  assert.ok(aboutData.name && aboutData.focusAreas.length > 0 && aboutData.labMission.length > 0);
+  assert.ok(aboutData.name && aboutData.mission && aboutData.now && aboutData.records.length > 0);
 });
 
 test('End-to-end workflow: CAPTURE -> AI DISTILL -> REVIEW -> UPGRADE TO NOTE / TOOLBOX', () => {

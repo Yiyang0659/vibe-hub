@@ -1,4 +1,5 @@
 const ROUTE_ALIASES = {
+  learning: 'notes',
   topic: 'topics',
   lesson: 'topics',
   papers: 'reading',

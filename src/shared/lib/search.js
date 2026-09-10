@@ -48,7 +48,7 @@ export function searchAllEntities({
   const results = [];
 
   // 1. Topics (术语知识)
-  lessons.forEach((lesson) => {
+  lessons.filter(item => item.publication !== 'draft').forEach((lesson) => {
     const haystack = normalizeText([
       lesson.title,
       lesson.english,
@@ -73,7 +73,7 @@ export function searchAllEntities({
   });
 
   // 2. Notes (思考与知识沉淀)
-  notes.forEach((note) => {
+  notes.filter(item => item.publication !== 'draft').forEach((note) => {
     const haystack = normalizeText([
       note.title,
       note.category,
@@ -127,7 +127,7 @@ export function searchAllEntities({
   });
 
   // 4. Projects & Experiments (项目与实验)
-  projects.forEach((proj) => {
+  projects.filter(item => item.publication !== 'draft').forEach((proj) => {
     const haystack = normalizeText([
       proj.title,
       proj.english,
@@ -157,7 +157,7 @@ export function searchAllEntities({
   });
 
   // 5. Toolbox (工具箱 / Playbook / Prompt / Checklist)
-  toolbox.forEach((tool) => {
+  toolbox.filter(item => item.publication !== 'draft').forEach((tool) => {
     const haystack = normalizeText([
       tool.title,
       tool.subtitle,
@@ -235,5 +235,6 @@ export function searchAllEntities({
     }
   });
 
-  return results;
+  const reviewIds = new Set([...notes,...projects,...toolbox].filter(item=>item.publication === 'review').map(item=>item.id));
+  return results.map(item=>reviewIds.has(item.id)?{...item,typeLabel:item.typeLabel+' · 待核实'}:item);
 }

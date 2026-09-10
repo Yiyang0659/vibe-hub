@@ -1,27 +1,18 @@
+import {validateContent} from '../../src/shared/content/validation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { lessons, WHY_LOOKUP, topicsWithDomain, domainOf } from '../../src/features/topics/index.js';
 import { notes, workItems, papers, toolbox, library } from '../../src/features/index.js';
 
-test('V4 发布门槛：每条 Note 的 unresolved（我还没想清楚什么）非空', () => {
-  notes.forEach((note) => {
-    assert.ok(note.unresolved && note.unresolved.trim().length >= 10, `note ${note.id} 缺少 unresolved`);
-  });
-});
+test('笔记按轻量内容结构校验', () => notes.forEach(n => assert.deepEqual(validateContent('note',n),[],n.id)));
 
 test('V4 发布门槛：每条 Work 的 problem 非空（Problem-first）', () => {
   workItems.forEach((w) => {
-    assert.ok(w.problem && w.problem.trim().length >= 10, `work ${w.id} 缺少 problem`);
+    assert.ok(w.problem && w.problem.trim().length > 0, `work ${w.id} 缺少 problem`);
   });
 });
 
-test('V4 发布门槛：EXPERIMENT 的 result 必须包含可量化数字', () => {
-  workItems
-    .filter((w) => w.kind === 'EXPERIMENT')
-    .forEach((w) => {
-      assert.ok(/\d/.test(w.result || ''), `experiment ${w.id} 的 result 缺少量化数字`);
-    });
-});
+test('项目支持进行中状态和定性观察', () => workItems.forEach(w => assert.deepEqual(validateContent('work',w),[],w.id)));
 
 test('V4 发布门槛：PAPER 的 myTake（我只记住三件事）恰好 3 条', () => {
   papers.forEach((p) => {
@@ -31,17 +22,11 @@ test('V4 发布门槛：PAPER 的 myTake（我只记住三件事）恰好 3 条'
 
 test('V4 发布门槛：TOOL 的 problemSolved 非空（它解决什么问题）', () => {
   toolbox.forEach((t) => {
-    assert.ok((t.problemSolved || '').trim().length >= 6, `tool ${t.id} 缺少 problemSolved`);
+    assert.ok((t.problemSolved || '').trim().length > 0, `tool ${t.id} 缺少 problemSolved`);
   });
 });
 
-test('V4 发布门槛：TOOL 至少提供 promptTemplate 或 checklist 之一（可复用性）', () => {
-  toolbox.forEach((t) => {
-    const hasTemplate = (t.promptTemplate || '').trim().length > 0;
-    const hasChecklist = Array.isArray(t.checklist) && t.checklist.length > 0;
-    assert.ok(hasTemplate || hasChecklist, `tool ${t.id} 既无模板也无清单，不可复用`);
-  });
-});
+test('工具按脚本和可复用正文分别校验', () => toolbox.forEach(t => assert.deepEqual(validateContent('tool',t),[],t.id)));
 
 test('V4 发布门槛：LIBRARY 的 whyRecommend（为什么值得留下）非空', () => {
   library.forEach((item) => {

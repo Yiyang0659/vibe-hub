@@ -25,6 +25,6 @@
 - 94 个源文件语法检查通过；109 项自动化测试通过。
 - 浏览器验证知识收藏、筛选、刷新持久化和详情阅读入口。
 - 当前预览为静态示意；逐条教学动画、完整交互样板及账号同步尚未实现。
-- 截图与文档反映 codex/knowledge-navigation 分支的阶段状态。
+- 本阶段成果已从 `codex/knowledge-navigation` 合并至 `main`，截图与文档随主分支更新。
 
 完整后续计划：[知识可视化](docs/plans/2026-09-15-knowledge-visual-learning.md)。

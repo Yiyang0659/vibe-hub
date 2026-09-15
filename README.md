@@ -47,8 +47,6 @@
 ```bash
 git clone https://github.com/Yiyang0659/vibe-hub.git
 cd vibe-hub
-# 本次阶段成果所在分支；main 尚未合并时请先切换
-git switch codex/knowledge-navigation
 npm run dev
 ```
 

@@ -19,7 +19,6 @@ const ROUTES = new Set([
   'library',
   'practice',
   'saved',
-  'workspace',
   'about'
 ]);
 

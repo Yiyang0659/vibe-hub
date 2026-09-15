@@ -17,7 +17,7 @@ export function renderTool(t, { checked = [], related = [] } = {}) {
     item: t,
     label: types[t.type] || t.typeLabel || "工具",
     back: "#/toolbox",
-    backLabel: "工具",
+    backLabel: "资源",
     summary: t.subtitle,
     body:
       section("解决什么问题", t.problemSolved) +

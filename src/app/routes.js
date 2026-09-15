@@ -8,7 +8,6 @@ export const routeMeta = {
   library: { title: '资料架', description: '值得再次打开的文章、网站、开源仓库与工具。' },
   practice: { title: '练习', description: '用短问题快速校准对 AI 产品与工程概念的理解。' },
   saved: { title: '已保存', description: '固定下来、近期需要反复使用的内容。' },
-  workspace: { title: '个人工作台', description: '用于随手记录、复习、收藏和整理的个人工作台。' },
   about: { title: '关于', description: '了解我如何在复杂的 AI 能力与真实产品之间做翻译与实现。' },
   'not-found': { title: '页面未找到', description: '这个页面暂时不存在。' }
 };

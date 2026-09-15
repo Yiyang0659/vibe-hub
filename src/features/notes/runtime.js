@@ -1,3 +1,10 @@
+import { renderThinkingBrowser, mountThinkingBrowser, renderThinkingReading, mountThinkingReading } from '../columns/thinking-browser.js';
+import { renderKnowledgeBrowser, mountKnowledgeBrowser } from '../columns/knowledge-browser.js';
+import { mountExplore, knowledgeCatalog } from '../columns/explore.js';
+import { thinkingCatalog } from '../columns/depth.js';
+import { renderThinkingDetail, mountDetailScroll, thinkingArticles } from '../columns/thinking-details.js';
+import { renderKnowledgeColumn, renderThinkingColumn } from '../columns/pages.js';
+import { mountHomePreviews } from '../learning/home-sections.js';
 import { renderLearningPage } from "../learning/page.js";
 import { renderNote } from "./detail.js";
 import { entryRelations } from "../../shared/components/entry-relations.js";
@@ -5,6 +12,22 @@ export function createNotesRuntime(context) {
   const { main, getAllNotes, topicsWithDomain, noteById, renderNotFound } =
     context;
   function renderNotes(params = new URLSearchParams()) {
+    if (params.get("kind") === "CONCEPT" && !params.has("review")) {
+      main.innerHTML = renderKnowledgeBrowser(topicsWithDomain, params);
+      mountKnowledgeBrowser(main, topicsWithDomain, params);
+      return;
+    }
+    if (params.get("kind") === "NOTE" && !params.has("review")) {
+      main.innerHTML = renderThinkingBrowser(getAllNotes());
+      mountThinkingBrowser(main, getAllNotes(), params);
+      return;
+    }
+    if (["CONCEPT", "NOTE"].includes(params.get("kind")) && !params.has("review")) {
+      main.innerHTML = params.get("kind") === "CONCEPT" ? renderKnowledgeColumn(topicsWithDomain) : renderThinkingColumn(getAllNotes());
+      mountHomePreviews(main);
+      mountExplore(main, params.get("kind") === "CONCEPT" ? knowledgeCatalog(topicsWithDomain) : thinkingCatalog(getAllNotes()), params);
+      return;
+    }
     main.innerHTML = renderLearningPage({
       notes: getAllNotes(),
       topics: topicsWithDomain,
@@ -33,9 +56,11 @@ export function createNotesRuntime(context) {
       });
   }
   function renderNoteDetail(id) {
+    if (thinkingArticles.some(x=>x.id===id)) { main.innerHTML = renderThinkingDetail(id); mountDetailScroll(main); return; }
     const note = noteById(id);
     if (!note || note.publication === "draft") return renderNotFound();
-    main.innerHTML = renderNote(note, entryRelations(note, context));
+    main.innerHTML = renderThinkingReading(note, entryRelations(note, context));
+    mountThinkingReading(main);
   }
   return { renderNotes, renderNoteDetail };
 }

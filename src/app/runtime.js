@@ -1,3 +1,8 @@
+import { initLanguage } from './language.js';
+import { mountColumnIntro } from '../features/columns/intro.js';
+import { canonicalBrowseHash, mountBrowseNavigation } from './browse-navigation.js';
+import { thinkingArticles } from '../features/columns/thinking-details.js';
+import { seriesDefinitions } from '../features/columns/knowledge.js';
 import { isPublished } from '../shared/content/validation.js';
 import { categories, lessons, createTopicsRuntime } from '../features/topics/index.js';
 import {
@@ -40,7 +45,6 @@ import { createWorkRuntime } from '../features/work/index.js';
 import { createToolboxRuntime } from '../features/toolbox/index.js';
 import { createLibraryRuntime } from '../features/library/index.js';
 import { createAboutRuntime } from '../features/about/index.js';
-import { createWorkspaceRuntime } from '../features/workspace/index.js';
 import { createPracticeRuntime } from '../features/practice/index.js';
 import { createSavedRuntime } from '../features/saved/index.js';
 
@@ -66,7 +70,6 @@ const searchResults = document.querySelector('#search-results');
 const captureDialog = document.querySelector('#capture-dialog');
 const captureContainer = document.querySelector('#capture-dialog-container');
 const themeToggle = document.querySelector('#theme-toggle');
-const workspaceLauncher = document.querySelector('#workspace-launcher');
 const siteHeader = document.querySelector('#site-header');
 const siteMenuTrigger = document.querySelector('#site-menu-trigger');
 const siteMobileMenu = document.querySelector('#site-mobile-menu');
@@ -140,7 +143,9 @@ function setTheme(theme) {
   document.documentElement.dataset.theme = validTheme;
   themeColorMeta?.setAttribute('content', validTheme === 'night' ? '#10141B' : '#F7F8FA');
   if (themeToggle) {
-    themeToggle.textContent = validTheme === 'night' ? '☀' : '☾';
+    themeToggle.innerHTML = validTheme === 'night'
+      ? '<svg data-theme-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+      : '<svg data-theme-icon="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 14.1A9 9 0 0 1 9.9 3.2 9.1 9.1 0 1 0 20.8 14.1Z"/></svg>';
     themeToggle.setAttribute('aria-pressed', String(validTheme === 'night'));
     themeToggle.setAttribute('aria-label', validTheme === 'night' ? '切换为日间模式' : '切换为夜航模式');
     themeToggle.title = validTheme === 'night' ? '当前：夜航模式（点击切换日间）' : '当前：日间模式（点击切换夜航）';
@@ -167,7 +172,7 @@ function toggleFavorite(id) {
     ? state.favorites.filter(item => item !== id)
     : [...state.favorites, id];
   saveState();
-  showToast(isFavorite(id) ? '已固定至工作区' : '已移出保存列表');
+  showToast(isFavorite(id) ? '已收藏' : '已取消收藏');
 }
 
 function toggleCompleted(id) {
@@ -259,7 +264,6 @@ const { renderWork, renderWorkDetail } = createWorkRuntime(featureContext);
 const { renderToolbox, renderToolboxDetail } = createToolboxRuntime(featureContext);
 const { renderLibrary } = createLibraryRuntime(featureContext);
 const { renderAbout } = createAboutRuntime(featureContext);
-const { renderWorkspace } = createWorkspaceRuntime(featureContext);
 const { renderPractice } = createPracticeRuntime(featureContext);
 const { resolveFavorite, renderSaved } = createSavedRuntime(featureContext);
 
@@ -585,19 +589,21 @@ function toggleSiteMenu() {
   siteMobileMenu?.setAttribute('aria-hidden', String(!open));
 }
 
+let previousRenderedRoute;
 function route() {
   routeFailed = false;
+  const canonical = canonicalBrowseHash(location.hash);
+  if (canonical !== location.hash) history.replaceState(null, "", canonical);
   const { routeName, id, query } = parseHash(location.hash);
   const normalizedRoute = normalizeRouteName(routeName);
+  main.dataset.restoreCatalog = String(!!previousRenderedRoute?.id && previousRenderedRoute.normalizedRoute === normalizedRoute);
+  previousRenderedRoute = {id, normalizedRoute};
   const params = new URLSearchParams(query);
 
   unmountHomeView();
   document.body.classList.toggle('is-home-route', routeName === 'home');
-  workspaceLauncher?.classList.toggle('is-active', routeName === 'workspace');
-  if (routeName === 'workspace') workspaceLauncher?.setAttribute('aria-current', 'page');
-  else workspaceLauncher?.removeAttribute('aria-current');
 
-  updateActiveNavigation(normalizedRoute);
+  updateActiveNavigation(normalizedRoute === 'notes' && params.get('kind') === 'CONCEPT' ? 'knowledge' : normalizedRoute);
 
   if (routeName === 'home') renderHome();
   else if (routeName === 'topics' || routeName === 'topic' || routeName === 'lesson') {
@@ -625,34 +631,32 @@ function route() {
   }
   else if (routeName === 'practice') renderPractice();
   else if (routeName === 'saved' || routeName === 'favorites') renderSaved();
-  else if (routeName === 'workspace') renderWorkspace();
-  else if (routeName === 'about') renderAbout();
+  else if (routeName === 'about') renderAbout(id);
   else renderNotFound();
 
   const routeMeta = {
     home: { title: `${site.name} — ${site.tagline}`, description: '关于 AI 产品、Agent 与应用工程的项目、文章和实用工具。' },
     work: { title: `项目 · ${site.name}`, description: '真正动手做过或验证过的 AI 产品、原型与实验。' },
     projects: { title: `项目 · ${site.name}`, description: '真正动手做过或验证过的 AI 产品、原型与实验。' },
-    learning: { title: `学习 · ${site.name}`, description: '记录知识、笔记与学习过程。' },
-    notes: { title: `学习 · ${site.name}`, description: '从项目与阅读中留下的 AI 产品、Agent 和工程思考。' },
-    topics: { title: `术语 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
-    topic: { title: `术语 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
-    lesson: { title: `术语 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
+    learning: { title: `${params.get("kind") === "CONCEPT" ? "知识" : "思考"} · ${site.name}`, description: '记录知识、笔记与学习过程。' },
+    notes: { title: `思考 · ${site.name}`, description: '从项目与阅读中留下的 AI 产品、Agent 和工程思考。' },
+    topics: { title: `知识 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
+    topic: { title: `知识 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
+    lesson: { title: `知识 · ${site.name}`, description: '用产品与实践视角解释 AI、Agent 和应用工程中的关键概念。' },
     papers: { title: `阅读 · ${site.name}`, description: '影响当前实践判断的论文、文章与阅读笔记。' },
     reading: { title: `阅读 · ${site.name}`, description: '影响当前实践判断的论文、文章与阅读笔记。' },
-    toolbox: { title: `工具 · ${site.name}`, description: '可以直接带走复用的 AI 工作方法、清单与模板。' },
-    playbooks: { title: `工具 · ${site.name}`, description: '可以直接带走复用的 AI 工作方法、清单与模板。' },
+    toolbox: { title: `资源 · ${site.name}`, description: '可以直接带走复用的 AI 工作方法、清单与模板。' },
+    playbooks: { title: `资源 · ${site.name}`, description: '可以直接带走复用的 AI 工作方法、清单与模板。' },
     library: { title: `资料架 · ${site.name}`, description: '值得再次打开的文章、网站、开源仓库与工具。' },
     'library-resources': { title: `资料架 · ${site.name}`, description: '值得再次打开的文章、网站、开源仓库与工具。' },
     practice: { title: `练习 · ${site.name}`, description: '用短问题快速校准对 AI 产品与工程概念的理解。' },
     saved: { title: `已保存 · ${site.name}`, description: '固定下来、近期需要反复使用的内容。' },
     favorites: { title: `已保存 · ${site.name}`, description: '固定下来、近期需要反复使用的内容。' },
-    workspace: { title: `个人工作台 · ${site.name}`, description: '用于随手记录、复习、收藏和整理的个人工作台。' },
     about: { title: `关于 · ${site.name}`, description: '了解我如何在复杂的 AI 能力与真实产品之间做翻译与实现。' }
   };
   const detail =
-    (routeName === 'topics' || routeName === 'topic' || routeName === 'lesson') && id ? topicById(id)
-    : (routeName === 'notes' || routeName === 'learning') && id ? noteById(id)
+    (routeName === 'topics' || routeName === 'topic' || routeName === 'lesson') && id ? (topicById(id) || seriesDefinitions.find(x=>x.id===id))
+    : (routeName === 'notes' || routeName === 'learning') && id ? (noteById(id) || thinkingArticles.find(x=>x.id===id))
     : (routeName === 'work' || routeName === 'projects') && id ? workById(id)
     : (routeName === 'papers' || routeName === 'reading') && id ? paperById(id)
     : (routeName === 'toolbox' || routeName === 'playbooks') && id ? toolById(id)
@@ -661,6 +665,7 @@ function route() {
   const meta = routeFailed ? {title: '页面未找到 · ' + site.name, description: '这个页面暂时不存在。'} : detail
     ? { title: `${detail.title} · ${site.name}`, description: detailDescription || routeMeta[routeName]?.description }
     : routeMeta[routeName] || { title: `页面未找到 · ${site.name}`, description: '这个页面暂时不存在。' };
+  if (routeName === 'about' && id) meta.title = `${id === 'now' ? '现在在做什么' : '关于我'} · ${site.name}`;
   applyPageMeta(meta);
 
   closeSiteMenu();
@@ -671,14 +676,14 @@ function route() {
   window.setTimeout(() => main.classList.remove('is-route-entering'), 520);
   window.scrollTo({ top: 0, behavior: 'instant' });
   main.focus({ preventScroll: true });
+  mountBrowseNavigation(main, routeName, id);
+  mountColumnIntro(main);
 }
 
 // 快速捕获入口
 
 document.querySelector('#topbar-quick-capture')?.addEventListener('click', openQuickCaptureModal);
-workspaceLauncher?.addEventListener('click', () => {
-  location.hash = '#/workspace';
-});
+initLanguage();
 
 // 全局搜索弹窗
 function openGlobalSearch() {
@@ -787,6 +792,8 @@ document.addEventListener('click', (e) => {
     renderSaved();
   } else if (location.hash.includes('/topics/')) {
     renderTopicDetail(id);
+  } else if (main.querySelector('#kb-results')) {
+    main.dispatchEvent(new Event('knowledge-favorite-changed'));
   } else {
     favBtn.classList.toggle('is-active', isFavorite(id));
     favBtn.textContent = isFavorite(id) ? '◆' : '◇';

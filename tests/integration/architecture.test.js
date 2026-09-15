@@ -67,7 +67,6 @@ test('feature page renderers do not live in the application entry', () => {
     'src/features/toolbox/runtime.js',
     'src/features/library/runtime.js',
     'src/features/about/runtime.js',
-    'src/features/workspace/runtime.js',
     'src/features/practice/runtime.js',
     'src/features/saved/runtime.js'
   ];
@@ -83,7 +82,6 @@ test('feature-specific styles are colocated with their owners', () => {
     'src/features/home/home.css',
     'src/features/notes/notes.css',
     'src/features/topics/topics.css',
-    'src/features/workspace/workspace.css'
   ];
 
   assert.deepEqual(expectedPaths.filter((path) => !existsSync(resolve(root, path))), []);

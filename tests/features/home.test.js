@@ -28,7 +28,7 @@ test('pet repeats the click effect every five seconds and cleans up on remount/u
       matchMedia: () => ({ matches: false }),
       setTimeout: globalThis.setTimeout
     }),
-    document: { querySelector: () => stage, documentElement: new EventTarget() },
+    document: { querySelectorAll: () => [], querySelector: () => stage, documentElement: new EventTarget() },
     requestAnimationFrame: () => 1,
     cancelAnimationFrame() {}
   };

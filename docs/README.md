@@ -24,6 +24,10 @@
 - [部署说明](engineering/deployment.md)：本地运行与静态部署方式。
 - [新增内容指南](guides/add-content.md)：添加术语、文章、项目和工具的实际路径。
 
+## 当前迭代计划
+
+- [知识栏目可视化学习迭代计划](plans/2026-09-15-knowledge-visual-learning.md)：轻量卡片、收藏与阅读入口，以及后续 10 条交互样板和批量扩展范围。
+
 ## 研究和历史
 
 - [学习网站定位、内容规划与首期实现](conversations/2026-09-10-learning-site-content-planning/README.md)：今天关于参考网站、学习型个人网站定位、首期实现、真实工具条目和栏目再次规划的对话交接。

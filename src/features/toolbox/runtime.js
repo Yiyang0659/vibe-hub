@@ -1,3 +1,4 @@
+import { renderResourceBrowser, mountResourceBrowser, resourcesForBrowser } from './browser.js';
 import { renderTool } from "./detail.js";
 import { entryRelations } from "../../shared/components/entry-relations.js";
 export function createToolboxRuntime(context) {
@@ -20,15 +21,10 @@ export function createToolboxRuntime(context) {
     }
   }
   function renderToolbox() {
-    main.innerHTML = renderToolboxIndex({ tools: getAllToolbox() });
-    main
-      .querySelectorAll("[data-quick-copy]")
-      .forEach((btn) =>
-        btn.addEventListener("click", () =>
-          copy(toolById(btn.dataset.quickCopy)?.promptTemplate || ""),
-        ),
-      );
+    main.innerHTML = renderResourceBrowser(resourcesForBrowser(getAllToolbox(), context.library || []));
+    mountResourceBrowser(main, resourcesForBrowser(getAllToolbox(), context.library || []), new URLSearchParams(location.hash.split("?")[1] || ""));
   }
+
   function renderToolboxDetail(id) {
     const tool = toolById(id);
     if (!tool || tool.publication === "draft") return renderNotFound();

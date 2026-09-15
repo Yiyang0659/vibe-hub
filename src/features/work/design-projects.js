@@ -1,0 +1,5 @@
+// User-supplied project designs; separate from verified portfolio records.
+export const designProjects = [
+  { id:'content-agent', title:'内容系统 Agent', subtitle:'从 Prompt 到可复用工作流', kind:'PROJECT', publication:'published', designOnly:true, visual:'workflow', statusLabel:'方案探索', practiceFocus:'流程拆分 · 人工确认', latestUpdate:'方案梳理，尚待验证', tags:['Agent','Workflow','Content'], summary:'把教育内容生产从一次性生成，整理成可复用、可迭代、可验证的结构化工作流。', problem:'不同教师有不同的表达风格、知识深度和受众。通用的一次性生成难以兼顾内容质量、个人表达与具体教学场景。', solution:'用知识库、模块化生成、AI 审核与人工修改串联内容生产，并将后续反馈用于调整方法。', modules:[['结构化知识库','课程资料、案例与教师风格'],['脚本生成流水线','按模块拆解并组合内容'],['审核评分','检查质量与教育适配性'],['反馈回写','保留观察与优化建议']], flow:['输入需求','知识库召回','模块化生成','AI 审核','人工修改','脚本输出','反馈回写'], keyDecisions:['先拆模块再生成，便于定位和修改问题。','知识内容与个人表达风格分开管理。','保留人工确认，反馈作为后续迭代输入。'], validationPlan:['脚本结构和知识准确性','教师风格与实际场景的适配','人工修改量与反馈可追溯性'], nextSteps:['明确各步骤输入输出','准备样例与审核规则','记录试运行结果'] }
+];
+export const learningDesign = { visual:'learning', displayTitle:'AI Learning OS', subtitle:'个人 AI 学习与实践系统', tags:['AI','Product','Web'], modules:[['项目','从想法到实践'],['知识','学习与笔记'],['思考','记录与反思'],['资源','可复用的方法']], flow:['首页基础','内容结构','栏目设计','持续完善'], nextSteps:['补充真实内容','完善栏目模板','串联知识与项目'] };

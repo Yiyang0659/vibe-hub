@@ -110,3 +110,11 @@
   :root { --site-hero-top: 108px; --site-hero-bottom: 36px; }
   .home-view .zh-hero { min-height: 0; }
 }
+/* Shared icon geometry; navigation retains the original five-item-era styling. */
+.zh-nav-actions>button>svg { width:24px; height:24px; display:block; overflow:visible; }
+
+/* Public catalog return and secondary About links. */
+.browse-return{padding-top:28px;font-size:14px}.browse-return a,.ab-more a{color:var(--vermilion);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}.browse-return a:focus-visible,.ab-more a:focus-visible{outline:2px solid var(--vermilion);outline-offset:3px}.ab-more{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:20px;font-size:14px}
+/* Language switch shares the header action size with the theme control. */
+.language-mark{font-size:13px;font-weight:700;line-height:1;border:1.5px solid currentColor;border-radius:5px;padding:4px 3px;min-width:25px;text-align:center}
+html[lang=en] .ci-copy h1{font-size:clamp(28px,3vw,44px);letter-spacing:-.035em}html[lang=en] .zh-nav-center{gap:0}html[lang=en] .ci-preview-grid{overflow-wrap:anywhere}

@@ -1,18 +1,18 @@
+import { renderKnowledgeBrowser, mountKnowledgeBrowser, termGroups } from '../columns/knowledge-browser.js';
+import { renderAllKnowledge, mountAllKnowledge, renderSeries, seriesDefinitions } from '../columns/knowledge.js';
 import { renderKnowledge } from './detail.js';
 import { isPublished } from '../../shared/content/validation.js';
 export function createTopicsRuntime(context) {
   const { main, state, practice, lessons, topicsWithDomain, WHY_LOOKUP, papers, library, aboutData, getAllNotes, getAllWork, getAllToolbox, getAllDigests, topicById, noteById, paperById, workById, toolById, categoryOf, showToast, saveState, isFavorite, isCompleted, toggleCompleted, renderTopicsIndex, mountTopicsIndex, renderArticlesIndex, renderReadingIndex, renderWorkIndex, renderToolboxIndex, renderLibraryIndex, renderRelatedTrail, escapeHTML, openQuickCaptureModal, calculateProgress, renderNotFound } = context;
 
 function renderTopics(params) {
-  main.innerHTML = renderTopicsIndex({ topics: topicsWithDomain.filter(isPublished), params });
-  mountTopicsIndex({
-    topics: topicsWithDomain.filter(isPublished),
-    initialDomain: params.get('domain') || 'all',
-    isCompleted
-  });
+  main.innerHTML = renderKnowledgeBrowser(topicsWithDomain, params);
+  mountKnowledgeBrowser(main, topicsWithDomain, params, {isFavorite});
+
 }
 
 function renderTopicDetail(id) {
+  if (seriesDefinitions.some(s=>s.id===id)) { main.innerHTML = renderSeries(id, topicsWithDomain); return; }
   const lesson = topicById(id);
   if (!lesson || lesson.publication === 'draft') return renderNotFound();
   const cat = categoryOf(lesson.category);
@@ -28,7 +28,7 @@ function renderTopicDetail(id) {
   main.innerHTML = lesson.scenario ? `
     <article class="lesson-page page-view portfolio-detail concept-detail" style="--route-color:${cat.accent}">
       <nav class="breadcrumb reveal" aria-label="面包屑">
-        <a href="#/learning">学习</a>
+        <a href="#/topics">知识</a>
         <span>/</span>
         <a href="#/topics">概念索引</a>
         <span>/</span>
@@ -37,7 +37,7 @@ function renderTopicDetail(id) {
 
       <header class="concept-hero detail-hero reveal">
         <div class="concept-hero-main">
-          <p class="chapter-label"><span>CONCEPT ${String(lessons.indexOf(lesson) + 1).padStart(2, '0')}</span> / ${escapeHTML(lesson.category)}</p>
+          <p class="chapter-label"><span>CONCEPT ${String(lessons.indexOf(lesson) + 1).padStart(2, '0')}</span> / ${escapeHTML(lesson.knowledgeCategory||lesson.category)}</p>
           <h1 class="detail-title">${escapeHTML(lesson.title)}</h1>
           <p class="detail-meta">${escapeHTML(lesson.english)}${lesson.aliases?.length ? ` · AKA ${lesson.aliases.map(escapeHTML).join(' / ')}` : ''}</p>
           <p class="concept-lead">${escapeHTML(lesson.excerpt)}</p>
@@ -47,7 +47,7 @@ function renderTopicDetail(id) {
           <dl class="concept-facts">
             <div><dt>理解成本</dt><dd>${lesson.duration || '—'} 分钟</dd></div>
             <div><dt>当前层级</dt><dd>${escapeHTML(lesson.level)}</dd></div>
-            <div><dt>所属方向</dt><dd>${escapeHTML(lesson.category)}</dd></div>
+            <div><dt>所属方向</dt><dd>${escapeHTML(lesson.knowledgeCategory||lesson.category)}</dd></div>
           </dl>
           <button class="favorite-seal concept-pin ${isFavorite(id) ? 'is-active' : ''}" type="button" data-favorite="${id}">
             <span>${isFavorite(id) ? '已收藏' : '收藏这个概念'}</span><b>${isFavorite(id) ? '◆' : '◇'}</b>
@@ -182,6 +182,17 @@ function renderTopicDetail(id) {
   ]});
 
   // 绑定滚动 TOC
+  if (!lesson.course && !seriesDefinitions.some(s=>s.chapters.some(c=>c[2]===id))) {
+    const category=lesson.knowledgeCategory||lesson.category;
+    const ordered=termGroups(topicsWithDomain||lessons,'',category).flatMap(g=>g.items);
+    const index=ordered.findIndex(t=>t.id===id);
+    const previous=ordered[index-1],next=ordered[index+1];
+    const link=(item,label)=>item?`<a href="#/topics/${encodeURIComponent(item.id)}">${label} · ${escapeHTML(item.title)}</a>`:'';
+    const nav=`<nav class="ds-bottom-links kb-reading-nav" aria-label="相邻知识">${link(previous,'上一篇')}<a href="#/topics?category=${encodeURIComponent(category)}">返回知识目录</a>${link(next,'下一篇')}</nav>`;
+    const existing=document.querySelector('.ds-bottom-links');
+    if(existing)existing.outerHTML=nav;
+    else document.querySelector('main article')?.insertAdjacentHTML('beforeend',nav);
+  }
   const tocLinks = [...document.querySelectorAll('.lesson-toc [data-scroll-target]')];
   tocLinks.forEach(link => link.addEventListener('click', (e) => {
     e.preventDefault();

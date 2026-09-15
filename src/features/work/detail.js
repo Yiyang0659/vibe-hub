@@ -1,36 +1,15 @@
-import {
-  entryPage,
-  section,
-  esc,
-  action,
-} from "../../shared/components/content-detail.js";
-import { safeHref } from "../../shared/content/validation.js";
-export function renderWorkDetailPage(w, related = []) {
-  return entryPage({
-    item: w,
-    label: w.kind === "EXPERIMENT" ? "小实验" : "项目与实践",
-    back: "#/work",
-    backLabel: "项目",
-    summary: w.summary,
-    body:
-      section("当前状态", w.statusLabel) +
-      (safeHref(w.screenshot)
-        ? '<figure class="entry-cover"><img src="' +
-          esc(w.screenshot) +
-          '" alt="' +
-          esc(w.title) +
-          '界面" loading="lazy"></figure>'
-        : "") +
-      section("为什么做", w.problem) +
-      section("做了什么", w.solution) +
-      section("我的参与", w.role) +
-      section("关键选择", w.keyDecisions) +
-      section("遇到的问题", w.challenge) +
-      section("如何验证", w.validation) +
-      section("目前结果", w.result) +
-      section("复盘与认识", w.whatILearned) +
-      action("查看演示", w.demoUrl) +
-      action("查看仓库", w.repoUrl),
-    related,
-  });
+import { renderProjectRecord } from './record-detail.js';
+import { icon } from '../learning/home-sections.js';
+import { columnTail } from '../columns/pages.js';
+import { section, esc, action, relatedLinks } from '../../shared/components/content-detail.js';
+import { projectCover, projectMeta, projectIcon } from './presentation.js';
+import { learningDesign } from './design-projects.js';
+export function renderWorkDetailPage(original,related=[]) {
+ if (original.journal) return renderProjectRecord(original,related);
+ const w=original.id==='learning-site'?{...original,...learningDesign}:original;
+ const block=(id,title,body,wide='')=>body?`<section id="project-${id}" class="pc-module ${wide}"><h2>${icon(({problem:"bulb",solution:"layers",decisions:"grid",flow:"tree",validation:"refresh",result:"cube"})[id]||"file")}${title}</h2>${body}</section>`:'';
+ const rows=(items)=>items?.length?`<div class="pc-mini-grid">${items.map((x,i)=>`<div><span>${String(i+1).padStart(2,'0')}</span><p>${esc(x)}</p></div>`).join('')}</div>`:'';
+ return `<article class="projects-page pc-page cl-page ds-project ds-project-${w.visual||'default'} site-container"><div class="pc-detail-hero"><header><p class="hp-label">项目 / ${esc(w.displayTitle||w.title)}</p><h1>${esc(w.displayTitle||w.title)}</h1>${w.subtitle?`<h2>${esc(w.subtitle)}</h2>`:''}<p class="project-summary">${esc(w.summary||w.problem||'')}</p>${projectMeta(w)}${w.designOnly?'<p class="pc-design-note">方案探索 · 尚未正式上线，流程与验证计划仍在梳理。</p>':`<p class="pc-design-note">${esc(w.time||'持续记录')} · ${esc(w.domain||'项目实践')}</p>`}<div class="pc-actions"><a class="site-button project-button" href="#project-solution" data-project-section="project-solution">查看${w.visual==='workflow'?'工作流':'完整过程'} →</a><a class="site-button pc-secondary" href="#/projects">返回项目列表 →</a>${action('查看仓库',w.repoUrl)}</div></header>${w.visual === "learning" || w.visual === "phone" ? `<figure class="ds-project-visual ds-visual-${w.visual}"><img src="./assets/details/${w.visual === "learning" ? "learning" : "phone"}-design.png" alt="${esc(w.displayTitle || w.title)} 界面设计方案"><figcaption>界面设计方案</figcaption></figure>` : projectCover(w)}</div>
+ ${w.publication==='review'?'<p class="entry-review">历史内容 · 待核实：其中的经历与结果尚未确认。</p>':''}
+ <div class="pc-module-grid">${block('problem','为什么做',w.problem?`<p>${esc(w.problem)}</p>`:'')}${block('solution',w.visual==='phone'?'核心功能':'核心结构',`<p>${esc(w.solution||'')}</p>${w.modules?.length?`<div class="pc-structure">${w.modules.map(([t,d],i)=>`<div>${icon(['book','layers','bulb','link'][i])}<strong>${esc(t)}</strong><small>${esc(d)}</small></div>`).join('')}</div>`:''}`,'pc-wide')}${block('decisions','关键选择',rows(w.keyDecisions),'pc-half')}${block('flow',w.visual==='phone'?'产品流程':'推进路径',w.flow?.length?`<ol class="pc-steps">${w.flow.map(x=>`<li>${esc(x)}</li>`).join('')}</ol><p>${w.designOnly?'按方案逐步实现和验证。':'从已确认的首页基础出发，继续完善内容与栏目。'}</p>`:'','pc-half')}${w.visual==='learning'?'</div><details class="ds-project-more"><summary>查看验证方式与阶段记录</summary><div class="pc-module-grid">':''}${block('validation',w.designOnly?'验证计划':'如何验证',rows(w.validationPlan||w.validation),'pc-half')}${block('result','阶段结果',w.result?`<p>${esc(w.result)}</p>`:'','pc-half')}${block('role','我的参与',w.role?`<p>${esc(w.role)}</p>`:'')}${block('challenge','遇到的问题',w.challenge?`<p>${esc(w.challenge)}</p>`:'')}${block('reflection','复盘与认识',w.whatILearned?`<p>${esc(w.whatILearned)}</p>`:'','pc-half')}</div>${w.visual==='learning'?'</details>':''}${w.nextSteps?.length?`<section class="pc-next"><h2>下一步</h2>${rows(w.nextSteps)}</section>`:''}${action('查看演示',w.demoUrl)}${related.length?`<details class="ds-project-more"><summary>相关知识与学习记录</summary>${relatedLinks(related)}</details>`:''}${columnTail}</article>`;
 }

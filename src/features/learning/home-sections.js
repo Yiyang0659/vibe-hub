@@ -1,83 +1,29 @@
-import { esc } from "../../shared/components/content-detail.js";
-import { isPublished } from "../../shared/content/validation.js";
-import { collections } from "./data.js";
-import { learningItems, filterLearning } from "./model.js";
-import { learningRow } from "./page.js";
-export function homeLearningSections(ctx) {
-  const items = learningItems({ notes: ctx.notes, topics: ctx.lessons });
-  const collection = collections.find(
-    (c) => filterLearning(items, { collection: c }).length,
-  );
-  const recent = items.filter((x) => x.kind !== "LOG").slice(0, 5);
-  const log = items.find((x) => x.kind === "LOG");
-  const builds = [
-    ...(ctx.toolbox || [])
-      .filter(isPublished)
-      .map((x) => ({
-        ...x,
-        label:
-          x.type === "SCRIPT"
-            ? "脚本工具"
-            : x.type === "PLUGIN"
-              ? "插件"
-              : "工具与方法",
-        desc: x.problemSolved,
-        href: "#/toolbox/" + x.id,
-      })),
-    ...(ctx.work || [])
-      .filter(isPublished)
-      .map((x) => ({
-        ...x,
-        label: x.statusLabel || "实践",
-        desc: x.summary || x.problem,
-        href: "#/work/" + x.id,
-      })),
-  ].slice(0, 4);
-  return (
-    (collection
-      ? '<section class="zh-section"><div class="zh-container"><p class="learning-eyebrow">CURRENTLY LEARNING</p><div class="home-learning-intro"><h2>正在学习，也正在尝试。</h2><a href="#/learning">全部学习记录 →</a></div><a class="learning-collection" href="#/learning?collection=' +
-        esc(collection.id) +
-        '"><div><p class="learning-eyebrow">持续整理 · ' +
-        filterLearning(items, { collection }).length +
-        " 条记录</p><h3>" +
-        esc(collection.title) +
-        "</h3><p>" +
-        esc(collection.description) +
-        '</p></div><span aria-hidden="true">↗</span></a></div></section>'
-      : "") +
-    (recent.length
-      ? '<section class="zh-section"><div class="zh-container"><p class="learning-eyebrow">RECENT NOTES</p><div class="home-learning-intro"><h2>最近留下的理解。</h2><a href="#/learning">浏览全部 →</a></div><div class="home-learning-list">' +
-        recent.map(learningRow).join("") +
-        "</div></div></section>"
-      : "") +
-    (builds.length
-      ? '<section class="zh-section"><div class="zh-container"><p class="learning-eyebrow">MADE & MAKING</p><div class="home-learning-intro"><h2>动手做过，留着再用。</h2><a href="#/toolbox">打开工具箱 →</a></div><div class="home-build-grid">' +
-        builds
-          .map(
-            (x) =>
-              '<a class="home-build-card" href="' +
-              esc(x.href) +
-              '"><p class="learning-eyebrow">' +
-              esc(x.label) +
-              "</p><h3>" +
-              esc(x.title) +
-              "</h3><p>" +
-              esc(x.desc) +
-              "</p><span>查看记录 ↗</span></a>",
-          )
-          .join("") +
-        "</div></div></section>"
-      : "") +
-    (log
-      ? '<section class="zh-section"><div class="zh-container"><a class="home-learning-log" href="' +
-        esc(log.href) +
-        '"><p class="learning-eyebrow">最近的变化 · ' +
-        esc(log.date) +
-        "</p><h2>" +
-        esc(log.title) +
-        "</h2><p>" +
-        esc(log.excerpt) +
-        "</p><span>读这条成长记录 →</span></a></div></section>"
-      : "")
-  );
+import { seriesDefinitions } from '../columns/knowledge-data.js';
+import { esc } from '../../shared/components/content-detail.js';
+import { isPublished } from '../../shared/content/validation.js';
+import { knowledgeSelection, seriesSelection, thinkingSelection, resourceSelection } from './home-curation.js';
+const shapes={book:'<path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"/>',file:'<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>',code:'<path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/>',bulb:'<path d="M9 18h6m-5 3h4M8 15c-5-5-2-12 4-12s9 7 4 12l-1 3H9z"/>',link:'<path d="m9 15 6-6m-5 8-2 2a4 4 0 0 1-6-6l4-4m8-2 2-2a4 4 0 0 1 6 6l-4 4"/>',cube:'<path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm-9 5 9 5 9-5M12 12v10"/>',tree:'<path d="M9 2h6v5H9zM12 7v5M4 16v-4h16v4M1 16h6v5H1zM9 16h6v5H9zM17 16h6v5h-6zM12 12v4"/>',layers:'<path d="m2 7 10-5 10 5-10 5L2 7Zm0 5 10 5 10-5M2 17l10 5 10-5"/>',grid:'<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>',refresh:'<path d="M20 9A8 8 0 0 0 5 6L2 9m0-6v6h6m-4 6a8 8 0 0 0 15 3l3-3m0 6v-6h-6"/>',search:'<circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/>'};
+const icon=(name='file',tone='blue')=>`<span class="hp-icon hp-icon--${tone}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${shapes[name]||shapes.file}</svg></span>`;
+const arrow='<span class="hp-arrow" aria-hidden="true">→</span>';
+const attrs=x=>`data-hp-item data-category="${esc(x.category||'')}" data-search="${esc([x.title,x.summary,x.category].join(' ').toLowerCase())}"`;
+const chips=(labels)=>`<div class="hp-filters" aria-label="内容分类">${['全部',...labels].map((l,i)=>`<button type="button" data-hp-filter="${i?esc(l):''}" aria-pressed="${!i}">${l}</button>`).join('')}</div>`;
+const empty='<p class="hp-empty" hidden>暂时没有匹配内容，请更换关键词或分类。</p><span class="hp-sr-only" data-hp-count aria-live="polite"></span>';
+const peek=(x)=>`type="button" data-hp-preview data-title="${esc(x.title)}" data-body="${esc(x.body||x.summary)}" data-planned="${!x.body||!!x.planned}"`;
+function intro(label,title,desc,action,href,quote='') {return `<div class="hp-intro"><p class="hp-label"><i></i>${label}</p><h2>${title}</h2><p class="hp-description">${desc}</p><a class="zh-button zh-button--primary" href="${href}">${action} ${arrow}</a>${quote?`<p class="hp-footnote">${quote}</p>`:''}</div>`;}
+const tail='<div class="hp-screen-tail"><span>THINK · BUILD · SHARE · GROW</span><span>—— 想与做，和更好的可能性在一起。</span></div>';
+function knowledge(ctx){
+ const published=(ctx.lessons||[]).filter(isPublished);
+ return `<section class="zh-section hp-section" id="home-knowledge"><div class="zh-container hp-layout">${intro('知识 / Knowledge','把没弄懂的问题，<br>整理成可反复查阅<br>的知识。','这里收集并整理了我在学习 AI、产品和技术过程中遇到的概念、原理与实践方法，并沉淀了一些结构化的学习系列，让零散的学习变得易于搜索、方便回顾。','进入知识','#/learning?kind=CONCEPT','知识不是堆积，而是为了下一次更快理解。')}<div class="hp-panel" data-hp-browser data-limit="4"><label class="hp-search">${icon('search')}<input type="search" data-hp-search aria-label="搜索首页知识" placeholder="搜索：RAG / MVP / Agent / PRD …"></label>${chips(['AI','产品','Agent','开发','设计'])}<div class="hp-knowledge-grid">${knowledgeSelection.map(x=>{const found=published.find(p=>p.id===x.id);return `<${found?'a':'button'} class="hp-knowledge-card" ${found?`href="#/topics/${x.id}"`:peek(x)} ${attrs(x)}>${icon(x.icon,x.tone)}<div><h3>${x.title}</h3><small>${x.meta}</small><p>${x.summary}</p></div>${arrow}</${found?'a':'button'}>`;}).join('')}</div>${empty}<div class="hp-series">${seriesSelection.map((x,i)=>`<a href="#/topics/${seriesDefinitions[i].id}">${icon(x.icon)}<div><span class="hp-badge">系列 · 可阅读</span><h3>${i?x.title:"AI 产品从 0 到 1"}</h3><small>${seriesDefinitions[i].chapters.length} 章 · 系列学习</small><p>${x.summary}</p></div></a>`).join('')}</div></div></div>${tail}</section>`;
 }
+function thinking(ctx){const [featured,...rest]=thinkingSelection;
+ return `<section class="zh-section hp-section" id="home-thinking"><div class="zh-container hp-layout"><div>${intro('思考 / Thinking','把理解、判断和复盘，<br>写成自己的思考。','这里记录我在学习、实践和探索过程中的思考笔记、文章、产品拆解、竞品分析和不断演化的观点。让学习不只是收集信息，而是真正内化为自己的认知体系。','进入思考','#/learning?kind=NOTE')}<blockquote class="hp-quote"><span aria-hidden="true">“</span><p>思考不是总结结束，<br>而是为了下一次做得更清楚。</p><cite>—— 想与做</cite></blockquote></div><div class="hp-thinking-grid"><article class="hp-panel hp-featured"><header><h3><i></i>本周思考</h3><a href="#/learning?kind=NOTE">查看全部 →</a></header><button ${peek(featured)} class="hp-feature-link"><div class="hp-notebook-photo"><img src="./assets/home/thinking-reference.png" alt="网格笔记本与桌边绿植"></div><span class="hp-badge">精选文章 · 整理中</span><h3>${featured.title}</h3><div class="hp-feature-tags"><span>方法</span><span>AI Product</span></div><p>${featured.summary}</p><small class="hp-feature-meta">选题已确定 <span>正文整理中</span></small></button></article><div class="hp-panel hp-recent" data-hp-browser data-limit="4"><header><h3><i></i>最近的思考</h3><a href="#/learning?kind=NOTE">更多思考 →</a></header>${chips(['笔记','拆解','竞品','观点'])}<div>${rest.map(x=>`<button class="hp-note-row" ${peek(x)} ${attrs(x)}>${icon(x.icon,x.tone)}<div><h3>${x.title}</h3><div class="hp-note-meta"><small>${x.meta}</small><time>整理中</time></div></div>${arrow}</button>`).join('')}</div>${empty}</div></div></div>${tail}</section>`;
+}
+function resources(){return `<section class="zh-section hp-section" id="home-resources"><div class="zh-container hp-layout">${intro('资源 / Resources','把值得反复使用的<br>东西，整理成自己的<br>资源库。','这里收集 Prompt、实用工具、技能方法、插件、网站和参考资料。希望这些资源能帮助我们更高效地工作和学习。','进入资源','#/toolbox','资源不是越多越好，而是下次还能快速找到。')}<div><div class="hp-panel" data-hp-browser data-limit="6"><header><h3><i></i>精选资源</h3><a href="#/library">查看更多资源 →</a></header>${chips(['Prompt','工具','Skill','网站','开源'])}<div class="hp-resource-grid">${resourceSelection.map(x=>`<button class="hp-resource-card" ${peek(x)} ${attrs(x)}><div class="hp-resource-top">${icon(x.icon,x.tone)}<small class="${x.planned?'':'hp-ready'}">${x.planned?'整理中':'可查看'}</small></div><h3>${x.title}</h3><span class="hp-type">${x.meta}</span><p>${x.summary}</p>${arrow}</button>`).join('')}</div>${empty}</div><div class="hp-resource-stats">${[['file','1','Prompts','提示词草案'],['code','3','Tools','模板与清单'],['layers','1','Skills','选题整理中'],['link','1','Websites','链接待补充']].map(([i,n,t,s])=>`<div>${icon(i)}<div><strong>${n}</strong><span>${t}</span><small>${s}</small></div></div>`).join('')}<p>资源不是越多越好，<br>而是下次还能快速找到。</p></div></div></div>${tail}</section>`;}
+export function homeLearningSections(ctx){return knowledge(ctx)+thinking(ctx)+resources(ctx)+`<dialog class="hp-preview-dialog"><button type="button" data-hp-close aria-label="关闭预览">×</button><p class="hp-dialog-status"></p><h2></h2><p class="hp-dialog-body"></p><a href="#/learning?kind=NOTE">浏览已有学习记录 →</a></dialog>`;}
+export function mountHomePreviews(root=document){
+ root.querySelectorAll('[data-hp-browser]').forEach(panel=>{let category='';const update=()=>{const q=(panel.querySelector('[data-hp-search]')?.value||'').trim().toLowerCase();let matched=0,shown=0;panel.querySelectorAll('[data-hp-item]').forEach(item=>{const match=(!category||item.dataset.category===category)&&q.split(/\s+/).every(w=>(item.dataset.search||'').includes(w));if(match)matched++;item.hidden=!match||shown>=Number(panel.dataset.limit);if(!item.hidden)shown++;});panel.querySelector('.hp-empty').hidden=matched>0;panel.querySelector('[data-hp-count]').textContent=`展示 ${shown} / ${matched} 条`;};panel.querySelector('[data-hp-search]')?.addEventListener('input',update);panel.querySelectorAll('[data-hp-filter]').forEach(btn=>btn.addEventListener('click',()=>{category=btn.dataset.hpFilter;panel.querySelectorAll('[data-hp-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));update();}));});
+ const dialog=root.querySelector?.('.hp-preview-dialog');if(!dialog?.showModal)return;
+ root.querySelectorAll('[data-hp-preview]').forEach(btn=>btn.addEventListener('click',()=>{dialog.querySelector('h2').textContent=btn.dataset.title;dialog.querySelector('.hp-dialog-status').textContent=btn.dataset.planned==='true'?'内容整理中 · 选题预览':'资源草案 · 可参考使用';dialog.querySelector('.hp-dialog-body').textContent=btn.dataset.body;dialog.showModal();}));dialog.querySelector('[data-hp-close]').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
+}
+
+export { icon, attrs, chips, peek, empty };

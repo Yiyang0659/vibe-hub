@@ -1,3 +1,5 @@
+import { courseLessons } from './course-data.js';
+import { enrichGlossary } from './glossary.js';
 export const categories = [
   { id: '前端航线', code: 'FE', title: '前端开发', subtitle: '浏览器、界面与交互状态', accent: '#45e0bf' },
   { id: '后端航线', code: 'BE', title: '后端开发', subtitle: '数据、服务与业务规则', accent: '#58a6ff' },
@@ -795,6 +797,6 @@ const expandedLessons = [
   })
 ];
 
-export const topics = [...coreLessons, ...expandedLessons];
+export const topics = [...enrichGlossary([...coreLessons, ...expandedLessons]), ...courseLessons];
 export const lessons = topics;
 export const learningQuote = '真正的理解不是记住名词，而是能在出错时知道该检查哪里。';

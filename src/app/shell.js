@@ -7,7 +7,9 @@ export function applyPageMeta(meta, doc = globalThis.document) {
 }
 
 export function navRouteFor(routeName) {
-  if (['topics', 'reading', 'library'].includes(routeName)) return 'notes';
+  if (routeName === 'topics') return 'knowledge';
+  if (routeName === 'notes') return 'thinking';
+  if (['reading', 'library', 'toolbox'].includes(routeName)) return 'resources';
   return routeName;
 }
 

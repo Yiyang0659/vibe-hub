@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {topicsWithDomain} from '../../src/features/topics/index.js';
+import {notes,workItems,toolbox} from '../../src/features/index.js';
+import {renderKnowledgeDetail} from '../../src/features/columns/knowledge.js';
+import {renderThinkingReading} from '../../src/features/columns/thinking-browser.js';
+import {renderProjectRecord} from '../../src/features/work/record-detail.js';
+import {renderTool} from '../../src/features/toolbox/detail.js';
+import {renderWorkIndex} from '../../src/features/work/work-page.js';
+import {renderAboutPage} from '../../src/features/about/page.js';
+import {renderHomeView} from '../../src/features/home/page.js';
+const pages=[...topicsWithDomain.map(t=>renderKnowledgeDetail(t)),...notes.map(n=>renderThinkingReading(n)),...workItems.map(w=>renderProjectRecord(w)),...toolbox.map(t=>renderTool(t)),renderWorkIndex({work:workItems}),renderAboutPage(),renderHomeView({notes,work:workItems,topics:topicsWithDomain,toolbox})];
+fs.writeFileSync(process.argv[2] || '/tmp/vibe-rendered-corpus.html',pages.join('\n'));

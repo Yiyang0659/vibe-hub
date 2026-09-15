@@ -1,3 +1,4 @@
+import {bilingualText} from '../../app/language.js';
 /**
  * V4 逻辑层 · 检索（lib/search.js）
  * 从 utils.js 迁移（Phase 2）；纯函数，无 DOM 依赖。
@@ -16,7 +17,7 @@ export function searchLessons(lessons, query = '', category = 'all', level = 'al
   return lessons.filter((lesson) => {
     const matchesCategory = category === 'all' || lesson.category === category;
     const matchesLevel = level === 'all' || lesson.level === level;
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       lesson.title,
       lesson.english,
       lesson.excerpt,
@@ -24,7 +25,7 @@ export function searchLessons(lessons, query = '', category = 'all', level = 'al
       lesson.category,
       ...(lesson.aliases || []),
       ...(lesson.tags || [])
-    ].join(' '));
+    ]));
     return matchesCategory && matchesLevel && (!keyword || haystack.includes(keyword));
   });
 }
@@ -49,7 +50,7 @@ export function searchAllEntities({
 
   // 1. Topics (术语知识)
   lessons.filter(item => item.publication !== 'draft').forEach((lesson) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       lesson.title,
       lesson.english,
       lesson.excerpt,
@@ -57,7 +58,7 @@ export function searchAllEntities({
       lesson.category,
       ...(lesson.aliases || []),
       ...(lesson.tags || [])
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'TOPIC',
@@ -74,7 +75,7 @@ export function searchAllEntities({
 
   // 2. Notes (思考与知识沉淀)
   notes.filter(item => item.publication !== 'draft').forEach((note) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       note.title,
       note.category,
       note.summary,
@@ -85,7 +86,7 @@ export function searchAllEntities({
       note.myPerspective,
       note.conclusion,
       note.unresolved
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'NOTE',
@@ -102,7 +103,7 @@ export function searchAllEntities({
 
   // 3. Papers (论文拆解)
   papers.forEach((paper) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       paper.title,
       paper.chineseTitle,
       paper.authors,
@@ -111,7 +112,7 @@ export function searchAllEntities({
       paper.problemSolved,
       paper.coreInnovation,
       ...(paper.top3Takeaways || [])
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'PAPER',
@@ -128,7 +129,7 @@ export function searchAllEntities({
 
   // 4. Projects & Experiments (项目与实验)
   projects.filter(item => item.publication !== 'draft').forEach((proj) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       proj.title,
       proj.english,
       proj.summary,
@@ -141,7 +142,7 @@ export function searchAllEntities({
       proj.objective || '',
       proj.findings || '',
       proj.keyTakeaway || ''
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'PROJECT',
@@ -158,7 +159,7 @@ export function searchAllEntities({
 
   // 5. Toolbox (工具箱 / Playbook / Prompt / Checklist)
   toolbox.filter(item => item.publication !== 'draft').forEach((tool) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       tool.title,
       tool.subtitle,
       tool.typeLabel,
@@ -171,7 +172,7 @@ export function searchAllEntities({
       tool.caseStudy || '',
       ...(tool.checklist || []),
       ...(tool.pitfalls || [])
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'TOOLBOX',
@@ -188,14 +189,14 @@ export function searchAllEntities({
 
   // 6. Library (精选资源库)
   library.forEach((item) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       item.title,
       item.categoryLabel,
       item.author,
       item.whyRecommend,
       item.whatILearned,
       ...(item.tags || [])
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'LIBRARY',
@@ -212,7 +213,7 @@ export function searchAllEntities({
 
   // 7. Digests (项目节点沉淀)
   digests.forEach((d) => {
-    const haystack = normalizeText([
+    const haystack = normalizeText(bilingualText([
       d.title,
       d.progress,
       d.problem,
@@ -220,7 +221,7 @@ export function searchAllEntities({
       d.reasoning,
       d.insight,
       d.reusableValue
-    ].join(' '));
+    ]));
     if (matchesQuery(haystack, keyword)) {
       results.push({
         type: 'DIGEST',

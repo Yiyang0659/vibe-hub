@@ -3,7 +3,6 @@
 @import url('./base.css');
 @import url('../features/home/home.css');
 @import url('./index-pages.css');
-@import url('../features/workspace/workspace.css');
 @import url('../features/notes/notes.css');
 @import url('./detail-pages.css');
 @import url('../features/topics/topics.css');
@@ -12,3 +11,25 @@
 @import url('./home-foundations.css');
 
 @import url('../features/learning/learning.css');
+
+@import url("../features/work/work.css");
+
+@import url("../features/learning/home-previews.css");
+
+@import url("../features/columns/columns.css");
+
+@import url("../features/columns/details.css");
+
+@import url("../features/columns/explore.css");
+
+@import url("../features/columns/knowledge-browser.css");
+
+@import url("../features/columns/thinking-browser.css");
+
+@import url("../features/about/about.css");
+
+@import url("../features/toolbox/browser.css");
+
+@import url("../features/work/records.css");
+
+@import url("../features/columns/intro.css");

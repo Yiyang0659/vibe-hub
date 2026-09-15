@@ -1,5 +1,5 @@
 import { isPublished } from '../../shared/content/validation.js';
-import { homeLearningSections } from '../learning/home-sections.js';
+import { homeLearningSections, mountHomePreviews } from '../learning/home-sections.js';
 /**
  * 首页：参考成熟个人作品站的信息架构，以项目、方法与文章呈现个人能力。
  */
@@ -193,6 +193,7 @@ export function unmountHomeView() {
 
 export function mountHomeView() {
   unmountHomeView();
+  mountHomePreviews();
 
   const stage = document.querySelector('.h-character-stage');
   const orb = stage?.querySelector('.h-orb');

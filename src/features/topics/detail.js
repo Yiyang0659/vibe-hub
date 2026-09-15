@@ -1,10 +1,12 @@
+import { renderKnowledgeDetail } from '../columns/knowledge.js';
+export const renderKnowledge = renderKnowledgeDetail;
 import {
   entryPage,
   section,
   esc,
   action,
 } from "../../shared/components/content-detail.js";
-export function renderKnowledge(
+export function renderLegacyKnowledge(
   item,
   { related = [], note = "", completed = false, favorite = false } = {},
 ) {
